@@ -70,14 +70,14 @@
    
    
 
-    <select id="getList" resultType="com.example.parseexcel.module.music.dao.vo.MusicSingerVO">
+    <select id="getList" resultType="com.example.sea.media.interfaces.vo.MusicSingerVO">
         SELECT
             *
         FROM d_singer
         <include refid='where_param'/>
     </select>
 
-    <select id="pageList" resultType="com.example.parseexcel.module.music.dao.vo.MusicSingerVO">
+    <select id="pageList" resultType="com.example.sea.media.interfaces.vo.MusicSingerVO">
         SELECT
             SQL_CALC_FOUND_ROWS *
         FROM d_singer
