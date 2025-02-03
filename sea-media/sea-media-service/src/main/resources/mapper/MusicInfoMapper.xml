@@ -37,9 +37,7 @@
             <if test="musicInfo.updateUser != null">
                 AND update_user = #{musicInfo.updateUser}
             </if>
-            <if test="musicInfo.singerName != null and musicInfo.singerName != ''">
-                AND s.name LIKE CONCAT('%', #{musicInfo.singerName}, '%' )
-            </if>
+
              AND del_flag = 0
         </where>
    </sql>
