@@ -3,3 +3,22 @@ server:
 spring:
   application:
     name: sea-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: sea-media-service
+          uri: lb://sea-media-service
+          order: 3
+          predicates:
+            - Path=/api/media/**
+          filters:
+            - StripPrefix=2
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        namespace: 9b361ed0-2213-402b-a56f-1ee08c180031
+        username: nacos
+        password: nacos

@@ -1,4 +1,4 @@
-package com.example.sea.common.handler;
+package com.example.sea.media.config.handler;
 
 
 import com.example.sea.common.encryption.DES;

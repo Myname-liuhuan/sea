@@ -39,24 +39,7 @@
 			<artifactId>jackson-annotations</artifactId>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-boot-starter -->
-		<dependency>
-			<groupId>com.baomidou</groupId>
-			<artifactId>mybatis-plus-boot-starter</artifactId>
-			<version>${mybatis-plus.version}</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>mybatis-spring</artifactId>
-					<groupId>org.mybatis</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<!-- 这个版本mybatis内置的mybatis-spring有问题，需要手动引入 -->
-		<dependency>
-			<groupId>org.mybatis</groupId>
-			<artifactId>mybatis-spring</artifactId>
-			<version>3.0.4</version>
-		</dependency>
+
 
 
 	</dependencies>
