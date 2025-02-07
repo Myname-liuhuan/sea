@@ -6,7 +6,6 @@
 		<groupId>com.example</groupId>
 		<artifactId>sea-media</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
-		<relativePath/>
 	</parent>
 	<artifactId>sea-media-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
@@ -27,6 +26,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.alibaba.cloud</groupId>
+			<artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+			<version>${spring.cloud.alibaba}</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
