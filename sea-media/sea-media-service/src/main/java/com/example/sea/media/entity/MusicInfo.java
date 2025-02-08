@@ -2,7 +2,7 @@ package com.example.sea.media.entity;
 
 
 import com.baomidou.mybatisplus.annotation.*;
-import com.example.sea.common.handler.EncryptTypeHandler;
+import com.example.sea.media.config.handler.EncryptTypeHandler;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;

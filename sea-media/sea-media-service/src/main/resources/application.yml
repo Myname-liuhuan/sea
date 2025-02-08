@@ -3,6 +3,13 @@ server:
 spring:
   application:
     name: sea-media-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        namespace: 9b361ed0-2213-402b-a56f-1ee08c180031
+        username: nacos
+        password: nacos
   # 数据源配置
   datasource:
     url: jdbc:mysql://43.142.126.219:3306/test?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=GMT%2B8
@@ -10,6 +17,7 @@ spring:
     password: lh123456
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
+
 
 
 

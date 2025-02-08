@@ -6,7 +6,6 @@
         <groupId>com.example</groupId>
         <artifactId>sea</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath/>
     </parent>
     <artifactId>sea-common</artifactId>
     <version>0.0.1-SNAPSHOT</version>
