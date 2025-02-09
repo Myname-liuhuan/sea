@@ -25,6 +25,7 @@
 		<mybatis-plus.version>3.5.10.1</mybatis-plus.version>
 		<druid.version>1.2.24</druid.version>
 		<spring.cloud.alibaba>2023.0.3.2</spring.cloud.alibaba>
+		<spring.cloud-version>2023.0.1</spring.cloud-version>
 	</properties>
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
@@ -52,6 +53,14 @@
 				<groupId>com.alibaba</groupId>
 				<artifactId>druid</artifactId>
 				<version>${druid.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring.cloud-version}</version>
+				<type>pom</type>
+				<scope>import</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
