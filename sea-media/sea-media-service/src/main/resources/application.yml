@@ -7,7 +7,7 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
-        namespace: 9b361ed0-2213-402b-a56f-1ee08c180031
+        namespace: e47b1dcd-878d-4721-b51f-8747f086c88c
         username: nacos
         password: nacos
   # 数据源配置

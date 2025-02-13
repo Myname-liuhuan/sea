@@ -1,0 +1,6 @@
+#springcloud环境下会加载优先级bootstrap大于application
+spring:
+  profiles:
+    active: local
+  application:
+    name: sea-gateway
