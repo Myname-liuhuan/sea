@@ -1,5 +1,7 @@
 package com.example.sea.code.service;
 
+import java.io.IOException;
+
 public interface CodeGenerationService {
-    void generateCode(String tableName);
+    byte[] generateCode(String tableName) throws IOException;
 }

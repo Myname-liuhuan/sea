@@ -1,15 +1,22 @@
 package com.example.sea.code.service.impl;
 
-import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.generator.FastAutoGenerator;
 import com.baomidou.mybatisplus.generator.config.OutputFile;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
 import com.example.sea.code.service.CodeGenerationService;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collections;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Service
 public class CodeGenerationServiceImpl implements CodeGenerationService {
@@ -30,27 +37,59 @@ public class CodeGenerationServiceImpl implements CodeGenerationService {
     private String basePackage;
 
     @Override
-    public void generateCode(String tableName) {
-        FastAutoGenerator.create(jdbcUrl, username, password)
-            .globalConfig(builder -> {
-                builder.author("System")
-                       .enableSwagger()
-                       .outputDir(outputDir);
-            })
-            .packageConfig(builder -> builder
-                .parent(basePackage)
-                .pathInfo(Collections.singletonMap(OutputFile.xml, outputDir + "/mapper"))
-            )
-            .strategyConfig(builder -> builder
-                .addInclude(tableName)
-                .entityBuilder()
-                .enableLombok()
-                .naming(NamingStrategy.underline_to_camel)
-                .columnNaming(NamingStrategy.underline_to_camel)
-                .controllerBuilder()
-                .enableRestStyle()
-            )
-            .templateEngine(new VelocityTemplateEngine())
-            .execute();
+    public byte[] generateCode(String tableName) throws IOException {
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+             ZipOutputStream zipOut = new ZipOutputStream(byteArrayOutputStream)) {
+            
+            // 创建临时目录
+            Path tempDir = Files.createTempDirectory("codegen");
+            
+            // 生成代码到临时目录
+            FastAutoGenerator.create(jdbcUrl, username, password)
+                .globalConfig(builder -> {
+                    builder.author("System")
+                           .enableSwagger()
+                           .outputDir(tempDir.toString());
+                })
+                .packageConfig(builder -> builder
+                    .parent(basePackage)
+                    .pathInfo(Collections.singletonMap(OutputFile.xml, tempDir + "/mapper"))
+                )
+                .strategyConfig(builder -> builder
+                    .addInclude(tableName)
+                    .entityBuilder()
+                    .enableLombok()
+                    .naming(NamingStrategy.underline_to_camel)
+                    .columnNaming(NamingStrategy.underline_to_camel)
+                    .controllerBuilder()
+                    .enableRestStyle()
+                )
+                .templateEngine(new VelocityTemplateEngine())
+                .execute();
+            
+            // 将生成的代码打包到zip
+            zipDirectory(tempDir.toFile(), zipOut);
+            
+            // 删除临时目录
+            FileUtils.deleteDirectory(tempDir.toFile());
+            
+            return byteArrayOutputStream.toByteArray();
+        }
+    }
+    
+    private void zipDirectory(File directory, ZipOutputStream zipOut) throws IOException {
+        File[] files = directory.listFiles();
+        if (files == null) return;
+        
+        for (File file : files) {
+            if (file.isDirectory()) {
+                zipDirectory(file, zipOut);
+                continue;
+            }
+            
+            zipOut.putNextEntry(new ZipEntry(file.getPath()));
+            zipOut.write(Files.readAllBytes(file.toPath()));
+            zipOut.closeEntry();
+        }
     }
 }
