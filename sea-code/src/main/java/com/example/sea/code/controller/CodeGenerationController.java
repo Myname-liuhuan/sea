@@ -1,6 +1,7 @@
 package com.example.sea.code.controller;
 
 import com.example.sea.code.service.CodeGenerationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ public class CodeGenerationController {
 
     private final CodeGenerationService codeGenerationService;
 
+    @Autowired
     public CodeGenerationController(CodeGenerationService codeGenerationService) {
         this.codeGenerationService = codeGenerationService;
     }
