@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
+/**
+ * @author liuhuan
+ * @date 2025-02-28
+ */
 @RestController
 @RequestMapping("/api/codegen")
 public class CodeGenerationController {
