@@ -1,13 +1,16 @@
 package com.example.sea.code.controller;
 
 import com.example.sea.code.service.CodeGenerationService;
+
+import jakarta.validation.constraints.NotBlank;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
@@ -28,7 +31,7 @@ public class CodeGenerationController {
     }
 
     @PostMapping("/generate")
-    public ResponseEntity<byte[]> generateCode(@RequestParam String tableName) throws IOException {
+    public ResponseEntity<byte[]> generateCode(@RequestBody @NotBlank String tableName) throws IOException {
         byte[] zipBytes = codeGenerationService.generateCode(tableName);
         
         return ResponseEntity.ok()
