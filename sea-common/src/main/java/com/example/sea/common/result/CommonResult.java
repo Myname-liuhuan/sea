@@ -3,6 +3,7 @@ package com.example.sea.common.result;
 
 /**
  * 返回值封装类
+ * @author liuhuan
  * @param <T>
  */
 public class CommonResult<T> {

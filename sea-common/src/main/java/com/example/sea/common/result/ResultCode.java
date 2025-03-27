@@ -2,6 +2,7 @@ package com.example.sea.common.result;
 
 /**
  * API返回码封装类
+ * @author liuhuan
  */
 public enum ResultCode implements IErrorCode {
     SUCCESS(200, "操作成功"),
@@ -9,7 +10,11 @@ public enum ResultCode implements IErrorCode {
     VALIDATE_FAILED(404, "参数检验失败"),
     UNAUTHORIZED(401, "暂未登录或token已经过期"),
     FORBIDDEN(403, "没有相关权限");
+
+    /** 返回码 */
     private long code;
+    
+    /** 返回信息 */
     private String message;
 
     private ResultCode(long code, String message) {
