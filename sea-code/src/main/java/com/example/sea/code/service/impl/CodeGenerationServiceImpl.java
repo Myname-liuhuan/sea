@@ -93,7 +93,10 @@ public class CodeGenerationServiceImpl implements CodeGenerationService {
                 continue;
             }
             
-            zipOut.putNextEntry(new ZipEntry(file.getPath()));
+            String fullPath = file.getPath().replace('\\', '/');
+            int comIndex = fullPath.indexOf("com/");
+            String relativePath = comIndex >= 0 ? fullPath.substring(comIndex) : fullPath;
+            zipOut.putNextEntry(new ZipEntry(relativePath.replace('\\', '/')));
             zipOut.write(Files.readAllBytes(file.toPath()));
             zipOut.closeEntry();
         }
