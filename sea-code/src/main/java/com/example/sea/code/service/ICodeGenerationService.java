@@ -9,7 +9,7 @@ import com.example.sea.code.entity.dto.CodeGenerateDTO;
  * @author liuhuan
  * @date 2025-03-24
  */
-public interface CodeGenerationService {
+public interface ICodeGenerationService {
 
     /**
      * 根据表名默认生成

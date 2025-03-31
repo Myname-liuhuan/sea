@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.generator.config.OutputFile;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
 import com.example.sea.code.entity.dto.CodeGenerateDTO;
-import com.example.sea.code.service.CodeGenerationService;
+import com.example.sea.code.service.ICodeGenerationService;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ import java.util.zip.ZipOutputStream;
  * @date 2025-03-24
  */
 @Service
-public class CodeGenerationServiceImpl implements CodeGenerationService {
+public class CodeGenerationServiceImpl implements ICodeGenerationService {
 
     @Value("${codegen.jdbc.url}")
     private String jdbcUrl;
