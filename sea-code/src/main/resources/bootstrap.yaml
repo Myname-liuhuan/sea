@@ -3,9 +3,12 @@ server:
 spring:
   application:
     name: sea-code
-  autoconfigure:
-    exclude:
-      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/test
+    username: root
+    password: lh123456
+    type: com.alibaba.druid.pool.DruidDataSource
 
 codegen:
   jdbc:
@@ -14,4 +17,3 @@ codegen:
     password: lh123456
   output-dir: D://file//codeAuto//src
   # base-package: com.example.sea.media
-

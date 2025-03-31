@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,7 +31,7 @@ public class CodeGenerationController {
     }
 
     @GetMapping("/generate")
-    public ResponseEntity<byte[]> generateCode(CodeGenerateDTO codeGenerateDTO) throws IOException {
+    public ResponseEntity<byte[]> generateCode(@Validated CodeGenerateDTO codeGenerateDTO) throws IOException {
         byte[] zipBytes = codeGenerationService.generateCode(codeGenerateDTO);
         
         return ResponseEntity.ok()
@@ -39,7 +40,4 @@ public class CodeGenerationController {
                 .body(zipBytes);
     }
 
-    public CommonResult<String> getDataSourceList(){
-        return null;
-    }
 }
