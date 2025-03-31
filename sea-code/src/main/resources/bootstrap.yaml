@@ -13,5 +13,5 @@ codegen:
     username: root
     password: lh123456
   output-dir: D://file//codeAuto//src
-  base-package: com.example.sea.media
+  # base-package: com.example.sea.media
 

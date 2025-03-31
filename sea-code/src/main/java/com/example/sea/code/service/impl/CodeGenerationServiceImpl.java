@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.generator.FastAutoGenerator;
 import com.baomidou.mybatisplus.generator.config.OutputFile;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
+import com.example.sea.code.entity.dto.CodeGenerateDTO;
 import com.example.sea.code.service.CodeGenerationService;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,11 +40,9 @@ public class CodeGenerationServiceImpl implements CodeGenerationService {
     @Value("${codegen.output-dir}")
     private String outputDir;
     
-    @Value("${codegen.base-package}")
-    private String basePackage;
 
     @Override
-    public byte[] generateCode(String tableName) throws IOException {
+    public byte[] generateCode(CodeGenerateDTO codeGenerateDTO) throws IOException {
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
              ZipOutputStream zipOut = new ZipOutputStream(byteArrayOutputStream)) {
             
@@ -58,11 +57,11 @@ public class CodeGenerationServiceImpl implements CodeGenerationService {
                            .outputDir(tempDir.toString());
                 })
                 .packageConfig(builder -> builder
-                    .parent(basePackage)
+                    .parent(codeGenerateDTO.getPackageName())
                     .pathInfo(Collections.singletonMap(OutputFile.xml, tempDir + "/mapper"))
                 )
                 .strategyConfig(builder -> builder
-                    .addInclude(tableName)
+                    .addInclude(codeGenerateDTO.getTableName())
                     .entityBuilder()
                     .enableLombok()
                     .naming(NamingStrategy.underline_to_camel)

@@ -1,6 +1,8 @@
 package com.example.sea.code.controller;
 
+import com.example.sea.code.entity.dto.CodeGenerateDTO;
 import com.example.sea.code.service.CodeGenerationService;
+import com.example.sea.common.result.CommonResult;
 
 import jakarta.validation.constraints.NotBlank;
 
@@ -8,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,13 +33,17 @@ public class CodeGenerationController {
         this.codeGenerationService = codeGenerationService;
     }
 
-    @PostMapping("/generate")
-    public ResponseEntity<byte[]> generateCode(@RequestBody @NotBlank String tableName) throws IOException {
-        byte[] zipBytes = codeGenerationService.generateCode(tableName);
+    @GetMapping("/generate")
+    public ResponseEntity<byte[]> generateCode(CodeGenerateDTO codeGenerateDTO) throws IOException {
+        byte[] zipBytes = codeGenerationService.generateCode(codeGenerateDTO);
         
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"generated-code.zip\"")
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(zipBytes);
+    }
+
+    public CommonResult<String> getDataSourceList(){
+        return null;
     }
 }

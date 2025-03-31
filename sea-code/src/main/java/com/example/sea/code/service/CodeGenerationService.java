@@ -2,6 +2,8 @@ package com.example.sea.code.service;
 
 import java.io.IOException;
 
+import com.example.sea.code.entity.dto.CodeGenerateDTO;
+
 /**
  * 代码生成服务
  * @author liuhuan
@@ -12,8 +14,8 @@ public interface CodeGenerationService {
     /**
      * 根据表名默认生成
      * @param tableName
-     * @return
+     * @return 压缩包字节
      * @throws IOException
      */
-    byte[] generateCode(String tableName) throws IOException;
+    byte[] generateCode(CodeGenerateDTO codeGenerateDTO) throws IOException;
 }
