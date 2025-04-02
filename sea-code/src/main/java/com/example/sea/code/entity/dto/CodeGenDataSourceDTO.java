@@ -19,7 +19,7 @@ public class CodeGenDataSourceDTO {
     private String name;
 
     /**
-     * 数据库类型（MySQL, PostgreSQL, Oracle 等）
+     * 数据库类型字符串（MySQL, PostgreSQL, Oracle 等）
      */
     @NotBlank
     private String dbType;

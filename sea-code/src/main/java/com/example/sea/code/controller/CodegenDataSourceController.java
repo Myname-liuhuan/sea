@@ -31,6 +31,12 @@ public class CodegenDataSourceController {
         return codegenDataSourceService.checkDataSource(codeGenDataSourceDTO);
     }
 
-
-
+    /**
+     * 新增数据源
+     * @return CommonResult<Boolean>
+     */
+    @PostMapping("/saveDataSource")
+    public CommonResult<Boolean> saveDataSource(@Validated @RequestBody CodeGenDataSourceDTO codeGenDataSourceDTO) {
+        return codegenDataSourceService.saveDataSource(codeGenDataSourceDTO);
+    }
 }

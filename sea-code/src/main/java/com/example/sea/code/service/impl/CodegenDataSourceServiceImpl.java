@@ -64,4 +64,36 @@ public class CodegenDataSourceServiceImpl extends ServiceImpl<CodegenDataSourceM
         }
     }
 
+    @Override
+    public CommonResult<Boolean> saveDataSource(CodeGenDataSourceDTO codeGenDataSourceDTO) {
+        // 参数校验
+        if (Objects.isNull(codeGenDataSourceDTO.getDbType()) || 
+            Objects.isNull(codeGenDataSourceDTO.getHost()) ||
+            Objects.isNull(codeGenDataSourceDTO.getPort()) ||
+            Objects.isNull(codeGenDataSourceDTO.getUsername()) ||
+            Objects.isNull(codeGenDataSourceDTO.getPassword()) ||
+            Objects.isNull(codeGenDataSourceDTO.getName())) {
+            return CommonResult.failed("数据源参数不完整");
+        }
+
+        // 检查数据源是否已存在
+        if (lambdaQuery()
+            .eq(CodegenDataSource::getName, codeGenDataSourceDTO.getName())
+            .exists()) {
+            return CommonResult.failed("数据源名称已存在");
+        }
+
+        // 转换为实体并保存
+        CodegenDataSource dataSource = new CodegenDataSource()
+            .setName(codeGenDataSourceDTO.getName())
+            .setDbType(codeGenDataSourceDTO.getDbType())
+            .setHost(codeGenDataSourceDTO.getHost())
+            .setPort(codeGenDataSourceDTO.getPort())
+            .setUsername(codeGenDataSourceDTO.getUsername())
+            .setPassword(codeGenDataSourceDTO.getPassword());
+        
+        return save(dataSource) ? 
+            CommonResult.success(true, "数据源保存成功") :
+            CommonResult.failed("数据源保存失败");
+    }
 }
