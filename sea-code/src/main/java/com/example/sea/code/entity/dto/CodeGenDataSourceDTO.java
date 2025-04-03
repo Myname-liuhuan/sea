@@ -21,31 +21,31 @@ public class CodeGenDataSourceDTO {
     /**
      * 数据库类型字符串（MySQL, PostgreSQL, Oracle 等）
      */
-    @NotBlank
+    @NotBlank(message = "数据库类型不能为空")
     private String dbType;
 
     /**
      * 数据库主机地址
      */
-    @NotBlank
+    @NotBlank(message = "数据库主机地址不能为空")
     private String host;
 
     /**
      * 数据库端口
      */
-    @NotNull
+    @NotNull(message = "数据库端口不能为空")
     private Integer port;
 
     /**
      * 数据库用户名
      */
-    @NotBlank
+    @NotBlank(message = "数据库用户名不能为空")
     private String username;
 
     /**
      * 数据库密码
      */
-    @NotBlank
+    @NotBlank(message = "数据库密码不能为空")
     private String password;
     
 }
