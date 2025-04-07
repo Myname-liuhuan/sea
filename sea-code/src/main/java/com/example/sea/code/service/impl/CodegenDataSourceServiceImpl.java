@@ -22,15 +22,6 @@ public class CodegenDataSourceServiceImpl extends ServiceImpl<CodegenDataSourceM
 
     @Override
     public CommonResult<Boolean> checkDataSource(CodeGenDataSourceDTO codeGenDataSourceDTO) {
-        // 参数校验
-        if (Objects.isNull(codeGenDataSourceDTO.getDbType()) || 
-            Objects.isNull(codeGenDataSourceDTO.getHost()) ||
-            Objects.isNull(codeGenDataSourceDTO.getPort()) ||
-            Objects.isNull(codeGenDataSourceDTO.getUsername()) ||
-            Objects.isNull(codeGenDataSourceDTO.getPassword())) {
-            return CommonResult.failed("数据源参数不完整");
-        }
-
         // 构建JDBC URL
         String jdbcUrl;
         switch (codeGenDataSourceDTO.getDbType().toLowerCase()) {
@@ -67,12 +58,7 @@ public class CodegenDataSourceServiceImpl extends ServiceImpl<CodegenDataSourceM
     @Override
     public CommonResult<Boolean> saveDataSource(CodeGenDataSourceDTO codeGenDataSourceDTO) {
         // 参数校验
-        if (Objects.isNull(codeGenDataSourceDTO.getDbType()) || 
-            Objects.isNull(codeGenDataSourceDTO.getHost()) ||
-            Objects.isNull(codeGenDataSourceDTO.getPort()) ||
-            Objects.isNull(codeGenDataSourceDTO.getUsername()) ||
-            Objects.isNull(codeGenDataSourceDTO.getPassword()) ||
-            Objects.isNull(codeGenDataSourceDTO.getName())) {
+        if (Objects.isNull(codeGenDataSourceDTO.getName())) {
             return CommonResult.failed("数据源参数不完整");
         }
 
