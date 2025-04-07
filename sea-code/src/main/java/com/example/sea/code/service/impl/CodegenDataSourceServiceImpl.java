@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Objects;
+import reactor.core.publisher.Flux;
 
 /**
  * 代码生成 - 数据源信息表服务实现类
@@ -81,5 +82,10 @@ public class CodegenDataSourceServiceImpl extends ServiceImpl<CodegenDataSourceM
         return save(dataSource) ? 
             CommonResult.success(true, "数据源保存成功") :
             CommonResult.failed("数据源保存失败");
+    }
+
+    @Override
+    public Flux<CodegenDataSource> listDataSource() {
+        return Flux.fromIterable(list());
     }
 }
