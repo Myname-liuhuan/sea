@@ -2,7 +2,6 @@ package com.example.sea.code.controller;
 
 import com.example.sea.code.entity.dto.CodeGenerateDTO;
 import com.example.sea.code.service.ICodeGenerationService;
-import com.example.sea.common.result.CommonResult;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -30,6 +29,13 @@ public class CodeGenerationController {
         this.codeGenerationService = codeGenerationService;
     }
 
+    /**
+     * 生成代码
+     *
+     * @param codeGenerateDTO 代码生成参数
+     * @return 生成的代码文件
+     * @throws IOException IO异常
+     */
     @GetMapping("/generate")
     public ResponseEntity<byte[]> generateCode(@Validated CodeGenerateDTO codeGenerateDTO) throws IOException {
         byte[] zipBytes = codeGenerationService.generateCode(codeGenerateDTO);
