@@ -31,20 +31,20 @@ public class CodegenDataSourceController {
 
     /**
      * 测试数据源连接
-     * @return Mono<CommonResult<Boolean>>
+     * @return Mono<Boolean>
      */
     @GetMapping("/checkDataSource")
-    public Mono<CommonResult<Boolean>> checkDataSource(@Validated(GroupCheck.class) CodeGenDataSourceDTO codeGenDataSourceDTO) {
-        return Mono.just(codegenDataSourceService.checkDataSource(codeGenDataSourceDTO));
+    public Mono<Boolean> checkDataSource(@Validated(GroupCheck.class) CodeGenDataSourceDTO codeGenDataSourceDTO) {
+        return codegenDataSourceService.checkDataSource(codeGenDataSourceDTO);
     }
 
     /**
      * 新增数据源
-     * @return Mono<CommonResult<Boolean>>
+     * @return Mono<Boolean>
      */
     @PostMapping("/saveDataSource")
-    public Mono<CommonResult<Boolean>> saveDataSource(@Validated(GroupSave.class) @RequestBody CodeGenDataSourceDTO codeGenDataSourceDTO) {
-        return Mono.just(codegenDataSourceService.saveDataSource(codeGenDataSourceDTO));
+    public Mono<Boolean> saveDataSource(@Validated(GroupSave.class) @RequestBody CodeGenDataSourceDTO codeGenDataSourceDTO) {
+        return codegenDataSourceService.saveDataSource(codeGenDataSourceDTO);
     }
 
     /**
