@@ -10,6 +10,14 @@ spring:
     password: lh123456
     type: com.alibaba.druid.pool.DruidDataSource
 
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+logging:
+  level:
+    com.example.sea.code.mapper: DEBUG
+
 codegen:
   jdbc:
     url: jdbc:mysql://localhost:3306/test
