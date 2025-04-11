@@ -3,8 +3,9 @@ package com.example.sea.code.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.sea.code.entity.CodegenDataSource;
 import com.example.sea.code.entity.dto.CodeGenDataSourceDTO;
+import com.example.sea.common.result.CommonResult;
+import java.util.List;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 /**
  * 代码生成 - 数据源信息表服务接口
@@ -19,14 +20,14 @@ public interface ICodegenDataSourceService extends IService<CodegenDataSource> {
      * @param codeGenDataSourceDTO
      * @return
      */
-    Mono<Boolean> checkDataSource(CodeGenDataSourceDTO codeGenDataSourceDTO);
+    CommonResult<Boolean> checkDataSource(CodeGenDataSourceDTO codeGenDataSourceDTO);
 
     /**
      * 保存数据源信息
      * @param codeGenDataSourceDTO
      * @return
      */
-    Mono<Boolean> saveDataSource(CodeGenDataSourceDTO codeGenDataSourceDTO);
+    CommonResult<Boolean> saveDataSource(CodeGenDataSourceDTO codeGenDataSourceDTO);
 
     /**
      * 获取数据源列表
