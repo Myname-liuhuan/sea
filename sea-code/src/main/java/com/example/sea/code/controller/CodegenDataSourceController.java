@@ -5,12 +5,16 @@ import com.example.sea.code.service.ICodegenDataSourceService;
 import com.example.sea.common.result.CommonResult;
 
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.Flux;
 import com.example.sea.code.entity.dto.GroupCheck;
 import com.example.sea.code.entity.dto.GroupSave;
+import com.example.sea.code.entity.vo.CodegenDataSourceVO;
 import com.example.sea.code.entity.CodegenDataSource;
 
 /**
@@ -51,7 +55,7 @@ public class CodegenDataSourceController {
      * 获取数据源列表
      */
     @GetMapping("/listDataSource")
-    public Flux<CodegenDataSource> listDataSource() {
-        return codegenDataSourceService.listDataSource();
+    public Mono<CommonResult<List<CodegenDataSourceVO>>> listDataSource() {
+        return Mono.just(codegenDataSourceService.listDataSource());
     }
 }

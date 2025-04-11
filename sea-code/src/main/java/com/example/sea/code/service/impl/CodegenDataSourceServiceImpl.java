@@ -3,12 +3,17 @@ package com.example.sea.code.service.impl;
 import com.example.sea.code.service.ICodegenDataSourceService;
 import com.example.sea.common.result.CommonResult;
 import com.example.sea.code.mapper.CodegenDataSourceMapper;
+import com.example.sea.code.converter.CodegenDataSourceConverter;
 import com.example.sea.code.entity.CodegenDataSource;
 import com.example.sea.code.entity.dto.CodeGenDataSourceDTO;
+import com.example.sea.code.entity.vo.CodegenDataSourceVO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.List;
 import java.util.Objects;
 import reactor.core.publisher.Flux;
 
@@ -20,6 +25,15 @@ import reactor.core.publisher.Flux;
  */
 @Service
 public class CodegenDataSourceServiceImpl extends ServiceImpl<CodegenDataSourceMapper, CodegenDataSource> implements ICodegenDataSourceService {
+
+
+    private final CodegenDataSourceConverter cDataSourceConverter;
+
+    @Autowired
+    public CodegenDataSourceServiceImpl(CodegenDataSourceConverter cDataSourceConverter) {
+        this.cDataSourceConverter = cDataSourceConverter;
+    }
+
 
     @Override
     public CommonResult<Boolean> checkDataSource(CodeGenDataSourceDTO codeGenDataSourceDTO) {
@@ -85,7 +99,9 @@ public class CodegenDataSourceServiceImpl extends ServiceImpl<CodegenDataSourceM
     }
 
     @Override
-    public Flux<CodegenDataSource> listDataSource() {
-        return Flux.fromIterable(list());
+    public CommonResult<List<CodegenDataSourceVO>> listDataSource() {
+        return CommonResult.success(
+            cDataSourceConverter.entityToVo(list())
+        );
     }
 }

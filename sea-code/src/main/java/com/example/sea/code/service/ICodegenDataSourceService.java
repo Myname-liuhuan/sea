@@ -3,6 +3,7 @@ package com.example.sea.code.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.sea.code.entity.CodegenDataSource;
 import com.example.sea.code.entity.dto.CodeGenDataSourceDTO;
+import com.example.sea.code.entity.vo.CodegenDataSourceVO;
 import com.example.sea.common.result.CommonResult;
 import java.util.List;
 import reactor.core.publisher.Flux;
@@ -33,5 +34,5 @@ public interface ICodegenDataSourceService extends IService<CodegenDataSource> {
      * 获取数据源列表
      * @return 数据源列表
      */
-    Flux<CodegenDataSource> listDataSource();
+    CommonResult<List<CodegenDataSourceVO>> listDataSource();
 }
