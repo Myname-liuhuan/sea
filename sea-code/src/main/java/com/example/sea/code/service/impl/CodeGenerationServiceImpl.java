@@ -10,7 +10,6 @@ import com.example.sea.code.mapper.CodegenDataSourceMapper;
 import com.example.sea.code.service.ICodeGenerationService;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -31,10 +30,6 @@ import java.util.zip.ZipOutputStream;
  */
 @Service
 public class CodeGenerationServiceImpl implements ICodeGenerationService {
-
-    
-    @Value("${codegen.output-dir}")
-    private String outputDir;
 
     private final CodegenDataSourceMapper codegenDataSourceMapper;
 
