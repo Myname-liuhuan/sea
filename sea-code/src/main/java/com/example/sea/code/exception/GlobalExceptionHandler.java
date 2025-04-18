@@ -19,6 +19,11 @@ import org.springframework.http.ResponseEntity;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * 处理参数校验@Validated异常
+     * @param ex 异常对象
+     * @return 响应结果
+     */
     @ExceptionHandler(WebExchangeBindException.class)
     public Mono<ResponseEntity<CommonResult<?>>> handleValidationException(WebExchangeBindException ex) {
         BindingResult bindingResult = ex.getBindingResult();
@@ -33,6 +38,11 @@ public class GlobalExceptionHandler {
                 .body(CommonResult.validateFailed(errorMsg.toString())));
     }
 
+    /**
+     * 处理参数校验@Validated异常
+     * @param ex 异常对象
+     * @return 响应结果
+     */
     @ExceptionHandler(ServerWebInputException.class) 
     public Mono<ResponseEntity<CommonResult<?>>> handleServerWebInputException(ServerWebInputException ex) {
         return Mono.just(ResponseEntity
@@ -40,6 +50,11 @@ public class GlobalExceptionHandler {
                 .body(CommonResult.validateFailed(ex.getReason())));
     }
 
+    /**
+     * 处理自定义业务异常
+     * @param ex 异常对象
+     * @return 响应结果
+     */
     @ExceptionHandler(BusinessException.class)
     public Mono<ResponseEntity<CommonResult<String>>> handleBusinessException(BusinessException ex) {
         return Mono.just(ResponseEntity
