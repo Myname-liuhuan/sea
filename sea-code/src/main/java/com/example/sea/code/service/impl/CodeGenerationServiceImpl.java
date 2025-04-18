@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
 import com.example.sea.code.entity.CodegenDataSource;
 import com.example.sea.code.entity.dto.CodeGenerateDTO;
+import com.example.sea.code.exception.BusinessException;
 import com.example.sea.code.mapper.CodegenDataSourceMapper;
 import com.example.sea.code.service.ICodeGenerationService;
 import org.apache.commons.io.FileUtils;
@@ -50,7 +51,7 @@ public class CodeGenerationServiceImpl implements ICodeGenerationService {
             // 查询数据源信息
             CodegenDataSource dataSource = codegenDataSourceMapper.selectById(codeGenerateDTO.getDataSourceId());
             if (Objects.isNull(dataSource)) {
-                throw new IllegalArgumentException("数据源不存在");
+                throw new BusinessException("数据源不存在");
             }
 
             // 生成代码到临时目录

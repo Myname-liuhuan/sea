@@ -39,4 +39,11 @@ public class GlobalExceptionHandler {
                 .badRequest()
                 .body(CommonResult.validateFailed(ex.getReason())));
     }
+
+    @ExceptionHandler(BusinessException.class)
+    public Mono<ResponseEntity<CommonResult<String>>> handleBusinessException(BusinessException ex) {
+        return Mono.just(ResponseEntity
+                .badRequest()
+                .body(CommonResult.failed(ex.getMessage())));
+    }
 }
