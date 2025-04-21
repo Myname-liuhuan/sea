@@ -42,4 +42,12 @@ public interface ICodegenDataSourceService extends IService<CodegenDataSource> {
      * @return 数据库列表
      */
     CommonResult<List<String>> listDataBase(Long dataSourceId);
+
+    /**
+     * 根据数据源和数据库获取表列表
+     * @param dataSourceId
+     * @param database
+     * @return
+     */
+    CommonResult<List<String>> listTable(Long dataSourceId, String database);
 }
