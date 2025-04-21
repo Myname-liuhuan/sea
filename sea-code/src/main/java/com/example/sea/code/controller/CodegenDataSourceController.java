@@ -56,4 +56,14 @@ public class CodegenDataSourceController {
     public Mono<CommonResult<List<CodegenDataSourceVO>>> listDataSource() {
         return Mono.just(codegenDataSourceService.listDataSource());
     }
+
+    /**
+     * 根据数据源获取数据库列表
+     * @param dataSourceId 数据源ID
+     * @return Mono<CommonResult<List<String>>>
+     */
+    @GetMapping("/listDataBase")
+    public Mono<CommonResult<List<String>>> listDataBase(Long dataSourceId) {
+        return Mono.just(codegenDataSourceService.listDataBase(dataSourceId));
+    }
 }
