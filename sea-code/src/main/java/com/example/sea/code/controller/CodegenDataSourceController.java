@@ -78,6 +78,18 @@ public class CodegenDataSourceController {
         return Mono.just(codegenDataSourceService.listTable(dataSourceId, database));
     }
 
+    /**
+     * 根据数据源、数据库和表名获取字段列表
+     * @param dataSourceId 数据源ID
+     * @param database 数据库名
+     * @param tableName 表名
+     * @return Mono<CommonResult<List<String>>>
+     */
+    @GetMapping("/listColumns")     
+    public Mono<CommonResult<List<String>>> listColumns(Long dataSourceId, String database, String tableName) {
+        return Mono.just(codegenDataSourceService.listColumns(dataSourceId, database, tableName));
+    }
+
 
      
 }

@@ -237,4 +237,73 @@ public class CodegenDataSourceServiceImpl extends ServiceImpl<CodegenDataSourceM
             return CommonResult.failed("获取表列表失败: " + e.getMessage());
         }
     }
+    
+    @Override
+    public CommonResult<List<String>> listColumns(Long dataSourceId, String database, String tableName) {
+        // 获取数据源信息
+        CodegenDataSource dataSource = getById(dataSourceId);
+        if (dataSource == null) {
+            return CommonResult.failed("数据源不存在");
+        }
+
+        // 构建JDBC URL
+        String jdbcUrl;
+        switch (dataSource.getDbType().toLowerCase()) {
+            case "mysql":
+                jdbcUrl = String.format("jdbc:mysql://%s:%d/%s?useSSL=false&serverTimezone=UTC",
+                    dataSource.getHost(), dataSource.getPort(), database);
+                break;
+            case "postgresql":
+                jdbcUrl = String.format("jdbc:postgresql://%s:%d/%s",
+                    dataSource.getHost(), dataSource.getPort(), database);
+                break;
+            case "oracle":
+                jdbcUrl = String.format("jdbc:oracle:thin:@%s:%d:orcl",
+                    dataSource.getHost(), dataSource.getPort());
+                break;
+            default:
+                return CommonResult.failed("不支持的数据库类型");
+        }
+
+        // 查询字段列表
+        try (Connection connection = DriverManager.getConnection(
+            jdbcUrl,
+            dataSource.getUsername(),
+            dataSource.getPassword())) {
+            
+            List<String> columns = new ArrayList<>();
+            String querySql;
+            switch (dataSource.getDbType().toLowerCase()) {
+                case "mysql":
+                    querySql = "SHOW COLUMNS FROM " + tableName;
+                    break;
+                case "postgresql":
+                    querySql = "SELECT column_name FROM information_schema.columns WHERE table_name = ?";
+                    break;
+                case "oracle":
+                    querySql = "SELECT column_name FROM user_tab_columns WHERE table_name = ?";
+                    break;
+                default:
+                    return CommonResult.failed("不支持的数据库类型");
+            }
+
+            try (PreparedStatement stmt = connection.prepareStatement(querySql)) {
+                if (dataSource.getDbType().equalsIgnoreCase("postgresql") || 
+                    dataSource.getDbType().equalsIgnoreCase("oracle")) {
+                    stmt.setString(1, tableName);
+                }
+                
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        columns.add(rs.getString(1));
+                    }
+                }
+            }
+            
+            return CommonResult.success(columns);
+        } catch (Exception e) {
+            return CommonResult.failed("获取字段列表失败: " + e.getMessage());
+        }
+    }
+
 }
