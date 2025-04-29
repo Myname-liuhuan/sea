@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.sea.code.entity.CodegenDataSource;
 import com.example.sea.code.entity.dto.CodeGenDataSourceDTO;
 import com.example.sea.code.entity.vo.CodegenDataSourceVO;
+import com.example.sea.code.entity.vo.TableColumnsVO;
 import com.example.sea.common.result.CommonResult;
 import java.util.List;
 
@@ -58,5 +59,5 @@ public interface ICodegenDataSourceService extends IService<CodegenDataSource> {
      * @param tableName 表名
      * @return 字段列表
      */
-    CommonResult<List<String>> listColumns(Long dataSourceId, String database, String tableName);
+    CommonResult<List<TableColumnsVO>> listColumns(Long dataSourceId, String database, String tableName);
 }

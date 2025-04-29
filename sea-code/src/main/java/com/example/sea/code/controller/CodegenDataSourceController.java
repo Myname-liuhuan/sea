@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 import com.example.sea.code.entity.dto.GroupCheck;
 import com.example.sea.code.entity.dto.GroupSave;
 import com.example.sea.code.entity.vo.CodegenDataSourceVO;
+import com.example.sea.code.entity.vo.TableColumnsVO;
 
 /**
  * 代码生成 - 数据源信息表控制器
@@ -86,7 +87,7 @@ public class CodegenDataSourceController {
      * @return Mono<CommonResult<List<String>>>
      */
     @GetMapping("/listColumns")     
-    public Mono<CommonResult<List<String>>> listColumns(Long dataSourceId, String database, String tableName) {
+    public Mono<CommonResult<List<TableColumnsVO>>> listColumns(Long dataSourceId, String database, String tableName) {
         return Mono.just(codegenDataSourceService.listColumns(dataSourceId, database, tableName));
     }
 

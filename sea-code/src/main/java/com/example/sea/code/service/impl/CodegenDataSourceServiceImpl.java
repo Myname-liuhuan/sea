@@ -7,6 +7,7 @@ import com.example.sea.code.converter.CodegenDataSourceConverter;
 import com.example.sea.code.entity.CodegenDataSource;
 import com.example.sea.code.entity.dto.CodeGenDataSourceDTO;
 import com.example.sea.code.entity.vo.CodegenDataSourceVO;
+import com.example.sea.code.entity.vo.TableColumnsVO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -239,7 +240,7 @@ public class CodegenDataSourceServiceImpl extends ServiceImpl<CodegenDataSourceM
     }
     
     @Override
-    public CommonResult<List<String>> listColumns(Long dataSourceId, String database, String tableName) {
+    public CommonResult<List<TableColumnsVO>> listColumns(Long dataSourceId, String database, String tableName) {
         // 获取数据源信息
         CodegenDataSource dataSource = getById(dataSourceId);
         if (dataSource == null) {
@@ -271,36 +272,62 @@ public class CodegenDataSourceServiceImpl extends ServiceImpl<CodegenDataSourceM
             dataSource.getUsername(),
             dataSource.getPassword())) {
             
-            List<String> columns = new ArrayList<>();
+            List<TableColumnsVO> columnList = new ArrayList<>();
             String querySql;
             switch (dataSource.getDbType().toLowerCase()) {
                 case "mysql":
-                    querySql = "SHOW COLUMNS FROM " + tableName;
+                    querySql = "SHOW FULL COLUMNS FROM " + tableName;
                     break;
                 case "postgresql":
-                    querySql = "SELECT column_name FROM information_schema.columns WHERE table_name = ?";
+                    querySql = "SELECT column_name, data_type, coalesce(description, '') " +
+                               "FROM information_schema.columns " +
+                               "LEFT JOIN pg_description ON " +
+                               "pg_description.objsubid = information_schema.columns.ordinal_position AND " +
+                               "pg_description.objoid = (SELECT oid FROM pg_class WHERE relname = ?) " +
+                               "WHERE table_name = ?";
                     break;
                 case "oracle":
-                    querySql = "SELECT column_name FROM user_tab_columns WHERE table_name = ?";
+                    querySql = "SELECT column_name, data_type, " +
+                              "NVL((SELECT comments FROM user_col_comments " +
+                              "WHERE table_name = ? AND column_name = t.column_name), '') " +
+                              "FROM user_tab_columns t WHERE table_name = ?";
                     break;
                 default:
                     return CommonResult.failed("不支持的数据库类型");
             }
 
             try (PreparedStatement stmt = connection.prepareStatement(querySql)) {
-                if (dataSource.getDbType().equalsIgnoreCase("postgresql") || 
-                    dataSource.getDbType().equalsIgnoreCase("oracle")) {
+                if (dataSource.getDbType().equalsIgnoreCase("postgresql")) {
                     stmt.setString(1, tableName);
+                    stmt.setString(2, tableName);
+                } else if (dataSource.getDbType().equalsIgnoreCase("oracle")) {
+                    stmt.setString(1, tableName);
+                    stmt.setString(2, tableName);
                 }
                 
                 try (ResultSet rs = stmt.executeQuery()) {
                     while (rs.next()) {
-                        columns.add(rs.getString(1));
+                        TableColumnsVO column = new TableColumnsVO();
+                        
+                        if (dataSource.getDbType().equalsIgnoreCase("mysql")) {
+                            // MySQL SHOW FULL COLUMNS 结果格式:
+                            // Field, Type, Collation, Null, Key, Default, Extra, Privileges, Comment
+                            column.setColumnName(rs.getString("Field"))
+                                  .setColumnType(rs.getString("Type"))
+                                  .setColumnComment(rs.getString("Comment"));
+                        } else {
+                            // PostgreSQL/Oracle 使用位置索引获取
+                            column.setColumnName(rs.getString(1))
+                                  .setColumnType(rs.getString(2))
+                                  .setColumnComment(rs.getString(3));
+                        }
+                        
+                        columnList.add(column);
                     }
                 }
             }
             
-            return CommonResult.success(columns);
+            return CommonResult.success(columnList);
         } catch (Exception e) {
             return CommonResult.failed("获取字段列表失败: " + e.getMessage());
         }
