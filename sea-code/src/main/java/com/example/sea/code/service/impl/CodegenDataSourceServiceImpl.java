@@ -3,6 +3,7 @@ package com.example.sea.code.service.impl;
 import com.example.sea.code.service.ICodegenDataSourceService;
 import com.example.sea.common.result.CommonResult;
 import com.example.sea.code.mapper.CodegenDataSourceMapper;
+import com.example.sea.code.common.utils.ColumnUtil;
 import com.example.sea.code.converter.CodegenDataSourceConverter;
 import com.example.sea.code.entity.CodegenDataSource;
 import com.example.sea.code.entity.dto.CodeGenDataSourceDTO;
@@ -314,6 +315,7 @@ public class CodegenDataSourceServiceImpl extends ServiceImpl<CodegenDataSourceM
                             // Field, Type, Collation, Null, Key, Default, Extra, Privileges, Comment
                             column.setColumnName(rs.getString("Field"))
                                   .setColumnType(rs.getString("Type"))
+                                  .setEntityType(ColumnUtil.getEntityTypeByColumnType(rs.getString("Type")))
                                   .setColumnComment(rs.getString("Comment"));
                         } else {
                             // PostgreSQL/Oracle 使用位置索引获取

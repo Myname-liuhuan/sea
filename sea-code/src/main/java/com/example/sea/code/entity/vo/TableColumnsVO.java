@@ -19,6 +19,9 @@ public class TableColumnsVO  {
     /** 列类型 */
     private String columnType;
 
+    /** 列对应的实体类类型 */
+    private String entityType;
+
     /** 列注释 */
     private String columnComment;
 }
