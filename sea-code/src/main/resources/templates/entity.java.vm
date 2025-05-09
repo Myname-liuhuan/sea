@@ -33,7 +33,8 @@ public class ${entity} {
      * ${field.comment}
      */
     #end
-    private ${field.propertyType} ${field.propertyName};
+    #set($overrideType = $typeOverride.get($field.name))
+    private #if($overrideType) $overrideType #else $field.propertyType #end $field.propertyName;
 #end
 ## ----------  END 字段循环遍历  ----------
 }

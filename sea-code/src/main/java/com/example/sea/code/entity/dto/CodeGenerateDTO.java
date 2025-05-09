@@ -1,5 +1,7 @@
 package com.example.sea.code.entity.dto;
 
+import java.util.List;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -27,5 +29,10 @@ public class CodeGenerateDTO {
     /** 生成的代码的包名 */
     @NotBlank(message = "待生成的包名不能为空")
     private String packageName;
+
+    /**
+     * 表中字段自定义规则
+     */
+    private List<CodeGenColumnSettingDTO> columnSettingList;
     
 }

@@ -9,6 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -38,6 +40,22 @@ public class CodeGenerationController {
      */
     @GetMapping("/generate")
     public ResponseEntity<byte[]> generateCode(@Validated CodeGenerateDTO codeGenerateDTO) throws IOException {
+        byte[] zipBytes = codeGenerationService.generateCode(codeGenerateDTO);
+        
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"generated-code.zip\"")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(zipBytes);
+    }
+
+    /**
+     * 生成代码-自定义实体类字段
+     * @param codeGenerateDTO
+     * @return
+     * @throws IOException
+     */
+    @PostMapping("/generateCodeByConfig")
+    public ResponseEntity<byte[]> generateCodeByConfig(@Validated @RequestBody CodeGenerateDTO codeGenerateDTO) throws IOException {
         byte[] zipBytes = codeGenerationService.generateCode(codeGenerateDTO);
         
         return ResponseEntity.ok()

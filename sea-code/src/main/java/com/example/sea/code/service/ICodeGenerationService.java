@@ -18,4 +18,12 @@ public interface ICodeGenerationService {
      * @throws IOException
      */
     byte[] generateCode(CodeGenerateDTO codeGenerateDTO) throws IOException;
+
+    /**
+     * 根据表名和自定义配置生成代码
+     * @param codeGenerateDTO 代码生成参数
+     * @return 压缩包字节
+     * @throws IOException IO异常
+     */
+    byte[] generateCodeByConfig(CodeGenerateDTO codeGenerateDTO) throws IOException;
 }
