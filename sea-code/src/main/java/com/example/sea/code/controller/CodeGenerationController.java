@@ -21,7 +21,7 @@ import java.io.IOException;
  * @date 2025-02-28
  */
 @RestController
-@RequestMapping("/api/codegen")
+@RequestMapping("/codegen")
 public class CodeGenerationController {
 
     private final ICodeGenerationService codeGenerationService;
