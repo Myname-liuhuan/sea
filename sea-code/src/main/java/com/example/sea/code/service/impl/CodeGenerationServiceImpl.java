@@ -122,6 +122,12 @@ public class CodeGenerationServiceImpl implements ICodeGenerationService {
             if (CollectionUtils.isEmpty(settingList)) {
                 throw new BusinessException("自定义字段设置不能为空");
             }
+            //提取出需要忽略的列
+            List<String> ignoreColumns = settingList.stream()
+                                                    .filter(setting -> !setting.getIsEntityField())
+                                                    .map(CodeGenColumnSettingDTO::getColumnName)
+                                                    .collect(Collectors.toList());
+
             //将自定义字段转为map
             Map<String, Object> customMap = new HashMap<>();
             Map<String, String> typeOverride = settingList.stream()
@@ -148,6 +154,7 @@ public class CodeGenerationServiceImpl implements ICodeGenerationService {
                 .strategyConfig(builder -> builder
                     .addInclude(codeGenerateDTO.getTableName())
                     .entityBuilder()
+                    .addIgnoreColumns(ignoreColumns)
                     .enableLombok()
                     .naming(NamingStrategy.underline_to_camel)
                     .columnNaming(NamingStrategy.underline_to_camel)

@@ -58,7 +58,7 @@ public class CodeGenerationController {
      */
     @PostMapping("/generateCodeByConfig")
     public ResponseEntity<byte[]> generateCodeByConfig(@Validated @RequestBody CodeGenerateDTO codeGenerateDTO) throws IOException {
-        byte[] zipBytes = codeGenerationService.generateCode(codeGenerateDTO);
+        byte[] zipBytes = codeGenerationService.generateCodeByConfig(codeGenerateDTO);
         //当前时间yyyyMMddHHmmss字符串
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         
