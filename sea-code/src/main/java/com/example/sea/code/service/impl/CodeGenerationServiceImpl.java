@@ -188,7 +188,11 @@ public class CodeGenerationServiceImpl implements ICodeGenerationService {
             
             String fullPath = file.getPath().replace('\\', '/');
             int comIndex = fullPath.indexOf("com/");
-            String relativePath = comIndex >= 0 ? fullPath.substring(comIndex) : fullPath;
+            //解决c:空文件夹问题
+            if (comIndex < 0) {
+                continue;
+            }
+            String relativePath = fullPath.substring(comIndex);
             zipOut.putNextEntry(new ZipEntry(relativePath.replace('\\', '/')));
             zipOut.write(Files.readAllBytes(file.toPath()));
             zipOut.closeEntry();
