@@ -41,6 +41,9 @@ public class CodeGenerationServiceImpl implements ICodeGenerationService {
 
     private final CodegenDataSourceMapper codegenDataSourceMapper;
 
+    /** 用于代码生成功能的临时文件夹的前缀 */
+    private static final String TEMP_DIR_PREFIX = "codegen";
+
     @Autowired
     public CodeGenerationServiceImpl(CodegenDataSourceMapper codegenDataSourceMapper) {
         this.codegenDataSourceMapper = codegenDataSourceMapper;
@@ -53,7 +56,7 @@ public class CodeGenerationServiceImpl implements ICodeGenerationService {
              ZipOutputStream zipOut = new ZipOutputStream(byteArrayOutputStream)) {
             
             // 创建临时目录
-            Path tempDir = Files.createTempDirectory("codegen");
+            Path tempDir = Files.createTempDirectory(TEMP_DIR_PREFIX);
             
             // 查询数据源信息
             CodegenDataSource dataSource = codegenDataSourceMapper.selectById(codeGenerateDTO.getDataSourceId());
@@ -112,7 +115,7 @@ public class CodeGenerationServiceImpl implements ICodeGenerationService {
              ZipOutputStream zipOut = new ZipOutputStream(byteArrayOutputStream)) {
             
             // 创建临时目录
-            Path tempDir = Files.createTempDirectory("codegen");
+            Path tempDir = Files.createTempDirectory(TEMP_DIR_PREFIX);
             
             // 查询数据源信息
             CodegenDataSource dataSource = codegenDataSourceMapper.selectById(codeGenerateDTO.getDataSourceId());
@@ -189,10 +192,13 @@ public class CodeGenerationServiceImpl implements ICodeGenerationService {
                 zipDirectory(file, zipOut);
                 continue;
             }
-            
+            //构建当前文件存放在压缩包的路径
             String fullPath = file.getPath().replace('\\', '/');
-          
-            zipOut.putNextEntry(new ZipEntry(fullPath));
+            String filePathInZip = fullPath.substring(fullPath.indexOf(TEMP_DIR_PREFIX));
+        
+            //指定压缩包内的当前文件路径
+            zipOut.putNextEntry(new ZipEntry(filePathInZip));
+            //将当前文件内容写入压缩包
             zipOut.write(Files.readAllBytes(file.toPath()));
             zipOut.closeEntry();
         }
