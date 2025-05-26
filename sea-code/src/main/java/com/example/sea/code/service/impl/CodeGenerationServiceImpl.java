@@ -95,6 +95,8 @@ public class CodeGenerationServiceImpl implements ICodeGenerationService {
             // 删除临时目录
             FileUtils.deleteDirectory(tempDir.toFile());
             
+            // 显式关闭zip流确保文件末端正确写入
+            zipOut.close();
             return byteArrayOutputStream.toByteArray();
         }
     }
@@ -172,6 +174,8 @@ public class CodeGenerationServiceImpl implements ICodeGenerationService {
             // 删除临时目录
             FileUtils.deleteDirectory(tempDir.toFile());
             
+            // 显式关闭zip流确保文件末端正确写入
+            zipOut.close();
             return byteArrayOutputStream.toByteArray();
         }
     }
@@ -187,13 +191,8 @@ public class CodeGenerationServiceImpl implements ICodeGenerationService {
             }
             
             String fullPath = file.getPath().replace('\\', '/');
-            int comIndex = fullPath.indexOf("com/");
-            //解决c:空文件夹问题
-            if (comIndex < 0) {
-                continue;
-            }
-            String relativePath = fullPath.substring(comIndex);
-            zipOut.putNextEntry(new ZipEntry(relativePath.replace('\\', '/')));
+          
+            zipOut.putNextEntry(new ZipEntry(fullPath));
             zipOut.write(Files.readAllBytes(file.toPath()));
             zipOut.closeEntry();
         }
