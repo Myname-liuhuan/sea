@@ -78,6 +78,7 @@ public class CodeGenerationServiceImpl implements ICodeGenerationService {
                 })
                 .packageConfig(builder -> builder
                     .parent(codeGenerateDTO.getPackageName())
+                    .mapper("dao")
                     .pathInfo(Collections.singletonMap(OutputFile.xml, tempDir + "/mapper"))
                 )
                 .strategyConfig(builder -> builder
@@ -154,6 +155,7 @@ public class CodeGenerationServiceImpl implements ICodeGenerationService {
                 })
                 .packageConfig(builder -> builder
                     .parent(codeGenerateDTO.getPackageName())
+                    .mapper("dao")
                     .pathInfo(Collections.singletonMap(OutputFile.xml, tempDir + "/mapper"))
                 )
                 .strategyConfig(builder -> builder
