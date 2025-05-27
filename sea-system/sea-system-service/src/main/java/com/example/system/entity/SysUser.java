@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @TableName("sys_users")
-public class SysUsers {
+public class SysUser {
 
     /**
      * 主键id
