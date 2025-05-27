@@ -10,12 +10,12 @@
     </parent>
 
     <groupId>com.example</groupId>
-    <artifactId>sea-user</artifactId>
+    <artifactId>sea-system</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>sea-user-interfaces</module>
-        <module>sea-user-service</module>
+        <module>sea-system-interfaces</module>
+        <module>sea-system-service</module>
     </modules>
 
     <properties>

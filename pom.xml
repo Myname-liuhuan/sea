@@ -20,7 +20,7 @@
 		<module>sea-media</module>
 		<module>sea-poi</module>
 		<module>sea-code</module>
-		<module>sea-user</module>
+		<module>sea-system</module>
 	</modules>
 	<properties>
 		<java.version>17</java.version>

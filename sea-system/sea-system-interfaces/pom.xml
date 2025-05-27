@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
           <groupId>com.example</groupId>
-          <artifactId>sea-user</artifactId>
+          <artifactId>sea-system</artifactId>
           <version>0.0.1-SNAPSHOT</version>
     </parent>
 
     <groupId>com.example</groupId>
-    <artifactId>sea-user-interfaces</artifactId>
+    <artifactId>sea-system-interfaces</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <properties>
