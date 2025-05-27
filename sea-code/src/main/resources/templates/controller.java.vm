@@ -6,12 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * ${table.comment}控制器
+ * @author ${author}
+ * @date ${date}
  */
 @RestController
 @RequestMapping("/${table.entityPath}")
 public class ${table.controllerName} {
 
+    private final ${table.serviceName} ${table.entityPath}Service;
+
     @Autowired
-    private ${table.serviceName} ${table.entityPath}Service;
+    public ${table.controllerName}(${table.serviceName} ${table.entityPath}Service){
+        this.${table.entityPath}Service = ${table.entityPath}Service;
+    }
+
 
 }

@@ -72,7 +72,8 @@ public class CodeGenerationServiceImpl implements ICodeGenerationService {
                                                     dataSource.getUsername(), 
                                                     dataSource.getPassword())
                 .globalConfig(builder -> {  
-                    builder.author("System")
+                    builder.author("admin")
+                           .commentDate("yyyy-MM-dd")
                            .enableSwagger()
                            .outputDir(tempDir.toString());
                 })
@@ -149,7 +150,8 @@ public class CodeGenerationServiceImpl implements ICodeGenerationService {
                                                     dataSource.getUsername(), 
                                                     dataSource.getPassword())
                 .globalConfig(builder -> {  
-                    builder.author("System")
+                    builder.author("admin")
+                           .commentDate("yyyy-MM-dd")
                            .enableSwagger()
                            .outputDir(tempDir.toString());
                 })

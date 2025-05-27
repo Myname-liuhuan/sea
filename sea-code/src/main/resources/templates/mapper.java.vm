@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Mapper;
 
 /**
  * ${table.comment}Mapper接口
+ * @author ${author}
+ * @date ${date}
  */
 @Mapper
 public interface ${table.mapperName} extends BaseMapper<${entity}> {
