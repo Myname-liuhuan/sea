@@ -1,4 +1,4 @@
-package com.example.system.entity;
+package com.example.sea.system.entity;
 
 import java.time.LocalDateTime;
 

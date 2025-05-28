@@ -1,8 +1,9 @@
-package com.example.system.controller;
+package com.example.sea.system.controller;
 
 import com.example.sea.common.result.CommonResult;
 import com.example.sea.system.interfaces.dto.SysUserDTO;
-import com.example.system.service.ISysUsersService;
+import com.example.sea.system.service.ISysUsersService;
+
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 

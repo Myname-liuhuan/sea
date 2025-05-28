@@ -1,7 +1,8 @@
-package com.example.system.dao;
+package com.example.sea.system.dao;
 
-import com.example.system.entity.SysUser;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.example.sea.system.entity.SysUser;
+
 import org.apache.ibatis.annotations.Mapper;
 
 /**

@@ -1,9 +1,9 @@
-package com.example.system.converter;
+package com.example.sea.system.converter;
 
 import org.mapstruct.Mapper;
 
+import com.example.sea.system.entity.SysUser;
 import com.example.sea.system.interfaces.dto.SysUserDTO;
-import com.example.system.entity.SysUser;
 /**
  * sys_users 表实体类转换器
  * @author liuhuan
