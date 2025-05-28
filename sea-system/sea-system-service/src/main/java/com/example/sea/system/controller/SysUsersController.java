@@ -6,9 +6,12 @@ import com.example.sea.system.service.ISysUsersService;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * 用户表控制器
+ * @author liuhuan
+ * @date 2025-05-28
  */
 @RestController
 @RequestMapping("/sysUsers")
@@ -22,7 +25,7 @@ public class SysUsersController {
     }
 
     @PostMapping("/save")
-    public CommonResult<Boolean> save(SysUserDTO sysUserDTO) {
+    public CommonResult<Boolean> save(@RequestBody @Validated SysUserDTO sysUserDTO) {
         return sysUsersService.save(sysUserDTO);
     }
 

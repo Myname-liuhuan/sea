@@ -3,6 +3,8 @@ package com.example.sea.system.interfaces.dto;
 import java.time.LocalDateTime;
 
 import com.example.sea.common.entity.dto.BaseDTO;
+
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -18,7 +20,8 @@ public class SysUserDTO extends BaseDTO {
     /**
      * 登录用户名
      */
-    private  String  username;
+    @NotNull(message = "用户名不能为空")
+    private String username;
 
     /**
      * 已验证邮箱

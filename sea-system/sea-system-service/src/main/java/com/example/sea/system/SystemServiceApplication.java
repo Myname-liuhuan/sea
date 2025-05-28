@@ -7,7 +7,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @MapperScan("com.example.sea.system.dao")
 @EnableDiscoveryClient
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.example.sea.system", "com.example.sea.common"} )
 public class SystemServiceApplication {
 
 	public static void main(String[] args) {
