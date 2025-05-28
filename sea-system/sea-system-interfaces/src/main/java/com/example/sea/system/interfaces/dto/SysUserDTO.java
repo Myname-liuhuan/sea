@@ -1,4 +1,4 @@
-package com.example.sea.user.interfaces.dto;
+package com.example.sea.system.interfaces.dto;
 
 import java.time.LocalDateTime;
 

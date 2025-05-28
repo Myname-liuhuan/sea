@@ -1,4 +1,4 @@
-package com.example.sea.user.interfaces.vo;
+package com.example.sea.system.interfaces.vo;
 
 import java.time.LocalDateTime;
 

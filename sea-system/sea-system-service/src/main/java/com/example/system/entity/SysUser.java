@@ -9,6 +9,8 @@ import lombok.experimental.Accessors;
 
 /**
  * 用户表实体类
+ * @author liuhuan
+ * @date 2025-05-28
  */
 @Data
 @Accessors(chain = true)
