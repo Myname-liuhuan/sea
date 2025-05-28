@@ -14,7 +14,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
-@TableName("sys_users")
+@TableName("sys_user")
 public class SysUser {
 
     /**
