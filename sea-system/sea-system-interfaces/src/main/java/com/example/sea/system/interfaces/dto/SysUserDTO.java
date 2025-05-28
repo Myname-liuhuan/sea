@@ -1,10 +1,8 @@
 package com.example.sea.system.interfaces.dto;
 
-import java.time.LocalDateTime;
-
 import com.example.sea.common.entity.dto.BaseDTO;
 
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -20,36 +18,34 @@ public class SysUserDTO extends BaseDTO {
     /**
      * 登录用户名
      */
-    @NotNull(message = "用户名不能为空")
+    @NotBlank(message = "用户名不能为空")
     private String username;
 
     /**
      * 已验证邮箱
      */
-    private  String  email;
+    private String email;
+
+    /**
+     * 联系电话
+     */
+    private String mobile;
 
     /**
      * BCrypt加密
      */
-    private  String  passwordHash;
+    @NotBlank(message = "密码不能为空")
+    private String passwordHash;
 
     /**
      * 头像URL
      */
-    private  String  avatarUrl;
+    private String avatarUrl;
 
     /**
      * 个人简介
      */
-    private  String  profile;
+    private String profile;
 
-    /**
-     * 封禁状态
-     */
-    private  String  isBanned;
 
-    /**
-     * 封禁截止时间
-     */
-    private  LocalDateTime  bannedUntil;
 }

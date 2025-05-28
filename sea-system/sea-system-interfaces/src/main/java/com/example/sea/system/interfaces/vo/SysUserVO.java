@@ -26,6 +26,11 @@ public class SysUserVO extends BaseVO {
     private  String  email;
 
     /**
+     * 联系电话
+     */
+    private String mobile;
+
+    /**
      * BCrypt加密
      */
     private  String  passwordHash;
