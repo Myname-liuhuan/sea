@@ -22,7 +22,7 @@ public class SysUsersController {
 
     @PostMapping("/save")
     public CommonResult<Boolean> save(SysUserDTO sysUserDTO) {
-        return CommonResult.success(sysUsersService.save(sysUserDTO));
+        return sysUsersService.save(sysUserDTO);
     }
 
     
