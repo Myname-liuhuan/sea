@@ -9,6 +9,9 @@ import com.example.sea.code.entity.vo.CodegenDataSourceVO;
 
 /**
  * 数据源信息表bean转换器
+ * org.mapstruct工具可以只在接口上加@mapper注解，
+ * 不需要关注转化的实现逻辑，
+ * 在编译后的class中会自动生成实现类。
  * @author liuhuan
  * @date 2025-04-11
  */
@@ -24,6 +27,8 @@ public interface CodegenDataSourceConverter {
 
     /**
      * 实体类列表转换为视图对象列表
+     * 在字段无法自动映射的情况下，可以使用Mapping注解进行手动映射。
+     *  eg：@Mapping(source = "username", target = "name")
      * @param list
      * @return
      */
