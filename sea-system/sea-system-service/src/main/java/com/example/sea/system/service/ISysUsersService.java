@@ -19,4 +19,11 @@ public interface ISysUsersService extends IService<SysUser> {
      */
     CommonResult<Boolean> save(SysUserDTO sysUserDTO);
 
+    /**
+     * 更新用户信息
+     * @param sysUserDTO 入参
+     * @return 结果
+     */
+    CommonResult<Boolean> update(SysUserDTO sysUserDTO);
+
 }

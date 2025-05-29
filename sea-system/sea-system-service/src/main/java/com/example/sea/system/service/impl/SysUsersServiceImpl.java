@@ -8,6 +8,8 @@ import com.example.sea.system.interfaces.dto.SysUserDTO;
 import com.example.sea.system.service.ISysUsersService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
+import java.util.Objects;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,7 @@ public class SysUsersServiceImpl extends ServiceImpl<SysUsersMapper, SysUser> im
     }
 
     /**
-     * 保存用户信息
+     * 新增用户信息
      */
     @Override
     public CommonResult<Boolean> save(SysUserDTO sysUserDTO) {
@@ -38,8 +40,25 @@ public class SysUsersServiceImpl extends ServiceImpl<SysUsersMapper, SysUser> im
         //BCrypt加密密码
         entity.setPasswordHash(bCryptPasswordEncoder.encode(sysUserDTO.getPassword()));
         boolean result = this.save(entity);
+        this.updateById(entity);
         return CommonResult.success(result);
     }
+
+    /**
+     * 更新用户信息
+     */
+    @Override
+    public CommonResult<Boolean> update(SysUserDTO sysUserDTO) {
+        SysUser entity = sysUserConverter.dtoToEntity(sysUserDTO);
+        //BCrypt加密密码
+        if (Objects.nonNull(sysUserDTO.getPassword())) {
+            entity.setPasswordHash(bCryptPasswordEncoder.encode(sysUserDTO.getPassword()));
+        }
+        boolean result = this.updateById(entity);
+        return CommonResult.success(result);
+    }
+
+    
 
 
 }

@@ -1,6 +1,8 @@
 package com.example.sea.system.controller;
 
 import com.example.sea.common.result.CommonResult;
+import com.example.sea.common.validation.GroupInsert;
+import com.example.sea.common.validation.GroupSave;
 import com.example.sea.system.interfaces.dto.SysUserDTO;
 import com.example.sea.system.service.ISysUsersService;
 
@@ -25,16 +27,24 @@ public class SysUsersController {
     }
 
     /**
-     * 保存用户
+     * 新增用户
      * @param sysUserDTO
      * @return
      */
     @PostMapping("/save")
-    public CommonResult<Boolean> save(@RequestBody @Validated SysUserDTO sysUserDTO) {
+    public CommonResult<Boolean> save(@RequestBody @Validated(GroupSave.class) SysUserDTO sysUserDTO) {
         return sysUsersService.save(sysUserDTO);
     }
 
-    
+    /**
+     * 更新用户信息
+     * @param sysUserDTO
+     * @return
+     */
+    @PostMapping("/update")
+    public CommonResult<Boolean> update(@RequestBody @Validated(GroupInsert.class) SysUserDTO sysUserDTO) {
+        return sysUsersService.update(sysUserDTO);
+    }
 
 
 }

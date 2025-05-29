@@ -1,6 +1,7 @@
 package com.example.sea.system.converter;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import com.example.sea.system.entity.SysUser;
 import com.example.sea.system.interfaces.dto.SysUserDTO;
@@ -17,6 +18,7 @@ public interface SysUserConverter {
      * @param dto
      * @return
      */
+    @Mapping(target = "passwordHash", source = "password")
     public SysUser dtoToEntity(SysUserDTO dto);
 
 }
