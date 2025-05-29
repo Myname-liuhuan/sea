@@ -2,12 +2,15 @@ package com.example.sea.system.service.impl;
 
 import com.example.sea.common.result.CommonResult;
 import com.example.sea.system.converter.SysUserConverter;
-import com.example.sea.system.dao.SysUsersMapper;
+import com.example.sea.system.dao.SysUserMapper;
 import com.example.sea.system.entity.SysUser;
 import com.example.sea.system.interfaces.dto.SysUserDTO;
+import com.example.sea.system.interfaces.dto.SysUserQueryDTO;
+import com.example.sea.system.interfaces.vo.SysUserVO;
 import com.example.sea.system.service.ISysUsersService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +23,7 @@ import org.springframework.stereotype.Service;
  * @date 2025-05-28
  */
 @Service
-public class SysUsersServiceImpl extends ServiceImpl<SysUsersMapper, SysUser> implements ISysUsersService {
+public class SysUsersServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements ISysUsersService {
 
     private final SysUserConverter sysUserConverter;
 
@@ -56,6 +59,14 @@ public class SysUsersServiceImpl extends ServiceImpl<SysUsersMapper, SysUser> im
         }
         boolean result = this.updateById(entity);
         return CommonResult.success(result);
+    }
+
+    @Override
+    public CommonResult<List<SysUserVO>> list(SysUserQueryDTO sysUserQueryDTO) {
+    
+        List<SysUserVO> userList = this.baseMapper.list(sysUserQueryDTO);
+        return CommonResult.success(userList);
+
     }
 
     
