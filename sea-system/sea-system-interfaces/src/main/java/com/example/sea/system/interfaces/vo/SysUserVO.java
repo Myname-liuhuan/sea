@@ -3,6 +3,8 @@ package com.example.sea.system.interfaces.vo;
 import java.time.LocalDateTime;
 
 import com.example.sea.common.entity.vo.BaseVO;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -48,5 +50,6 @@ public class SysUserVO extends BaseVO {
     /**
      * 封禁截止时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private  LocalDateTime  bannedUntil;
 }
