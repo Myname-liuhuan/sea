@@ -9,6 +9,7 @@ import com.example.sea.system.service.ISysUsersService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -21,14 +22,21 @@ public class SysUsersServiceImpl extends ServiceImpl<SysUsersMapper, SysUser> im
 
     private final SysUserConverter sysUserConverter;
 
+    private final BCryptPasswordEncoder bCryptPasswordEncoder =  new BCryptPasswordEncoder();
+
     @Autowired
     public SysUsersServiceImpl(SysUserConverter sysUserConverter) {
         this.sysUserConverter = sysUserConverter;
     }
 
+    /**
+     * 保存用户信息
+     */
     @Override
-    public CommonResult<Boolean> save(SysUserDTO sysUser) {
-        SysUser entity = sysUserConverter.dtoToEntity(sysUser);
+    public CommonResult<Boolean> save(SysUserDTO sysUserDTO) {
+        SysUser entity = sysUserConverter.dtoToEntity(sysUserDTO);
+        //BCrypt加密密码
+        entity.setPasswordHash(bCryptPasswordEncoder.encode(sysUserDTO.getPassword()));
         boolean result = this.save(entity);
         return CommonResult.success(result);
     }

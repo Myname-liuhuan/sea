@@ -14,9 +14,9 @@ public interface ISysUsersService extends IService<SysUser> {
 
     /**
      * 保存用户信息
-     * @param sysUser
+     * @param sysUserDTO 入参
      * @return
      */
-    CommonResult<Boolean> save(SysUserDTO sysUser);
+    CommonResult<Boolean> save(SysUserDTO sysUserDTO);
 
 }

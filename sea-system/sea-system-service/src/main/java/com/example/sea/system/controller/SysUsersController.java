@@ -14,7 +14,7 @@ import org.springframework.validation.annotation.Validated;
  * @date 2025-05-28
  */
 @RestController
-@RequestMapping("/sysUsers")
+@RequestMapping("/sysUser")
 public class SysUsersController {
 
     private final ISysUsersService sysUsersService;
@@ -24,6 +24,11 @@ public class SysUsersController {
         this.sysUsersService = sysUsersService;
     }
 
+    /**
+     * 保存用户
+     * @param sysUserDTO
+     * @return
+     */
     @PostMapping("/save")
     public CommonResult<Boolean> save(@RequestBody @Validated SysUserDTO sysUserDTO) {
         return sysUsersService.save(sysUserDTO);

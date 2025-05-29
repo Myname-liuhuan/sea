@@ -3,7 +3,10 @@ package com.example.sea.system.entity;
 import java.time.LocalDateTime;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.example.sea.common.entity.BaseEntity;
+
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 
@@ -13,14 +16,10 @@ import lombok.experimental.Accessors;
  * @date 2025-05-28
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 @TableName("sys_user")
-public class SysUser {
-
-    /**
-     * 主键id
-     */
-    private  Long  id;
+public class SysUser extends BaseEntity{
 
     /**
      * 登录用户名
@@ -62,28 +61,4 @@ public class SysUser {
      */
     private  LocalDateTime  bannedUntil;
 
-    /**
-     * 创建时间
-     */
-    private  LocalDateTime  createTime;
-
-    /**
-     * 更新时间
-     */
-    private  LocalDateTime  updateTime;
-
-    /**
-     * 创建人
-     */
-    private  Long  createBy;
-
-    /**
-     * 修改人
-     */
-    private  Long  updateBy;
-
-    /**
-     * 删除标识 0:有效  1:删除
-     */
-    private  String  delFlag;
 }

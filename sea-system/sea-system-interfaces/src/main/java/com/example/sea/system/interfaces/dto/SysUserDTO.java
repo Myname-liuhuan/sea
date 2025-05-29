@@ -35,7 +35,7 @@ public class SysUserDTO extends BaseDTO {
      * BCrypt加密
      */
     @NotBlank(message = "密码不能为空")
-    private String passwordHash;
+    private String password;
 
     /**
      * 头像URL
