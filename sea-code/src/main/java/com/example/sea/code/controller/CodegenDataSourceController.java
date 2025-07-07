@@ -2,7 +2,7 @@ package com.example.sea.code.controller;
 
 import com.example.sea.code.entity.dto.CodeGenDataSourceDTO;
 import com.example.sea.code.service.ICodegenDataSourceService;
-import com.example.sea.common.result.CommonResult;
+import com.example.sea.common.core.result.CommonResult;
 
 import org.springframework.web.bind.annotation.*;
 

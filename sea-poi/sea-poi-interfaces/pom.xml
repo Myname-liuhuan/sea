@@ -23,8 +23,15 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <executions>
+                <execution>
+                <id>repackage</id>
+                <goals><goal>repackage</goal></goals>
+                <configuration><skip>true</skip></configuration>
+                </execution>
+            </executions>
             </plugin>
         </plugins>
     </build>

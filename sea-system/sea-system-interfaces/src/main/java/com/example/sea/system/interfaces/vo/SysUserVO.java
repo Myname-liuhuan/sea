@@ -2,7 +2,7 @@ package com.example.sea.system.interfaces.vo;
 
 import java.time.LocalDateTime;
 
-import com.example.sea.common.entity.vo.BaseVO;
+import com.example.sea.common.core.entity.vo.BaseVO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Data;

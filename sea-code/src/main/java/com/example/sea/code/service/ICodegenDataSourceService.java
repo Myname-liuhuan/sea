@@ -5,7 +5,7 @@ import com.example.sea.code.entity.CodegenDataSource;
 import com.example.sea.code.entity.dto.CodeGenDataSourceDTO;
 import com.example.sea.code.entity.vo.CodegenDataSourceVO;
 import com.example.sea.code.entity.vo.TableColumnsVO;
-import com.example.sea.common.result.CommonResult;
+import com.example.sea.common.core.result.CommonResult;
 import java.util.List;
 
 /**

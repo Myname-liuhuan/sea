@@ -1,8 +1,8 @@
 package com.example.sea.media.service.impl;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.sea.common.constants.SystemConstant;
-import com.example.sea.common.result.CommonResult;
+import com.example.sea.common.core.constants.SystemConstant;
+import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.media.dao.MusicSingerMapper;
 import com.example.sea.media.entity.MusicSinger;
 import com.example.sea.media.interfaces.vo.MusicSingerVO;

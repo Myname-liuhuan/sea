@@ -1,8 +1,8 @@
 package com.example.sea.system.controller;
 
-import com.example.sea.common.result.CommonResult;
-import com.example.sea.common.validation.GroupInsert;
-import com.example.sea.common.validation.GroupSave;
+import com.example.sea.common.core.result.CommonResult;
+import com.example.sea.common.core.validation.GroupInsert;
+import com.example.sea.common.core.validation.GroupSave;
 import com.example.sea.system.interfaces.dto.SysUserDTO;
 import com.example.sea.system.interfaces.dto.SysUserQueryDTO;
 import com.example.sea.system.interfaces.vo.SysUserVO;

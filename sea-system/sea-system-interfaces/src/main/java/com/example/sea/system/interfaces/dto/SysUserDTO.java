@@ -1,8 +1,8 @@
 package com.example.sea.system.interfaces.dto;
 
-import com.example.sea.common.entity.dto.BaseDTO;
-import com.example.sea.common.validation.GroupInsert;
-import com.example.sea.common.validation.GroupSave;
+import com.example.sea.common.core.entity.dto.BaseDTO;
+import com.example.sea.common.core.validation.GroupInsert;
+import com.example.sea.common.core.validation.GroupSave;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

@@ -1,6 +1,6 @@
 package com.example.sea.code.exception;
 
-import com.example.sea.common.result.CommonResult;
+import com.example.sea.common.core.result.CommonResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindingResult;

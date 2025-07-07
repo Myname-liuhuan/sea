@@ -59,7 +59,7 @@
 
 		<dependency>
 			<groupId>com.example</groupId>
-			<artifactId>sea-common</artifactId>
+			<artifactId>sea-common-core</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>

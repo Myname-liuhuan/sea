@@ -1,6 +1,6 @@
 package com.example.sea.system.service.impl;
 
-import com.example.sea.common.result.CommonResult;
+import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.system.converter.SysUserConverter;
 import com.example.sea.system.dao.SysUserMapper;
 import com.example.sea.system.entity.SysUser;

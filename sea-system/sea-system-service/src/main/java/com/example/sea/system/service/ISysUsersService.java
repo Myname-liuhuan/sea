@@ -3,7 +3,7 @@ package com.example.sea.system.service;
 import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.sea.common.result.CommonResult;
+import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.system.entity.SysUser;
 import com.example.sea.system.interfaces.dto.SysUserDTO;
 import com.example.sea.system.interfaces.dto.SysUserQueryDTO;

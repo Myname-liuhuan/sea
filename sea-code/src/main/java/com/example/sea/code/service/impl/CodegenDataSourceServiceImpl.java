@@ -1,7 +1,7 @@
 package com.example.sea.code.service.impl;
 
 import com.example.sea.code.service.ICodegenDataSourceService;
-import com.example.sea.common.result.CommonResult;
+import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.code.mapper.CodegenDataSourceMapper;
 import com.example.sea.code.common.utils.ColumnUtil;
 import com.example.sea.code.converter.CodegenDataSourceConverter;

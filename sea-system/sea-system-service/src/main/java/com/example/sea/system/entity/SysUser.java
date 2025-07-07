@@ -3,7 +3,7 @@ package com.example.sea.system.entity;
 import java.time.LocalDateTime;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.example.sea.common.entity.BaseEntity;
+import com.example.sea.common.core.entity.BaseEntity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

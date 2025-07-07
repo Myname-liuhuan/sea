@@ -1,6 +1,6 @@
 package com.example.sea.code.exception;
 
-import com.example.sea.common.result.IErrorCode;
+import com.example.sea.common.core.result.IErrorCode;
 
 /**
  * 业务异常类
