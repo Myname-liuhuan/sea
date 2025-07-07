@@ -66,7 +66,7 @@ public class AuthFilter implements GlobalFilter, Ordered  {
             String secretKey = System.getenv("SECRET_KEY");
             if (StringUtils.isEmpty(secretKey)) {
                 log.error("环境变量 SECRET_KEY 未设置");
-                unauthorized(exchange);
+                return unauthorized(exchange);
             }
                 
             Claims claims = Jwts.parser()
