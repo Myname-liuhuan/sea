@@ -1,0 +1,24 @@
+server:
+  port: 9000
+
+spring:
+  application:
+    name: sea-oauth2
+  main:
+    allow-bean-definition-overriding: true
+  config:
+    activate:
+      on-profile: default
+  security:
+    oauth2:
+      authorization-server:
+        issuer-url: http://localhost:9000
+  datasource:
+    url: jdbc:mysql://localhost:3306/oauth2?useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: lh123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
