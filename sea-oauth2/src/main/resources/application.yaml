@@ -22,3 +22,10 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+    
+#固定字段使用配置文件
+oauth2:
+  client:
+    id: client
+    secret: secret
+    redirect-uri: http://127.0.0.1:8080/login/oauth2/code/client

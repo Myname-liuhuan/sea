@@ -5,8 +5,10 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
@@ -20,8 +22,6 @@ import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
-import org.springframework.context.annotation.DependsOn;
-import javax.sql.DataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
@@ -39,8 +39,13 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.UUID;
 
+import javax.sql.DataSource;
+
 @Configuration
 public class AuthorizationServerConfig {
+
+    @Autowired
+    private OAuth2ClientProperties oAuth2ClientProperties;
 
     /**
      * 给当前的授权服务器也配置一个自定义的安全过滤链
@@ -71,14 +76,18 @@ public class AuthorizationServerConfig {
     @Primary
     @DependsOn("jdbcRegisteredClientRepository")
     public RegisteredClientRepository registeredClientRepository(PasswordEncoder passwordEncoder, DataSource dataSource) {
-        RegisteredClient client = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("client")
-                .clientSecret(passwordEncoder.encode("secret"))
+        String clientId = oAuth2ClientProperties.getId();
+        String clientSecret = oAuth2ClientProperties.getSecret();
+        String redirectUri = oAuth2ClientProperties.getRedirectUri();
+
+        RegisteredClient client = RegisteredClient.withId(UUID.nameUUIDFromBytes(clientId.getBytes()).toString())
+                .clientId(clientId)
+                .clientSecret(passwordEncoder.encode(clientSecret))
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-                .redirectUri("http://127.0.0.1:8080/login/oauth2/code/client")
+                .redirectUri(redirectUri)
                 .scope(OidcScopes.OPENID)
                 .scope("read")
                 .scope("write")
