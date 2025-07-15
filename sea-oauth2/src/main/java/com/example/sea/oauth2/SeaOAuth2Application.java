@@ -16,4 +16,13 @@ public class SeaOAuth2Application {
     public AuthorizationServerSettings authorizationServerSettings() {
         return AuthorizationServerSettings.builder().build();
     }
+
+    // 新增一个根路径映射，避免登录后访问 / 返回404
+    @org.springframework.web.bind.annotation.RestController
+    static class RootController {
+        @org.springframework.web.bind.annotation.GetMapping("/")
+        public String index() {
+            return "Sea OAuth2 Server is running.";
+        }
+    }
 }

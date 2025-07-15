@@ -59,16 +59,16 @@ public class AuthorizationServerConfig {
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
             .oidc(Customizer.withDefaults());
-        http.exceptionHandling(exceptions ->
-	  			exceptions.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
-	  		)
-            .oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()));
-
-            /**
-             * LoginUrlAuthenticationEntryPoint和formLogin都是当用户访问受保护资源且未认证时，Spring Security 会触发 AuthenticationEntryPoint，即 LoginUrlAuthenticationEntryPoint，将请求重定向到指定的登录页 /login
-             * 区别是LoginUrlAuthenticationEntryPoint更灵活，可以指向自定义页面，而formLogin是Spring Security提供的默认登录页面。
-             */
-            // return http.formLogin(Customizer.withDefaults()).build();
+        http
+            .exceptionHandling(exceptions ->
+                exceptions.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
+            )
+            .oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()))
+            .csrf(csrf -> csrf.disable())
+            .formLogin(form -> form
+                .loginPage("/login")
+                .permitAll()
+            );
         return http.build();
     }
 
@@ -132,12 +132,4 @@ public class AuthorizationServerConfig {
         return keyPairGenerator.generateKeyPair();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails user = User.withUsername("user")
-                .password(passwordEncoder.encode("password"))
-                .roles("USER")
-                .build();
-        return new InMemoryUserDetailsManager(user);
-    }
 }
