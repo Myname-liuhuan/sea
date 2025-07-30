@@ -22,6 +22,7 @@
 		<module>sea-code</module>
 		<module>sea-system</module>
 		<module>sea-oauth2</module>
+		<module>sea-auth</module>
 	</modules>
 	<properties>
 		<java.version>17</java.version>
