@@ -13,3 +13,7 @@ spring:
         extension-configs:
           #私有配置
           - data-id: ${spring.application.name}.${spring.cloud.nacos.config.file-extension}
+
+jwt:
+  secret: "c2VjdXJpdHktc2VjcmV0LWtleS13aXRoLTMyLWNoYXJz" # 32字符Base64编码密钥
+  expirationMs: 86400000 # 24小时

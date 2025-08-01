@@ -43,7 +43,7 @@
          <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
-            <version>0.9.1</version> <!-- 或使用较新版本 -->
+            <version>0.12.6</version> <!-- 或使用较新版本 -->
         </dependency>
 
         <dependency>
