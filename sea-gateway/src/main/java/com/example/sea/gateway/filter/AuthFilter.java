@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -38,6 +39,10 @@ public class AuthFilter implements GlobalFilter, Ordered  {
     public AuthFilter(SecurityWhiteListProperties securityWhiteListProperties) {
         this.securityWhiteListProperties = securityWhiteListProperties;
     }
+
+    @Value("${jwt.secret}")
+    private String secret;
+
     /** 认证jwt在header中的key */
     private static final String AUTH_HEADER = "Authorization";
     /** 认证jwt的前缀 */
@@ -62,15 +67,8 @@ public class AuthFilter implements GlobalFilter, Ordered  {
 
         String token = authHeader.replace(TOKEN_PREFIX, "");
         try {
-            //从环境变量获取secretKey
-            String secretKey = System.getenv("SECRET_KEY");
-            if (StringUtils.isEmpty(secretKey)) {
-                log.error("环境变量 SECRET_KEY 未设置");
-                return unauthorized(exchange);
-            }
-                
             Claims claims = Jwts.parser()
-                    .setSigningKey(secretKey)
+                    .setSigningKey(secret)
                     .parseClaimsJws(token)
                     .getBody();
 
