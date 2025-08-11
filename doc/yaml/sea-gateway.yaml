@@ -1,0 +1,42 @@
+server:
+  port: 9080
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        namespace: e47b1dcd-878d-4721-b51f-8747f086c88c
+        username: nacos
+        password: nacos
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: sea-auth
+          uri: lb://sea-auth
+          order: 1
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=2
+        - id: sea-media-service
+          uri: lb://sea-media-service
+          order: 3
+          predicates:
+            - Path=/api/media/**
+          filters:
+            - StripPrefix=2
+        - id: sea-system-service
+          uri: lb://sea-system-service
+          order: 2
+          predicates:
+            - Path=/api/system/**
+          filters:
+            - StripPrefix=2
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    com.example.sea.gateway: DEBUG
