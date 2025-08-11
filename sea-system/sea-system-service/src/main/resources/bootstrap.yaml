@@ -1,27 +1,5 @@
-server:
-  port: 8083
 spring:
+  profiles:
+    active: local
   application:
-    name: sea-system-service
-  cloud:
-    nacos:
-      discovery:
-        server-addr: 127.0.0.1:8848
-        namespace: e47b1dcd-878d-4721-b51f-8747f086c88c
-        username: nacos
-        password: nacos
-  # 数据源配置
-  datasource:
-    url: jdbc:mysql://127.0.0.1:3306/sea?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=GMT%2B8
-    username: root
-    password: lh123456
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    type: com.alibaba.druid.pool.DruidDataSource
-
-# MyBatis配置
-mybatis-plus:
-  mapper-locations: classpath*:/mappers/**/*.xml
-  configuration:
-    map-underscore-to-camel-case: true
-    # 开启日志
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    name: sea-system

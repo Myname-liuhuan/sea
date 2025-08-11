@@ -1,7 +1,8 @@
 package com.example.sea.auth.service.impl;
 
 import com.example.sea.auth.service.AuthService;
-import com.example.sea.auth.utils.JwtUtil;
+import com.example.sea.common.security.utils.JwtUtil;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;

@@ -5,7 +5,6 @@ import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -16,12 +15,12 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.server.ServerWebExchange;
+
+import com.example.sea.common.security.properties.SecurityWhiteListProperties;
+import com.example.sea.common.security.utils.JwtUtil;
+
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import lombok.extern.slf4j.Slf4j;
-
-import com.example.sea.gateway.properties.SecurityWhiteListProperties;
-
 import reactor.core.publisher.Mono;
 
 /**
@@ -40,8 +39,8 @@ public class AuthFilter implements GlobalFilter, Ordered  {
         this.securityWhiteListProperties = securityWhiteListProperties;
     }
 
-    @Value("${jwt.secret}")
-    private String secret;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     /** 认证jwt在header中的key */
     private static final String AUTH_HEADER = "Authorization";
@@ -67,10 +66,7 @@ public class AuthFilter implements GlobalFilter, Ordered  {
 
         String token = authHeader.replace(TOKEN_PREFIX, "");
         try {
-            Claims claims = Jwts.parser()
-                    .setSigningKey(secret)
-                    .parseClaimsJws(token)
-                    .getBody();
+            Claims claims = jwtUtil.parseToken(token);
 
             ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
                     .header("userId", claims.getSubject())

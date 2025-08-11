@@ -1,4 +1,4 @@
-package com.example.sea.gateway.properties;
+package com.example.sea.common.security.properties;
 
 import java.util.List;
 

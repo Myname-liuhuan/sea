@@ -1,4 +1,4 @@
-package com.example.sea.auth.utils;
+package com.example.sea.common.security.utils;
 
 import java.util.Date;
 import java.util.List;
