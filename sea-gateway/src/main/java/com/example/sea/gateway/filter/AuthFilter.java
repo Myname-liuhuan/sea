@@ -16,8 +16,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.example.sea.common.security.properties.SecurityWhiteListProperties;
-import com.example.sea.common.security.utils.JwtUtil;
+import com.example.sea.gateway.properties.SecurityWhiteListProperties;
+import com.example.sea.gateway.utils.JwtUtil;
 
 import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
@@ -67,9 +67,9 @@ public class AuthFilter implements GlobalFilter, Ordered  {
         String token = authHeader.replace(TOKEN_PREFIX, "");
         try {
             Claims claims = jwtUtil.parseToken(token);
-
+            String  str = claims.getSubject();
             ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
-                    .header("userId", claims.getSubject())
+                    .header("userId", str)
                     .build();
 
             return chain.filter(exchange.mutate().request(mutatedRequest).build());
