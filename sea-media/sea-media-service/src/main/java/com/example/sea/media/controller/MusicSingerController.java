@@ -1,7 +1,7 @@
 package com.example.sea.media.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.sea.common.result.CommonResult;
+import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.media.entity.MusicSinger;
 import com.example.sea.media.interfaces.vo.MusicSingerVO;
 import com.example.sea.media.service.MusicSingerService;

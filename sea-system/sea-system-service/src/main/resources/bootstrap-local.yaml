@@ -1,0 +1,15 @@
+spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: http://127.0.0.1:8848
+        namespace: e47b1dcd-878d-4721-b51f-8747f086c88c
+        username: nacos
+        password: nacos
+        file-extension: yaml
+        shared-configs:
+          #共享配置
+          - data-id: shared_bootstrap.${spring.cloud.nacos.config.file-extension}
+        extension-configs:
+          #私有配置
+          - data-id: ${spring.application.name}.${spring.cloud.nacos.config.file-extension}

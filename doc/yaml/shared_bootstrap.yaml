@@ -1,0 +1,19 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        namespace: e47b1dcd-878d-4721-b51f-8747f086c88c
+        username: nacos
+        password: nacos
+jwt:
+  secret: YW5vdGhlclNlY3JldEtleUZvckp3dEJhc2U2NEVuY29kZWRBbmRTdHJvbmdLZXk=
+  expirationMs: 86400000 # 24小时
+  refreshExpirationMs: 604800000 # 7天
+
+security:
+  whitelist:
+    - /auth/login
+    - /auth/register
+    - /public/**
+    - /api/auth/**

@@ -1,7 +1,7 @@
 package com.example.sea.media.config.handler;
 
 
-import com.example.sea.common.encryption.DES;
+import com.example.sea.common.core.encryption.DES;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 

@@ -33,3 +33,7 @@ build/
 .vscode/
 
 test/
+
+#排除effective-pom.xml
+*/effective-pom.xml
+

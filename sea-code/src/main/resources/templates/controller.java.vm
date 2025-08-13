@@ -1,0 +1,24 @@
+package ${package.Controller};
+
+import ${package.Service}.${table.serviceName};
+import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+
+/**
+ * ${table.comment}控制器
+ * @author ${author}
+ * @date ${date}
+ */
+@RestController
+@RequestMapping("/${table.entityPath}")
+public class ${table.controllerName} {
+
+    private final ${table.serviceName} ${table.entityPath}Service;
+
+    @Autowired
+    public ${table.controllerName}(${table.serviceName} ${table.entityPath}Service){
+        this.${table.entityPath}Service = ${table.entityPath}Service;
+    }
+
+
+}
