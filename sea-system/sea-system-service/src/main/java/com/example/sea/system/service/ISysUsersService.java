@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.sea.common.core.result.CommonResult;
+import com.example.sea.common.security.entity.LoginUser;
 import com.example.sea.system.entity.SysUser;
 import com.example.sea.system.interfaces.dto.SysUserDTO;
 import com.example.sea.system.interfaces.dto.SysUserQueryDTO;
@@ -36,5 +37,13 @@ public interface ISysUsersService extends IService<SysUser> {
      * @return 用户列表
      */
     CommonResult<List<SysUserVO>> list(SysUserQueryDTO sysUserQueryDTO);
+    
+    /**
+     * 校验登录用户信息
+     * @param username 用户名
+     * @return 登录用户信息
+     */
+    CommonResult<LoginUser> checkLoginUser(String username);
+
 
 }

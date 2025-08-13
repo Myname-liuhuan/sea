@@ -132,4 +132,12 @@ public class CommonResult<T> {
     public void setData(T data) {
         this.data = data;
     }
+
+    /**
+     * 判断当前结果是否成功
+     * @return true 表示成功，false 表示失败
+     */
+    public boolean isSuccess() {
+        return this.code == ResultCode.SUCCESS.getCode();
+    }
 }

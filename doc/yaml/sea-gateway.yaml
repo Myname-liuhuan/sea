@@ -21,15 +21,15 @@ spring:
             - Path=/api/auth/**
           filters:
             - StripPrefix=2
-        - id: sea-media-service
-          uri: lb://sea-media-service
+        - id: sea-media
+          uri: lb://sea-media
           order: 3
           predicates:
             - Path=/api/media/**
           filters:
             - StripPrefix=2
-        - id: sea-system-service
-          uri: lb://sea-system-service
+        - id: sea-system
+          uri: lb://sea-system
           order: 2
           predicates:
             - Path=/api/system/**
