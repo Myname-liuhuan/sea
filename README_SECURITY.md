@@ -53,6 +53,8 @@ Authorization: Bearer <token>
   - `/api/code/**` -> sea-code服务
   - `/api/system/**` -> sea-system服务
   - `/api/media/**` -> sea-media服务
+- **说明**
+  - 双层校验: gateway模块做简单的token是否存在校验，具体的校验token是否有效在每个服务自己的拦截器校验; 如果网关和个服务之间的请求时完全可信的，则可以全部校验放在gateway,各下游服务只解析出用户信息。
 
 ### 业务服务配置 (以sea-code为例)
 - **端口**: 8082
