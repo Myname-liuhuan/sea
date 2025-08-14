@@ -2,15 +2,15 @@ package com.example.sea.code.service.impl;
 
 import com.baomidou.mybatisplus.generator.FastAutoGenerator;
 import com.baomidou.mybatisplus.generator.config.OutputFile;
-import com.baomidou.mybatisplus.generator.config.po.TableField;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
 import com.example.sea.code.entity.CodegenDataSource;
 import com.example.sea.code.entity.dto.CodeGenColumnSettingDTO;
 import com.example.sea.code.entity.dto.CodeGenerateDTO;
-import com.example.sea.code.exception.BusinessException;
 import com.example.sea.code.mapper.CodegenDataSourceMapper;
 import com.example.sea.code.service.ICodeGenerationService;
+import com.example.sea.common.core.exception.BusinessException;
+
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
