@@ -51,8 +51,11 @@ public class SysUser extends BaseEntity{
      */
     private  String  profile;
 
+    /** '状态 0停用 1正常 */
+    private String  status;
+
     /**
-     * 封禁状态
+     * 封禁状态 0正常 1封禁
      */
     private  String  isBanned;
 
