@@ -6,7 +6,7 @@ import com.example.sea.common.core.validation.GroupSave;
 import com.example.sea.system.interfaces.dto.SysUserDTO;
 import com.example.sea.system.interfaces.dto.SysUserQueryDTO;
 import com.example.sea.system.interfaces.vo.SysUserVO;
-import com.example.sea.system.service.ISysUsersService;
+import com.example.sea.system.service.ISysUserService;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -22,12 +22,12 @@ import org.springframework.validation.annotation.Validated;
  */
 @RestController
 @RequestMapping("/sysUser")
-public class SysUsersController {
+public class SysUserController {
 
-    private final ISysUsersService sysUsersService;
+    private final ISysUserService sysUsersService;
 
     @Autowired
-    public SysUsersController(ISysUsersService sysUsersService){
+    public SysUserController(ISysUserService sysUsersService){
         this.sysUsersService = sysUsersService;
     }
 

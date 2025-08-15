@@ -8,11 +8,14 @@ import com.example.sea.system.entity.SysUser;
 import com.example.sea.system.interfaces.dto.SysUserDTO;
 import com.example.sea.system.interfaces.dto.SysUserQueryDTO;
 import com.example.sea.system.interfaces.vo.SysUserVO;
-import com.example.sea.system.service.ISysUsersService;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.example.sea.system.service.ISysUserService;
+
+import lombok.extern.slf4j.Slf4j;
+
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Objects;
 
@@ -27,15 +30,16 @@ import org.springframework.util.CollectionUtils;
  * @author liuhuan
  * @date 2025-05-28
  */
+@Slf4j
 @Service
-public class SysUsersServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements ISysUsersService {
+public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements ISysUserService {
 
     private final SysUserConverter sysUserConverter;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder =  new BCryptPasswordEncoder();
 
     @Autowired
-    public SysUsersServiceImpl(SysUserConverter sysUserConverter) {
+    public SysUserServiceImpl(SysUserConverter sysUserConverter) {
         this.sysUserConverter = sysUserConverter;
     }
 
@@ -44,12 +48,21 @@ public class SysUsersServiceImpl extends ServiceImpl<SysUserMapper, SysUser> imp
      */
     @Override
     public CommonResult<Boolean> save(SysUserDTO sysUserDTO) {
-        SysUser entity = sysUserConverter.dtoToEntity(sysUserDTO);
-        //BCrypt加密密码
-        entity.setPasswordHash(bCryptPasswordEncoder.encode(sysUserDTO.getPassword()));
-        boolean result = this.save(entity);
-        this.updateById(entity);
-        return CommonResult.success(result);
+        try {
+            SysUser entity = sysUserConverter.dtoToEntity(sysUserDTO);
+            //BCrypt加密密码
+            entity.setPasswordHash(bCryptPasswordEncoder.encode(sysUserDTO.getPassword()));
+            boolean result = this.save(entity);
+            return CommonResult.success(result);
+        } catch (Exception e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof SQLIntegrityConstraintViolationException) {
+                log.error("用户新增失败，用户名已存在：{}", cause.getMessage(), e);
+                return CommonResult.failed("该用户已存在");
+            }
+            log.error("用户新增失败：{}", e.getMessage(), e);
+            return CommonResult.failed("用户新增失败");
+        }
     }
 
     /**
@@ -80,7 +93,7 @@ public class SysUsersServiceImpl extends ServiceImpl<SysUserMapper, SysUser> imp
      * @return 返回登录用户信息
      */
     @Override
-    public CommonResult<LoginUser> checkLoginUser(String username) {
+    public CommonResult<LoginUser> getLoginUser(String username) {
         //lambdaquery通过用户名查询用户
         List<SysUser> userList = this.baseMapper.selectList(
             Wrappers.<SysUser>lambdaQuery().eq(SysUser::getUsername, username)
