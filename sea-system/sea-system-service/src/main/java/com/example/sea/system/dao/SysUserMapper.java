@@ -25,4 +25,18 @@ public interface SysUserMapper extends BaseMapper<SysUser> {
      */
     List<SysUserVO> list(SysUserQueryDTO sysUserQueryDTO);
 
+     /**
+     * 根据用户ID获取角色编码列表
+     * @param userId
+     * @return
+     */
+    List<String> getRoleCodeByUserId(Long userId);
+
+    /**
+     * 根据用户ID获取权限列表
+     * @param userId
+     * @return
+     */
+    List<String> getPermsByUserId(Long userId);
+
 }

@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.sea.auth.feign.SystemFeignClient;
 import com.example.sea.auth.service.AuthService;
+import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.security.entity.LoginUser;
 import com.example.sea.common.security.utils.JwtUtil;
 
@@ -20,19 +22,25 @@ import reactor.core.publisher.Mono;
 @Service
 public class AuthServiceImpl implements AuthService {
 
-    @Autowired
-    private JwtUtil jwtUtil;
+    
+    private final JwtUtil jwtUtil;
+    private final SystemFeignClient systemFeignClient;
 
-    // 模拟用户验证，实际应该从数据库查询
+    @Autowired
+    public AuthServiceImpl(JwtUtil jwtUtil, SystemFeignClient systemFeignClient) {
+        this.jwtUtil = jwtUtil;
+        this.systemFeignClient = systemFeignClient;
+    }
+
+    // 从远程系统服务验证用户
     private LoginUser validateUser(String username, String password) {
-        LoginUser loginUser = new LoginUser();
-        loginUser.setUsername(username);
-        loginUser.setPassword(password);
-        loginUser.setId(1L); // 模拟用户ID
-        loginUser.setRoles(new ArrayList<>(){{add("Admin");add("superAdmin");}});
-        loginUser.setAuthorities(new ArrayList<>(){{add("user:read");add("user:write");}});
-        if ("admin".equals(username) && "admin123".equals(password)) {
-            return loginUser;
+        CommonResult<LoginUser> result = systemFeignClient.getLoginUser(username);
+        if (result.isSuccess() && result.getData() != null) {
+            LoginUser loginUser = result.getData();
+            // 这里应该添加密码验证逻辑
+            if (loginUser.getPassword() != null && loginUser.getPassword().equals(password)) {
+                return loginUser;
+            }
         }
         return null;
     }

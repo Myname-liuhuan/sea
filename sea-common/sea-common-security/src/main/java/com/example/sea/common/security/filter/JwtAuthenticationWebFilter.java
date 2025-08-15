@@ -1,6 +1,7 @@
 package com.example.sea.common.security.filter;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -88,13 +89,11 @@ public class JwtAuthenticationWebFilter implements WebFilter {
     private Authentication getAuthentication(String token) {
         Claims claims = jwtUtil.parseToken(token);
         String username = claims.getSubject();
-        Object authoritiesObj = claims.get("authorities");
-        String authoritiesStr = authoritiesObj != null ? authoritiesObj.toString() : "";
+        List<String> authoritiesObj = (List<String>) claims.get("authorities");
         // authoritiesStr 可能是逗号分隔的字符串
-        String[] authoritiesArr = authoritiesStr.split(",");
         UserDetails userDetails = User.withUsername(username)
                 .password("") // 密码可为空
-                .authorities(authoritiesArr)
+                .authorities(authoritiesObj.toArray(new String[0]))
                 .build();
         return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
     }

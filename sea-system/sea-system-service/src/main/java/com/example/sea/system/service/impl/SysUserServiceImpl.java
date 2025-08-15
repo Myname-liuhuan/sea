@@ -57,7 +57,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         } catch (Exception e) {
             Throwable cause = e.getCause();
             if (cause instanceof SQLIntegrityConstraintViolationException) {
-                log.error("用户新增失败，用户名已存在：{}", cause.getMessage(), e);
+                log.error("用户新增失败，用户名已存在：{}", cause.getMessage());
                 return CommonResult.failed("该用户已存在");
             }
             log.error("用户新增失败：{}", e.getMessage(), e);
@@ -103,6 +103,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             SysUser sysUser = userList.get(0);
             LoginUser loginUser = new LoginUser();
             BeanUtils.copyProperties(sysUser, loginUser);
+            //获取角色
+            List<String> roleCodeList = this.baseMapper.getRoleCodeByUserId(sysUser.getId());
+            loginUser.setRoles(roleCodeList);
+            //获取权限
+            List<String> authorityList = this.baseMapper.getPermsByUserId(sysUser.getId());
+            loginUser.setAuthorities(authorityList);
             return CommonResult.success(loginUser);
         }
         return CommonResult.failed();
