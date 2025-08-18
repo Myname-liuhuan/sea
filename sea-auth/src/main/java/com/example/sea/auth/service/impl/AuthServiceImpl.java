@@ -1,13 +1,14 @@
 package com.example.sea.auth.service.impl;
 
-import java.util.ArrayList;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.sea.auth.feign.SystemFeignClient;
+import com.alibaba.cloud.commons.lang.StringUtils;
 import com.example.sea.auth.service.AuthService;
-import com.example.sea.common.core.result.CommonResult;
+import com.example.sea.auth.webclient.SystemWebClient;
 import com.example.sea.common.security.entity.LoginUser;
 import com.example.sea.common.security.utils.JwtUtil;
 
@@ -22,27 +23,32 @@ import reactor.core.publisher.Mono;
 @Service
 public class AuthServiceImpl implements AuthService {
 
-    
     private final JwtUtil jwtUtil;
-    private final SystemFeignClient systemFeignClient;
+    private final SystemWebClient systemWebClient;
+
+    private final BCryptPasswordEncoder bCryptPasswordEncoder =  new BCryptPasswordEncoder();
 
     @Autowired
-    public AuthServiceImpl(JwtUtil jwtUtil, SystemFeignClient systemFeignClient) {
+    public AuthServiceImpl(JwtUtil jwtUtil, SystemWebClient systemWebClient) {
         this.jwtUtil = jwtUtil;
-        this.systemFeignClient = systemFeignClient;
+        this.systemWebClient = systemWebClient;
     }
 
     // 从远程系统服务验证用户
-    private LoginUser validateUser(String username, String password) {
-        CommonResult<LoginUser> result = systemFeignClient.getLoginUser(username);
-        if (result.isSuccess() && result.getData() != null) {
-            LoginUser loginUser = result.getData();
-            // 这里应该添加密码验证逻辑
-            if (loginUser.getPassword() != null && loginUser.getPassword().equals(password)) {
-                return loginUser;
-            }
-        }
-        return null;
+    private Mono<LoginUser> validateUser(String username, String password) {
+        return systemWebClient.getLoginUser(username)
+                .flatMap(result -> {
+                    if (result != null && result.isSuccess() && result.getData() != null 
+                                                                    && StringUtils.isNotBlank(password)) {
+                        LoginUser loginUser = result.getData();
+                        // 这里应该添加密码验证逻辑
+                        String passwordHash =  bCryptPasswordEncoder.encode(password);
+                        if (Objects.equals(loginUser.getPassword(), passwordHash)) {
+                            return Mono.just(loginUser);
+                        }
+                    }
+                    return Mono.empty();
+                });
     }
 
     /**
@@ -53,12 +59,8 @@ public class AuthServiceImpl implements AuthService {
      */
     @Override
     public Mono<String> authenticate(String username, String password) {
-        LoginUser loginUser = validateUser(username, password);
-        if (loginUser != null) {
-            String token = jwtUtil.generateAccessToken(loginUser);
-            return Mono.just(token);
-        }
-        return Mono.empty();
+        return validateUser(username, password)
+                .map(loginUser -> jwtUtil.generateAccessToken(loginUser));
     }
 
     /**
@@ -75,11 +77,11 @@ public class AuthServiceImpl implements AuthService {
             }
             // 解析刷新token
             Claims claims =  jwtUtil.parseToken(refreshToken);
-            LoginUser loginUser = validateUser(
-                (String)claims.get("username"), (String) claims.get("password")
-            );
-            String newAccessToken = jwtUtil.generateAccessToken(loginUser);
-            return Mono.just(newAccessToken);
+            String username = (String) claims.get("username");
+            String password = (String) claims.get("password");
+            
+            return validateUser(username, password)
+                    .map(loginUser -> jwtUtil.generateAccessToken(loginUser));
         } catch (Exception e) {
             return Mono.empty();
         }

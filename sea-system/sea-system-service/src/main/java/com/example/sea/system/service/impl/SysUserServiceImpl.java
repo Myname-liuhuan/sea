@@ -103,6 +103,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             SysUser sysUser = userList.get(0);
             LoginUser loginUser = new LoginUser();
             BeanUtils.copyProperties(sysUser, loginUser);
+            loginUser.setPassword(sysUser.getPasswordHash());
             //获取角色
             List<String> roleCodeList = this.baseMapper.getRoleCodeByUserId(sysUser.getId());
             loginUser.setRoles(roleCodeList);
