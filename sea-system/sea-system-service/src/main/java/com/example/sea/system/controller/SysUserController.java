@@ -1,5 +1,15 @@
 package com.example.sea.system.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.core.validation.GroupInsert;
 import com.example.sea.common.core.validation.GroupSave;
@@ -10,13 +20,6 @@ import com.example.sea.system.interfaces.vo.SysUserVO;
 import com.example.sea.system.service.ISysUserService;
 
 import jakarta.validation.constraints.NotBlank;
-
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 
 /**
  * 用户表控制器
@@ -69,8 +72,8 @@ public class SysUserController {
      * @param username
      * @return
      */
-    @PostMapping("/getLoginUser")
-    public CommonResult<LoginUser> getLoginUser(@RequestBody @NotBlank String username) {
+    @GetMapping("/getLoginUser")
+    public CommonResult<LoginUser> getLoginUser(@NotBlank String username) {
         return sysUsersService.getLoginUser(username);
     }
 

@@ -2,7 +2,6 @@ package com.example.sea.auth.feign.fallback;
 
 import com.example.sea.auth.feign.SystemFeignClient;
 import com.example.sea.common.core.result.CommonResult;
-import com.example.sea.common.security.entity.LoginUser;
 
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
@@ -17,7 +16,12 @@ public class SystemFeignClientFallback implements FallbackFactory<SystemFeignCli
 
     @Override
     public SystemFeignClient create(Throwable cause) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'create'");
+        return new SystemFeignClient() {
+            @Override
+            public CommonResult<com.example.sea.common.security.entity.LoginUser> getLoginUser(String username) {
+                // 可根据 cause 打印日志
+                return CommonResult.failed("feign调用system模块失败");
+            }
+        };
     }
 }

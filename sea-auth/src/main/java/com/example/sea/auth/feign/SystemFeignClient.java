@@ -1,11 +1,11 @@
 package com.example.sea.auth.feign;
 
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+
 import com.example.sea.auth.feign.fallback.SystemFeignClientFallback;
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.security.entity.LoginUser;
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * 系统服务Feign客户端
@@ -20,6 +20,6 @@ public interface SystemFeignClient {
      * @param username 用户名
      * @return 登录用户信息
      */
-    @PostMapping("/sysUser/getLoginUser")
-    CommonResult<LoginUser> getLoginUser(@RequestBody String username);
+    @GetMapping("/sysUser/getLoginUser")
+    CommonResult<LoginUser> getLoginUser(String username);
 }
