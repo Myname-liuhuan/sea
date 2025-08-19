@@ -1,5 +1,6 @@
 package com.example.sea.auth.service;
 
+import com.example.sea.auth.dto.LoginResponse;
 import reactor.core.publisher.Mono;
 
 /**
@@ -13,9 +14,9 @@ public interface AuthService {
      * 用户认证
      * @param username 用户名
      * @param password 密码
-     * @return token
+     * @return 登录响应，包含accessToken和refreshToken
      */
-    Mono<String> authenticate(String username, String password);
+    Mono<LoginResponse> authenticate(String username, String password);
     
     /**
      * 刷新token

@@ -130,6 +130,14 @@ public class JwtUtil implements InitializingBean {
                 .signWith(secretKey)
                 .compact();
     }
+
+    /**
+     * 获取 AccessToken 过期时间
+     * @return
+     */
+    public long getAccessTokenExpirationMs(){
+        return expirationMs;
+    }
 }
 
 
