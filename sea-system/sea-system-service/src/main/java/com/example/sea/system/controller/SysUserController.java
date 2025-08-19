@@ -19,8 +19,6 @@ import com.example.sea.system.interfaces.dto.SysUserQueryDTO;
 import com.example.sea.system.interfaces.vo.SysUserVO;
 import com.example.sea.system.service.ISysUserService;
 
-import jakarta.validation.constraints.NotBlank;
-
 /**
  * 用户表控制器
  * @author liuhuan
@@ -69,11 +67,16 @@ public class SysUserController {
 
     /**
      * 根据用户名获取登录用户信息
+     * 
+     * @RequestParam String username 要求请求参数里必须有 username 这个名字的参数。
+            你传的是 usname=888，没有匹配到 username。
+            SpringMVC 在绑定阶段就发现 缺少必须参数，于是直接抛出 MissingServletRequestParameterException → 400 Bad Request。
+            此时，参数压根没绑定到方法，也就不会走 Hibernate Validator 的 @NotBlank
      * @param username
      * @return
      */
     @GetMapping("/getLoginUser")
-    public CommonResult<LoginUser> getLoginUser(@NotBlank String username) {
+    public CommonResult<LoginUser> getLoginUser(String username) {
         return sysUsersService.getLoginUser(username);
     }
 

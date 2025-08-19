@@ -19,6 +19,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -94,6 +95,9 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
      */
     @Override
     public CommonResult<LoginUser> getLoginUser(String username) {
+        if (StringUtils.isBlank(username)) {
+            return CommonResult.failed("用户名不能为空");
+        }
         //lambdaquery通过用户名查询用户
         List<SysUser> userList = this.baseMapper.selectList(
             Wrappers.<SysUser>lambdaQuery().eq(SysUser::getUsername, username)
