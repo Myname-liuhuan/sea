@@ -68,10 +68,11 @@ public class SysUserController {
     /**
      * 根据用户名获取登录用户信息
      * 
-     * @RequestParam String username 要求请求参数里必须有 username 这个名字的参数。
-            你传的是 usname=888，没有匹配到 username。
+     * ::@RequestParam String username 要求请求参数里必须有 username 这个名字的参数。
+            当传的是 usname=888,没有匹配到 username。
             SpringMVC 在绑定阶段就发现 缺少必须参数，于是直接抛出 MissingServletRequestParameterException → 400 Bad Request。
             此时，参数压根没绑定到方法，也就不会走 Hibernate Validator 的 @NotBlank
+        解决:1,使用实体类接收参数,在实体类中加注解; 2,手动去判断参数是否为空
      * @param username
      * @return
      */

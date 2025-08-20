@@ -16,6 +16,7 @@
         <module>sea-common-security</module>
         <module>sea-common-core</module>
         <module>sea-common-mybatis</module>
+        <module>sea-common-remoteclient</module>
     </modules>
 
 
