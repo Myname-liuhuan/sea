@@ -111,12 +111,16 @@ public class JwtUtil implements InitializingBean {
     }
 
      /**
-     * 核心构建 Token 方法
-     * - sub = userId
-     * - iat = now
-     * - exp = now + ttlMillis
-     * - username （自定义 claim）
-     */
+      * 标准的jwt payload:
+      * {
+      *  "sub": "1234567890",      // 用户 ID
+      *  "username": "alice",      
+      *  "roles": ["USER"],        
+      *  "iat": 1713500000,        // 签发时间
+      *  "exp": 1713503600,        // 过期时间
+      *  "jti": "9f8c7d6a-1234-4bcd-9e1a-56789abcdeff"
+      * }
+      */
     private String buildToken(LoginUser loginUser, long ttlMillis, String tokenType) {
         Date now = new Date();
         return Jwts.builder()
