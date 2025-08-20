@@ -1,6 +1,7 @@
 package com.example.sea.common.security.utils;
 
 import java.util.Date;
+import java.util.UUID;
 
 import javax.crypto.SecretKey;
 
@@ -124,6 +125,7 @@ public class JwtUtil implements InitializingBean {
     private String buildToken(LoginUser loginUser, long ttlMillis, String tokenType) {
         Date now = new Date();
         return Jwts.builder()
+                .id(UUID.randomUUID().toString()) // 唯一的 token ID
                 .subject(String.valueOf(loginUser.getId()))
                 .claim("username", loginUser.getUsername())
                 .claim("roles", loginUser.getRoles())
@@ -141,6 +143,14 @@ public class JwtUtil implements InitializingBean {
      */
     public long getAccessTokenExpirationMs(){
         return expirationMs;
+    }
+
+    /**
+     * 获取 AccessToken 过期时间
+     * @return
+     */
+    public long getRefreshTokenExpirationMs(){
+        return refreshExpirationMs;
     }
 }
 

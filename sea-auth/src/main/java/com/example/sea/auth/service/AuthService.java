@@ -1,6 +1,8 @@
 package com.example.sea.auth.service;
 
 import com.example.sea.auth.dto.LoginResponse;
+import com.example.sea.common.core.result.CommonResult;
+
 import reactor.core.publisher.Mono;
 
 /**
@@ -16,12 +18,12 @@ public interface AuthService {
      * @param password 密码
      * @return 登录响应，包含accessToken和refreshToken
      */
-    Mono<LoginResponse> authenticate(String username, String password);
+   Mono<CommonResult<LoginResponse>> authenticate(String username, String password);
     
     /**
      * 刷新token
      * @param refreshToken 刷新token
      * @return 新token
      */
-    Mono<String> refreshToken(String refreshToken);
+    Mono<CommonResult<LoginResponse>> refreshToken(String refreshToken);
 }

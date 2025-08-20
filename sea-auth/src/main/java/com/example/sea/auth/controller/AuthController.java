@@ -28,9 +28,7 @@ public class AuthController {
      */
     @PostMapping("/login")
     public Mono<CommonResult<LoginResponse>> login(@RequestBody LoginRequest loginRequest) {
-        return authService.authenticate(loginRequest.getUsername(), loginRequest.getPassword())
-                .map(loginResponse -> CommonResult.success(loginResponse))
-                .defaultIfEmpty(CommonResult.failed("账号或者密码错误"));
+        return authService.authenticate(loginRequest.getUsername(), loginRequest.getPassword());
     }
 
     /**
@@ -38,8 +36,13 @@ public class AuthController {
      */
     @PostMapping("/refresh")
     public Mono<CommonResult<LoginResponse>> refresh(@RequestBody String refreshToken) {
-        return authService.refreshToken(refreshToken)
-                .map(token -> CommonResult.success(new LoginResponse(token, null, 3600000L)))
-                .defaultIfEmpty(CommonResult.failed("刷新token无效或已过期"));
+        return authService.refreshToken(refreshToken);
+                // .map(tokenResult -> {
+                //     if (tokenResult.isSuccess()) {
+                //         return CommonResult.success(new LoginResponse(tokenResult.getData(), null, 3600000L));
+                //     } else {
+                //         return CommonResult.failed(tokenResult.getMessage());
+                //     }
+                // });
     }
 }
