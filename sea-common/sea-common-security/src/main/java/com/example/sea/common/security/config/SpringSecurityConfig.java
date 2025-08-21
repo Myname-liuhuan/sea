@@ -3,34 +3,37 @@ package com.example.sea.common.security.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
-import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.example.sea.common.security.filter.JwtAuthenticationWebFilter;
 import com.example.sea.common.security.properties.SecurityWhiteListProperties;
 
 @Configuration
+@EnableWebSecurity
 public class SpringSecurityConfig {
 
     private final SecurityWhiteListProperties securityProperties;
-    private final JwtAuthenticationWebFilter jwtAuthenticationWebFilter;
+    private final JwtAuthenticationWebFilter jwtAuthenticationFilter;
 
     @Autowired
-    public SpringSecurityConfig(SecurityWhiteListProperties securityProperties, JwtAuthenticationWebFilter jwtAuthenticationWebFilter) {
+    public SpringSecurityConfig(SecurityWhiteListProperties securityProperties, JwtAuthenticationWebFilter jwtAuthenticationFilter) {
         this.securityProperties = securityProperties;
-        this.jwtAuthenticationWebFilter = jwtAuthenticationWebFilter;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
     @Bean
-    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
-            .authorizeExchange(exchange -> exchange
-                .pathMatchers(securityProperties.getWhitelist().toArray(new String[0])).permitAll()
-                .anyExchange().authenticated()
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(securityProperties.getWhitelist().toArray(new String[0])).permitAll()
+                .anyRequest().authenticated()
             )
-            .addFilterAt(jwtAuthenticationWebFilter, SecurityWebFiltersOrder.AUTHENTICATION);
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        
         return http.build();
     }
 }

@@ -1,34 +1,34 @@
 package com.example.sea.common.security.filter;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.example.sea.common.security.properties.SecurityWhiteListProperties;
 import com.example.sea.common.security.utils.JwtRedisUtil;
 import com.example.sea.common.security.utils.JwtUtil;
 
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import reactor.core.publisher.Mono;
 
 @Component
 @Slf4j
-public class JwtAuthenticationWebFilter implements WebFilter {
+public class JwtAuthenticationWebFilter extends OncePerRequestFilter {
 
     private final SecurityWhiteListProperties securityProperties;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
@@ -42,82 +42,87 @@ public class JwtAuthenticationWebFilter implements WebFilter {
         this.jwtRedisUtil = jwtRedisUtil;
     }
 
-     /** 验证不通过的提示 */
+    /** 验证不通过的提示 */
     private static final String UNAUTHORIZED_MESSAGE_TEMPLATE = "{\"code\":401,\"message\":\"%s\"}";
 
-
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        String path = exchange.getRequest().getPath().value();
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+        
+        String path = request.getRequestURI();
 
         // 白名单直接放行
         for (String pattern : securityProperties.getWhitelist()) {
             if (pathMatcher.match(pattern, path)) {
-                return chain.filter(exchange);
+                filterChain.doFilter(request, response);
+                return;
             }
         }
-       
-        String token = resolveToken(exchange);
+
+        String token = resolveToken(request);
         if (token == null) {
-            return unauthorized(exchange, "token缺失");
+            unauthorized(response, "token缺失");
+            return;
         }
 
         // 验证token是否存在于Redis中
         // if (!jwtRedisUtil.validateToken(token)) {
-        //     return unauthorized(exchange, "无效的token");
+        //     unauthorized(response, "无效的token");
+        //     return;
         // }
 
         JwtUtil.TokenParseResult tokenParseResult = jwtUtil.parseTokenWithExpirationStatus(token);
         if (tokenParseResult.isExpired()) {
-             return unauthorized(exchange, "token已过期");
+            unauthorized(response, "token已过期");
+            return;
         }
 
         if (!tokenParseResult.isSuccess()) {
-            return unauthorized(exchange, "无效的token");
+            unauthorized(response, "无效的token");
+            return;
         }
 
-        //将用户信息存储到security context中
+        // 将用户信息存储到security context中
         Claims claims = tokenParseResult.getClaims();
         String username = claims.getSubject();
         List<String> authoritiesObj = (List<String>) claims.get("authorities");
-        // authoritiesStr 可能是逗号分隔的字符串
+        
         UserDetails userDetails = User.withUsername(username)
-                .password("") //密码可为空
+                .password("") // 密码可为空
                 .authorities(authoritiesObj.toArray(new String[0]))
                 .build();
-        return chain.filter(exchange)
-                .contextWrite(ReactiveSecurityContextHolder.withAuthentication(
-                    new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities())
-                ));
+        
+        UsernamePasswordAuthenticationToken authentication = 
+            new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
+        
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        
+        filterChain.doFilter(request, response);
     }
 
     /**
      * 提取token
-     * @param exchange
+     * @param request
      * @return
      */
-    private String resolveToken(ServerWebExchange exchange) {
-        String bearerToken = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+    private String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
         return null;
     }
 
-
     /**
      * 验证不通过时返回未授权响应 自定义提示
-     * @param exchange
+     * @param response
      * @param message
-     * @return
+     * @throws IOException
      */
-    private Mono<Void> unauthorized(ServerWebExchange exchange, String message) {
-        ServerHttpResponse response = exchange.getResponse();
-        response.setStatusCode(HttpStatus.UNAUTHORIZED);
-        response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
-        return response.writeWith(Mono.just(response
-                        .bufferFactory()
-                        .wrap(String.format(UNAUTHORIZED_MESSAGE_TEMPLATE, message)
-                                .getBytes(StandardCharsets.UTF_8))));
+    private void unauthorized(HttpServletResponse response, String message) throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        response.getWriter().write(String.format(UNAUTHORIZED_MESSAGE_TEMPLATE, message));
     }
 }
