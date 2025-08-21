@@ -1,52 +1,20 @@
 package com.example.sea.common.core.utils;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.*;
-import org.springframework.stereotype.Component;
-
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
 
 @Component
 public class RedisUtil {
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
-
-    private static final String LOCK_PREFIX = "lock:";
-
-
-     // ============================ 分布式锁 =============================
-    /**
-     * 获取分布式锁
-     *
-     * @param key     锁的key
-     * @param value   锁的唯一标识（比如UUID）
-     * @param expire  过期时间(秒)
-     * @return true 获取成功, false 获取失败
-     */
-    public boolean tryLock(String key, String value, long expire) {
-        Boolean success = redisTemplate.opsForValue().setIfAbsent(LOCK_PREFIX + key, value, expire, TimeUnit.SECONDS);
-        return Boolean.TRUE.equals(success);
-    }
-
-    /**
-     * 释放分布式锁（安全删除：先比较 value）
-     *
-     * @param key   锁的key
-     * @param value 锁的唯一标识
-     */
-    public boolean unlock(String key, String value) {
-        try {
-            key = LOCK_PREFIX + key;
-            Object val = redisTemplate.opsForValue().get(key);
-            if (value.equals(val)) {
-                redisTemplate.delete( key);
-                return true;
-            }
-        } catch (Exception ignored) {}
-        return false;
-    }
 
     // ============================= 常用数据操作封装 ============================
 
