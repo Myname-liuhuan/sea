@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +19,7 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 
 import com.example.sea.common.security.properties.SecurityWhiteListProperties;
+import com.example.sea.common.security.utils.JwtRedisUtil;
 import com.example.sea.common.security.utils.JwtUtil;
 
 import io.jsonwebtoken.Claims;
@@ -33,11 +33,13 @@ public class JwtAuthenticationWebFilter implements WebFilter {
     private final SecurityWhiteListProperties securityProperties;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
     private final JwtUtil jwtUtil;
+    private final JwtRedisUtil jwtRedisUtil;
 
     @Autowired
-    public JwtAuthenticationWebFilter(SecurityWhiteListProperties securityProperties, JwtUtil jwtUtil) {
+    public JwtAuthenticationWebFilter(SecurityWhiteListProperties securityProperties, JwtUtil jwtUtil, JwtRedisUtil jwtRedisUtil) {
         this.securityProperties = securityProperties;
         this.jwtUtil = jwtUtil;
+        this.jwtRedisUtil = jwtRedisUtil;
     }
 
      /** 验证不通过的提示 */
@@ -60,17 +62,33 @@ public class JwtAuthenticationWebFilter implements WebFilter {
             return unauthorized(exchange, "token缺失");
         }
 
-        try {
-             Claims claims = jwtUtil.parseToken(token);
-        } catch (Exception e) {
-             log.error("认证失败token:{}", token, e);
-             return unauthorized(exchange, "无效的token");
+        // 验证token是否存在于Redis中
+        if (!jwtRedisUtil.validateToken(token)) {
+            return unauthorized(exchange, "无效的token");
         }
-      
-        // 设置认证上下文
-        Authentication authentication = getAuthentication(token);
+
+        JwtUtil.TokenParseResult tokenParseResult = jwtUtil.parseTokenWithExpirationStatus(token);
+        if (tokenParseResult.isExpired()) {
+             return unauthorized(exchange, "token已过期");
+        }
+
+        if (!tokenParseResult.isSuccess()) {
+            return unauthorized(exchange, "无效的token");
+        }
+
+        //将用户信息存储到security context中
+        Claims claims = tokenParseResult.getClaims();
+        String username = claims.getSubject();
+        List<String> authoritiesObj = (List<String>) claims.get("authorities");
+        // authoritiesStr 可能是逗号分隔的字符串
+        UserDetails userDetails = User.withUsername(username)
+                .password("") //密码可为空
+                .authorities(authoritiesObj.toArray(new String[0]))
+                .build();
         return chain.filter(exchange)
-                .contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication));
+                .contextWrite(ReactiveSecurityContextHolder.withAuthentication(
+                    new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities())
+                ));
     }
 
     /**
@@ -86,17 +104,6 @@ public class JwtAuthenticationWebFilter implements WebFilter {
         return null;
     }
 
-    private Authentication getAuthentication(String token) {
-        Claims claims = jwtUtil.parseToken(token);
-        String username = claims.getSubject();
-        List<String> authoritiesObj = (List<String>) claims.get("authorities");
-        // authoritiesStr 可能是逗号分隔的字符串
-        UserDetails userDetails = User.withUsername(username)
-                .password("") // 密码可为空
-                .authorities(authoritiesObj.toArray(new String[0]))
-                .build();
-        return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
-    }
 
     /**
      * 验证不通过时返回未授权响应 自定义提示

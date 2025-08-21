@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import com.example.sea.common.security.entity.LoginUser;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -88,6 +89,28 @@ public class JwtUtil implements InitializingBean {
                 .parseSignedClaims(token)
                 .getPayload();
     }
+    
+    /**
+     * 解析token并返回详细的解析结果，包括是否过期
+     * @param token JWT token
+     * @return TokenParseResult 包含解析状态和结果
+     */
+    public TokenParseResult parseTokenWithExpirationStatus(String token) {
+        try {
+            Claims claims = Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+            return TokenParseResult.success(claims);
+        } catch (ExpiredJwtException e) {
+            // token已过期，但claims仍然可以获取
+            return TokenParseResult.expired("Token已过期");
+        } catch (Exception e) {
+            // 其他异常（签名无效、格式错误等）
+            return TokenParseResult.error("Token无效: " + e.getMessage());
+        }
+    }
 
     /**
      * 判断是否是 RefreshToken
@@ -152,6 +175,49 @@ public class JwtUtil implements InitializingBean {
     public long getRefreshTokenExpirationMs(){
         return refreshExpirationMs;
     }
+
+    /**
+     * Token解析结果类，包含解析状态和结果
+     */
+    public static class TokenParseResult {
+        private final boolean success;
+        private final Claims claims;
+        private final boolean expired;
+        private final String errorMessage;
+
+        private TokenParseResult(boolean success, Claims claims, boolean expired, String errorMessage) {
+            this.success = success;
+            this.claims = claims;
+            this.expired = expired;
+            this.errorMessage = errorMessage;
+        }
+
+        public static TokenParseResult success(Claims claims) {
+            return new TokenParseResult(true, claims, false, null);
+        }
+
+        public static TokenParseResult expired(String errorMessage) {
+            return new TokenParseResult(false, null, true, errorMessage);
+        }
+
+        public static TokenParseResult error(String errorMessage) {
+            return new TokenParseResult(false, null, false, errorMessage);
+        }
+
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public Claims getClaims() {
+            return claims;
+        }
+
+        public boolean isExpired() {
+            return expired;
+        }
+
+        public String getErrorMessage() {
+            return errorMessage;
+        }
+    }
 }
-
-
