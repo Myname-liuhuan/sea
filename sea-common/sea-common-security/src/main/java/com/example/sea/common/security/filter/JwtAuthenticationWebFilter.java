@@ -63,9 +63,9 @@ public class JwtAuthenticationWebFilter implements WebFilter {
         }
 
         // 验证token是否存在于Redis中
-        if (!jwtRedisUtil.validateToken(token)) {
-            return unauthorized(exchange, "无效的token");
-        }
+        // if (!jwtRedisUtil.validateToken(token)) {
+        //     return unauthorized(exchange, "无效的token");
+        // }
 
         JwtUtil.TokenParseResult tokenParseResult = jwtUtil.parseTokenWithExpirationStatus(token);
         if (tokenParseResult.isExpired()) {
