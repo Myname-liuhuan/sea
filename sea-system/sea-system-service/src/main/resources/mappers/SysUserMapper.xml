@@ -35,4 +35,21 @@
         </where>
         ORDER BY create_time DESC
     </select>
+
+
+    <select id="getRoleCodeByUserId" resultType="String">
+        SELECT r.role_code
+        FROM sys_user_role ur
+        JOIN sys_role r ON ur.role_id = r.id
+        WHERE ur.user_id = #{userId}
+    </select>
+
+    <select id="getPermsByUserId" resultType="String">
+        SELECT sm.perms  
+        FROM sys_role_menu srm
+        JOIN sys_menu sm  ON srm.menu_id  = sm.id 
+        JOIN sys_user_role sur ON srm.role_id  = sur.role_id 
+        WHERE sur.user_id = #{userId}
+    </select>
+
 </mapper>

@@ -16,5 +16,5 @@ public class SeaAuthApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SeaAuthApplication.class, args);
 	}
-
+	
 }

@@ -15,7 +15,7 @@ import com.example.sea.system.interfaces.vo.SysUserVO;
  * @author liuhuan
  * @date 2025-05-28
  */
-public interface ISysUsersService extends IService<SysUser> {
+public interface ISysUserService extends IService<SysUser> {
 
     /**
      * 保存用户信息
@@ -43,7 +43,7 @@ public interface ISysUsersService extends IService<SysUser> {
      * @param username 用户名
      * @return 登录用户信息
      */
-    CommonResult<LoginUser> checkLoginUser(String username);
+    CommonResult<LoginUser> getLoginUser(String username);
 
 
 }

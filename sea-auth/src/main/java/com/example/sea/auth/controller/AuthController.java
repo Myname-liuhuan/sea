@@ -3,8 +3,8 @@ package com.example.sea.auth.controller;
 import com.example.sea.auth.dto.LoginRequest;
 import com.example.sea.auth.dto.LoginResponse;
 import com.example.sea.auth.service.AuthService;
+import com.example.sea.common.core.result.CommonResult;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,19 +27,22 @@ public class AuthController {
      * 用户登录
      */
     @PostMapping("/login")
-    public Mono<ResponseEntity<LoginResponse>> login(@RequestBody LoginRequest loginRequest) {
-        return authService.authenticate(loginRequest.getUsername(), loginRequest.getPassword())
-                .map(token -> ResponseEntity.ok(new LoginResponse(token)))
-                .defaultIfEmpty(ResponseEntity.status(401).build());
+    public Mono<CommonResult<LoginResponse>> login(@RequestBody LoginRequest loginRequest) {
+        return authService.authenticate(loginRequest.getUsername(), loginRequest.getPassword());
     }
 
     /**
      * 刷新token
      */
     @PostMapping("/refresh")
-    public Mono<ResponseEntity<LoginResponse>> refresh(@RequestBody String refreshToken) {
-        return authService.refreshToken(refreshToken)
-                .map(token -> ResponseEntity.ok(new LoginResponse(token)))
-                .defaultIfEmpty(ResponseEntity.status(401).build());
+    public Mono<CommonResult<LoginResponse>> refresh(@RequestBody String refreshToken) {
+        return authService.refreshToken(refreshToken);
+                // .map(tokenResult -> {
+                //     if (tokenResult.isSuccess()) {
+                //         return CommonResult.success(new LoginResponse(tokenResult.getData(), null, 3600000L));
+                //     } else {
+                //         return CommonResult.failed(tokenResult.getMessage());
+                //     }
+                // });
     }
 }
