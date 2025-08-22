@@ -103,20 +103,21 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             Wrappers.<SysUser>lambdaQuery().eq(SysUser::getUsername, username)
         );
 
-        if(!CollectionUtils.isEmpty(userList)){
-            SysUser sysUser = userList.get(0);
-            LoginUser loginUser = new LoginUser();
-            BeanUtils.copyProperties(sysUser, loginUser);
-            loginUser.setPassword(sysUser.getPasswordHash());
-            //获取角色
-            List<String> roleCodeList = this.baseMapper.getRoleCodeByUserId(sysUser.getId());
-            loginUser.setRoles(roleCodeList);
-            //获取权限
-            List<String> authorityList = this.baseMapper.getPermsByUserId(sysUser.getId());
-            loginUser.setAuthorities(authorityList);
-            return CommonResult.success(loginUser);
+        if (CollectionUtils.isEmpty(userList)) {
+            return CommonResult.failed("用户不存在");
         }
-        return CommonResult.failed();
+
+        SysUser sysUser = userList.get(0);
+        LoginUser loginUser = new LoginUser();
+        BeanUtils.copyProperties(sysUser, loginUser);
+        loginUser.setPassword(sysUser.getPasswordHash());
+        //获取角色
+        List<String> roleCodeList = this.baseMapper.getRoleCodeByUserId(sysUser.getId());
+        loginUser.setRoles(roleCodeList);
+        //获取权限
+        List<String> authorityList = this.baseMapper.getPermsByUserId(sysUser.getId());
+        loginUser.setAuthorities(authorityList);
+        return CommonResult.success(loginUser);
     }
 
     
