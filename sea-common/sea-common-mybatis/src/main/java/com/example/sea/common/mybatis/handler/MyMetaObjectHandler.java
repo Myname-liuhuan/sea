@@ -1,6 +1,8 @@
 package com.example.sea.common.mybatis.handler;
 
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
+import com.example.sea.common.security.utils.SecurityContextUtil;
+
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;
 
@@ -27,8 +29,16 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         this.strictUpdateFill(metaObject, "updateBy", Long.class, getCurrentUserId());
     }
 
+    /**
+     * 获取当前登录用户的ID
+     * 如果未登录或无法获取，则返回0
+     * @return
+     */
     private Long getCurrentUserId() {
-        // TODO: 从上下文获取当前用户ID
+        Long userId = SecurityContextUtil.getUserId();
+        if (userId != null) {
+            return userId;
+        }
         return 0L;
     }
 }
