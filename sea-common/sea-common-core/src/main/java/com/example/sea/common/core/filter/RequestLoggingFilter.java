@@ -4,10 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
-import reactor.core.publisher.Mono;
+
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 /**
  * 打印每次请求路径
@@ -16,20 +20,27 @@ import reactor.core.publisher.Mono;
  */
 @Component
 @Order(1)
-public class RequestLoggingFilter implements WebFilter {
+public class RequestLoggingFilter implements Filter {
     
     private static final Logger logger = LoggerFactory.getLogger(RequestLoggingFilter.class);
 
     @Override
-    public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
-        String path = exchange.getRequest().getPath().toString();
-        String method = exchange.getRequest().getMethod().name();
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) 
+            throws IOException, ServletException {
+        
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String path = httpRequest.getRequestURI();
+        String method = httpRequest.getMethod();
         
         logger.info("Request received - Method: {}, Path: {}", method, path);
         
-        return chain.filter(exchange)
-            .doOnSuccess(v -> logger.info("Request completed - Method: {}, Path: {}", method, path))
-            .doOnError(e -> logger.error("Request failed - Method: {}, Path: {}, Error: {}", 
-                method, path, e.getMessage()));
+        try {
+            chain.doFilter(request, response);
+            logger.info("Request completed - Method: {}, Path: {}", method, path);
+        } catch (Exception e) {
+            logger.error("Request failed - Method: {}, Path: {}, Error: {}", 
+                method, path, e.getMessage());
+            throw e;
+        }
     }
 }
