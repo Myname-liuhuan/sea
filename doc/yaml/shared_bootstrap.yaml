@@ -8,8 +8,8 @@ spring:
         password: nacos
 jwt:
   secret: YW5vdGhlclNlY3JldEtleUZvckp3dEJhc2U2NEVuY29kZWRBbmRTdHJvbmdLZXk=
-  expirationMs: 86400000 # 24小时
-  refreshExpirationMs: 604800000 # 7天
+  expirationMs: 360000 # 1小时,AccessToken 过期时间（毫秒）
+  refreshExpirationMs: 604800000 # 7天,RefreshToken 过期时间（毫秒）
 
 security:
   whitelist:
