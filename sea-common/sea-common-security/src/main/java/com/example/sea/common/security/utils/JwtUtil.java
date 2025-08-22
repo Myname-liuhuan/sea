@@ -152,7 +152,7 @@ public class JwtUtil implements InitializingBean {
                 .subject(String.valueOf(loginUser.getId()))
                 .claim("username", loginUser.getUsername())
                 .claim("roles", loginUser.getRoles())
-                .claim("authorities", loginUser.getAuthorities())
+                .claim("authorities", loginUser.getPerms())
                 .claim("tokenType", tokenType) // 标记 token 类型
                 .issuedAt(now)
                 .expiration(new Date(now.getTime() + ttlMillis))

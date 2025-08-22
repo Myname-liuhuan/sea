@@ -9,12 +9,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.example.sea.common.security.entity.LoginUser;
 import com.example.sea.common.security.properties.SecurityWhiteListProperties;
 import com.example.sea.common.security.utils.JwtRedisUtil;
 import com.example.sea.common.security.utils.JwtUtil;
@@ -45,6 +44,7 @@ public class JwtAuthenticationWebFilter extends OncePerRequestFilter {
     /** 验证不通过的提示 */
     private static final String UNAUTHORIZED_MESSAGE_TEMPLATE = "{\"code\":401,\"message\":\"%s\"}";
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -84,17 +84,14 @@ public class JwtAuthenticationWebFilter extends OncePerRequestFilter {
 
         // 将用户信息存储到security context中
         Claims claims = tokenParseResult.getClaims();
-        String username = claims.getSubject();
-        List<String> authoritiesObj = (List<String>) claims.get("authorities");
-        
-        UserDetails userDetails = User.withUsername(username)
-                .password("") // 密码可为空
-                .authorities(authoritiesObj.toArray(new String[0]))
-                .build();
-        
+        LoginUser loginUser = new LoginUser();
+        loginUser.setId(Long.parseLong(claims.getSubject()));
+        loginUser.setUsername(claims.get("username", String.class));
+        loginUser.setRoles(claims.get("roles", List.class));
+        loginUser.setPerms(claims.get("authorities", List.class));
+
         UsernamePasswordAuthenticationToken authentication = 
-            new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
-        
+            new UsernamePasswordAuthenticationToken(loginUser, token, loginUser.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
         
         filterChain.doFilter(request, response);

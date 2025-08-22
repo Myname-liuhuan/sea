@@ -1,5 +1,18 @@
 package com.example.sea.system.service.impl;
 
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.List;
+import java.util.Objects;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.security.entity.LoginUser;
 import com.example.sea.system.converter.SysUserConverter;
@@ -11,20 +24,6 @@ import com.example.sea.system.interfaces.vo.SysUserVO;
 import com.example.sea.system.service.ISysUserService;
 
 import lombok.extern.slf4j.Slf4j;
-
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.List;
-import java.util.Objects;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 /**
  * 用户表服务实现类
@@ -115,8 +114,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         List<String> roleCodeList = this.baseMapper.getRoleCodeByUserId(sysUser.getId());
         loginUser.setRoles(roleCodeList);
         //获取权限
-        List<String> authorityList = this.baseMapper.getPermsByUserId(sysUser.getId());
-        loginUser.setAuthorities(authorityList);
+        List<String> perms = this.baseMapper.getPermsByUserId(sysUser.getId());
+        loginUser.setPerms(perms);
         return CommonResult.success(loginUser);
     }
 
