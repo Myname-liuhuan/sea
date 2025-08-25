@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.example.sea.common.security.constants.SecurityConstants;
 import com.example.sea.common.security.entity.LoginUser;
 import com.example.sea.common.security.properties.SecurityWhiteListProperties;
 import com.example.sea.common.security.utils.JwtRedisUtil;
@@ -51,7 +52,7 @@ public class JwtAuthenticationWebFilter extends OncePerRequestFilter {
         
         String path = request.getRequestURI();
 
-        // 白名单直接放行
+        // 白名单直接放行  (注:放行逻辑只能在解析token前,解析token后SpringSecurity会要求必须给SecurityContext值)
         for (String pattern : securityProperties.getWhitelist()) {
             if (pathMatcher.match(pattern, path)) {
                 filterChain.doFilter(request, response);
@@ -86,9 +87,9 @@ public class JwtAuthenticationWebFilter extends OncePerRequestFilter {
         Claims claims = tokenParseResult.getClaims();
         LoginUser loginUser = new LoginUser();
         loginUser.setId(Long.parseLong(claims.getSubject()));
-        loginUser.setUsername(claims.get("username", String.class));
-        loginUser.setRoles(claims.get("roles", List.class));
-        loginUser.setPerms(claims.get("authorities", List.class));
+        loginUser.setUsername(claims.get(SecurityConstants.CLAIM_USERNAME, String.class));
+        loginUser.setRoles(claims.get(SecurityConstants.CLAIM_ROLES, List.class));
+        loginUser.setPerms(claims.get(SecurityConstants.CLAIM_AUTHS, List.class));
 
         UsernamePasswordAuthenticationToken authentication = 
             new UsernamePasswordAuthenticationToken(loginUser, token, loginUser.getAuthorities());

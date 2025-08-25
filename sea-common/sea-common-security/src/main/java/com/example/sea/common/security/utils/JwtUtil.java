@@ -67,7 +67,7 @@ public class JwtUtil implements InitializingBean {
      * 生成 AccessToken
      */
     public String generateAccessToken(LoginUser loginUser) {
-        return buildToken(loginUser, expirationMs, "ACCESS");
+        return buildToken(loginUser, expirationMs, SecurityConstants.TOKEN_TYPE_ACCESS);
     }
 
 
@@ -77,7 +77,7 @@ public class JwtUtil implements InitializingBean {
      * @return
      */
     public String generateRefreshToken(LoginUser loginUser) {
-        return buildToken(loginUser, refreshExpirationMs, "REFRESH");
+        return buildToken(loginUser, refreshExpirationMs, SecurityConstants.TOKEN_TYPE_REFRESH);
     }
 
     /**
@@ -89,8 +89,8 @@ public class JwtUtil implements InitializingBean {
         return Jwts.builder()
                 .id(SecurityConstants.INTERNAL_FEIGN) // 唯一的 token ID
                 .subject("0")
-                .claim("roles", List.of("ADMIN"))
-                .claim("authorities",List.of("*:*:*"))
+                .claim(SecurityConstants.CLAIM_ROLES, List.of("ADMIN"))
+                .claim(SecurityConstants.CLAIM_AUTHS,List.of("*:*:*"))
                 .issuedAt(now)
                 .expiration(new Date(now.getTime() + expirationMs))
                 .signWith(secretKey)
@@ -170,10 +170,10 @@ public class JwtUtil implements InitializingBean {
         return Jwts.builder()
                 .id(UUID.randomUUID().toString()) // 唯一的 token ID
                 .subject(String.valueOf(loginUser.getId()))
-                .claim("username", loginUser.getUsername())
-                .claim("roles", loginUser.getRoles())
-                .claim("authorities", loginUser.getPerms())
-                .claim("tokenType", tokenType) // 标记 token 类型
+                .claim(SecurityConstants.CLAIM_USERNAME, loginUser.getUsername())
+                .claim(SecurityConstants.CLAIM_ROLES, loginUser.getRoles())
+                .claim(SecurityConstants.CLAIM_AUTHS, loginUser.getPerms())
+                .claim(SecurityConstants.CLAIM_TOKEN_TYPE, tokenType) // 标记 token 类型
                 .issuedAt(now)
                 .expiration(new Date(now.getTime() + ttlMillis))
                 .signWith(secretKey)
