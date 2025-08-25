@@ -1,6 +1,7 @@
 package com.example.sea.common.security.utils;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 import javax.crypto.SecretKey;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.example.sea.common.security.constants.SecurityConstants;
 import com.example.sea.common.security.entity.LoginUser;
 
 import io.jsonwebtoken.Claims;
@@ -77,6 +79,24 @@ public class JwtUtil implements InitializingBean {
     public String generateRefreshToken(LoginUser loginUser) {
         return buildToken(loginUser, refreshExpirationMs, "REFRESH");
     }
+
+    /**
+     * 生成白名单token（无用户信息，仅标记请求来源可信）
+     * @return
+     */
+    public String generateWhiteToken() {
+        Date now = new Date();
+        return Jwts.builder()
+                .id(SecurityConstants.INTERNAL_FEIGN) // 唯一的 token ID
+                .subject("0")
+                .claim("roles", List.of("ADMIN"))
+                .claim("authorities",List.of("*:*:*"))
+                .issuedAt(now)
+                .expiration(new Date(now.getTime() + expirationMs))
+                .signWith(secretKey)
+                .compact();
+    }
+
 
     /**
      * 解析并验证 JWT：
