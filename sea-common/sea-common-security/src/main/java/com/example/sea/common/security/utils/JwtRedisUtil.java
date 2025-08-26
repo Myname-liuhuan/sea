@@ -36,12 +36,12 @@ public class JwtRedisUtil {
     /**
      * Redis中用户token版本号的key前缀 (用于实现用户踢下线所有设备)
      */
-    private static final String JWT_TOKEN_VERSION_KEY_PREFIX = "jwt:token:version:";
+    private static final String JWT_TOKEN_VERSION_KEY_PREFIX = "jwt:version:";
 
     /** 
      * Redis中JWT token黑名单的key前缀 (用于实现token注销)
      */
-    private static final String JWT_TOKEN_BLACKLIST_KEY_PREFIX = "jwt:token:blacklist:";
+    private static final String JWT_TOKEN_BLACKLIST_KEY_PREFIX = "jwt:blacklist:";
 
 
 
