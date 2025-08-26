@@ -22,4 +22,7 @@ public interface SecurityConstants {
     public static final String CLAIM_AUTHS = "authorities";
     /** tokenType */
     public static final String CLAIM_TOKEN_TYPE = "tokenType";
+    /** 当前token的版本 */
+    public static final String CLAIM_VERSION = "version";
+
 }

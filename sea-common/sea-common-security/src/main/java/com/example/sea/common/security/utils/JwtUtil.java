@@ -1,5 +1,6 @@
 package com.example.sea.common.security.utils;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -137,7 +138,7 @@ public class JwtUtil implements InitializingBean {
      */
     public boolean isRefreshToken(String token) {
         try {
-            return "REFRESH".equals(parseToken(token).get("tokenType", String.class));
+            return "REFRESH".equals(parseToken(token).get(SecurityConstants.CLAIM_TOKEN_TYPE, String.class));
         } catch (Exception e) {
             return false;
         }
@@ -148,7 +149,7 @@ public class JwtUtil implements InitializingBean {
      */
     public boolean isAccessToken(String token) {
         try {
-            return "ACCESS".equals(parseToken(token).get("tokenType", String.class));
+            return "ACCESS".equals(parseToken(token).get(SecurityConstants.CLAIM_TOKEN_TYPE, String.class));
         } catch (Exception e) {
             return false;
         }
@@ -174,6 +175,7 @@ public class JwtUtil implements InitializingBean {
                 .claim(SecurityConstants.CLAIM_ROLES, loginUser.getRoles())
                 .claim(SecurityConstants.CLAIM_AUTHS, loginUser.getPerms())
                 .claim(SecurityConstants.CLAIM_TOKEN_TYPE, tokenType) // 标记 token 类型
+                .claim(SecurityConstants.CLAIM_VERSION, loginUser.getVersion()) // 记录当前token的版本
                 .issuedAt(now)
                 .expiration(new Date(now.getTime() + ttlMillis))
                 .signWith(secretKey)
@@ -194,6 +196,17 @@ public class JwtUtil implements InitializingBean {
      */
     public long getRefreshTokenExpirationMs(){
         return refreshExpirationMs;
+    }
+
+    /**
+     * 计算token还有多久过期
+     * @param claim
+     * @return 距离过期的秒数
+     */
+    public long remainSeconds(Claims claim) {
+        long now = Instant.now().getEpochSecond();
+        long exp = claim.getExpiration().toInstant().getEpochSecond();
+        return Math.max(0, exp - now);
     }
 
     /**

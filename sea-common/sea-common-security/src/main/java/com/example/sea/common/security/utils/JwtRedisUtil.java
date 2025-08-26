@@ -34,6 +34,19 @@ public class JwtRedisUtil {
     private static final String USER_TOKEN_KEY_PREFIX = "jwt:user:";
 
     /**
+     * Redis中用户token版本号的key前缀 (用于实现用户踢下线所有设备)
+     */
+    private static final String JWT_TOKEN_VERSION_KEY_PREFIX = "jwt:token:version:";
+
+    /** 
+     * Redis中JWT token黑名单的key前缀 (用于实现token注销)
+     */
+    private static final String JWT_TOKEN_BLACKLIST_KEY_PREFIX = "jwt:token:blacklist:";
+
+
+
+
+    /**
      * 存储JWT token到Redis
      * @param token JWT token
      * @param userId 用户ID
@@ -161,4 +174,47 @@ public class JwtRedisUtil {
             throw new RuntimeException("无法从token中提取用户ID", e);
         }
     }
+
+    /**
+     * 获取用户当前token的版本号
+     * @param userId
+     * @return
+     */
+    public Long getUserVersion(String userId){
+        String versionKey = JWT_TOKEN_VERSION_KEY_PREFIX + userId;
+        String versionStr = redisTemplate.opsForValue().get(versionKey);
+        return versionStr == null ? 0L : Long.parseLong(versionStr);
+    }
+
+    /**
+     * 用户的token版本号+1 (踢下线所有token)
+     * @param userId
+     * @return
+     */
+     public long incrTokenVersion(Long userId) {
+        String key = JWT_TOKEN_VERSION_KEY_PREFIX + userId;
+        Long v = redisTemplate.opsForValue().increment(key);
+        return v == null ? 0L : v;
+    }
+
+    /**
+     * 检查token是否在黑名单中
+     * @param jti
+     * @return
+     */
+    public boolean isBlacklisted(String jti) {
+        String key = JWT_TOKEN_BLACKLIST_KEY_PREFIX + jti;
+        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
+    }
+
+    /**
+     * 将token加入黑名单(踢掉单个token)
+     * @param jti
+     * @param ttlSec
+     */
+    public void addToBlacklist(String jti, long ttlSec) {
+        String key = JWT_TOKEN_BLACKLIST_KEY_PREFIX + jti;
+        redisTemplate.opsForValue().set(key, "1", ttlSec, TimeUnit.SECONDS);
+    }
+
 }

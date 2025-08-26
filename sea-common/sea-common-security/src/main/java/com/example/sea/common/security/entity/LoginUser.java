@@ -21,6 +21,9 @@ public class LoginUser implements UserDetails {
     private String username;
 
     private String password;
+
+    /** 记录该userId当前token的版本 用于踢人下线*/
+    private Long version;
     
     /**
      * 角色编码列表

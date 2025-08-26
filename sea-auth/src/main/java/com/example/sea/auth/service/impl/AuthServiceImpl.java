@@ -54,6 +54,9 @@ public class AuthServiceImpl implements AuthService {
         }
 
         LoginUser loginUser = vaResult.getData();
+        //设置当前token的版本
+        loginUser.setVersion(jwtRedisUtil.getUserVersion(String.valueOf(loginUser.getId())));
+        //生成token
         String accessToken = jwtUtil.generateAccessToken(loginUser);
         String refreshToken = jwtUtil.generateRefreshToken(loginUser);
         Long expiresIn = jwtUtil.getAccessTokenExpirationMs();

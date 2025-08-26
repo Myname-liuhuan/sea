@@ -3,6 +3,7 @@ package com.example.sea.common.security.filter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -66,12 +67,6 @@ public class JwtAuthenticationWebFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 验证token是否存在于Redis中
-        // if (!jwtRedisUtil.validateToken(token)) {
-        //     unauthorized(response, "无效的token");
-        //     return;
-        // }
-
         JwtUtil.TokenParseResult tokenParseResult = jwtUtil.parseTokenWithExpirationStatus(token);
         if (tokenParseResult.isExpired()) {
             unauthorized(response, "token已过期");
@@ -83,8 +78,33 @@ public class JwtAuthenticationWebFilter extends OncePerRequestFilter {
             return;
         }
 
-        // 将用户信息存储到security context中
         Claims claims = tokenParseResult.getClaims();
+        //判断是否是服务间通信,不是就需要进一步校验
+        if (!Objects.equals(SecurityConstants.INTERNAL_FEIGN, claims.getId())) {
+            //只允许accessToken
+            String tokenType = claims.get(SecurityConstants.CLAIM_TOKEN_TYPE, String.class);
+            if(!Objects.equals(SecurityConstants.TOKEN_TYPE_ACCESS, tokenType)){
+                log.error("只允许accessToken访问接口,token:{}", token);
+                unauthorized(response, "无效的token");
+                return;
+            }
+            //验证token是否在黑名单
+            if(jwtRedisUtil.isBlacklisted(claims.getId())){
+                log.error("黑名单token:{}", token);
+                unauthorized(response, "无效的token");
+                return;
+            }
+            //验证版本号
+            Long version = jwtRedisUtil.getUserVersion(claims.getSubject());
+            Long tokenVersion = claims.get(SecurityConstants.CLAIM_VERSION, Long.class);
+            if(version != tokenVersion){
+                log.error("旧版本token:{}", token);
+                unauthorized(response, "无效的token");
+                return;
+            }
+        }
+
+        // 将用户信息存储到security context中
         LoginUser loginUser = new LoginUser();
         loginUser.setId(Long.parseLong(claims.getSubject()));
         loginUser.setUsername(claims.get(SecurityConstants.CLAIM_USERNAME, String.class));
