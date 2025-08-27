@@ -3,7 +3,7 @@
 
     <!-- 声明变量开始： -->
     <!-- 日志存放路径 -->
-    <property name="log.path" value="./logs" />
+    <property name="log.path" value="./logs/system" />
     <!-- 日志输出格式 -->
     <property name="log.pattern" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{20} - [%method,%line] - %msg%n" />
     <!-- 单个日志文件最大大小 -->
