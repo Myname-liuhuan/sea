@@ -35,8 +35,3 @@ spring:
             - Path=/api/system/**
           filters:
             - StripPrefix=2
-
-logging:
-  level:
-    org.springframework.cloud.gateway: DEBUG
-    com.example.sea.gateway: DEBUG

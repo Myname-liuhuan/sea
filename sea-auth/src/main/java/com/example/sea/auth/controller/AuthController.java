@@ -17,7 +17,7 @@ import com.example.sea.common.core.result.CommonResult;
  * @date 2025-08-04
  */
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/")
 public class AuthController {
 
     @Autowired

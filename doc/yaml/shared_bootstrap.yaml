@@ -11,9 +11,11 @@ jwt:
   expirationMs: 3600000 # 1小时,AccessToken 过期时间（毫秒）
   refreshExpirationMs: 604800000 # 7天,RefreshToken 过期时间（毫秒）
 
+#请求白名单
 security:
   whitelist:
-    - /auth/login
-    - /auth/register
+    - /api/auth/login
+    - /login
+    - /api/auth/register
+    - /register
     - /public/**
-    - /api/auth/**
