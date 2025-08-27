@@ -36,7 +36,7 @@ public class RequestLoggingFilter implements Filter {
         
         try {
             chain.doFilter(request, response);
-            logger.info("Request completed - Method: {}, Path: {}", method, path);
+            // logger.info("Request completed - Method: {}, Path: {}", method, path);
         } catch (Exception e) {
             logger.error("Request failed - Method: {}, Path: {}, Error: {}", 
                 method, path, e.getMessage());
