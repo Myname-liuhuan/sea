@@ -33,6 +33,8 @@ build/
 .vscode/
 
 test/
+### 日志文件目录 ###
+logs/
 
 #排除effective-pom.xml
 */effective-pom.xml
