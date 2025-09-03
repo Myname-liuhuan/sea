@@ -7,6 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.cloud.commons.lang.StringUtils;
+import com.example.sea.auth.dto.LoginRequestDTO;
 import com.example.sea.auth.dto.LoginResponse;
 import com.example.sea.auth.feign.SystemFeignClient;
 import com.example.sea.auth.service.AuthService;
@@ -73,7 +74,8 @@ public class AuthServiceImpl implements AuthService {
      * @return 新的访问令牌AccessToken
      */
     @Override
-    public CommonResult<LoginResponse> refreshToken(String refreshToken) {
+    public CommonResult<LoginResponse> refreshToken(LoginRequestDTO loginRequest) {
+        String refreshToken = loginRequest.getRefreshToken();
         // 先验证token是否存在于Redis中
         if (!jwtRedisUtil.validateToken(refreshToken)) {
             return CommonResult.failed("刷新token无效或已过期");
