@@ -32,6 +32,8 @@ public class AuthServiceImpl implements AuthService {
     private final JwtRedisUtil jwtRedisUtil;
     private final SystemFeignClient systemFeignClient;
 
+    private static final String LOGIN_FAILURE_MSG = "用户名或密码错误";
+
     private final BCryptPasswordEncoder bCryptPasswordEncoder =  new BCryptPasswordEncoder();
 
     @Autowired
@@ -51,7 +53,8 @@ public class AuthServiceImpl implements AuthService {
     public CommonResult<LoginResponse> authenticate(String username, String password) {
         CommonResult<LoginUser> vaResult = validateUser(username, password);
         if (!vaResult.isSuccess()) {
-            return CommonResult.failed(vaResult.getMessage());
+            log.error("用户登录失败:用户名称{},失败原因:{}",username, vaResult.getMessage());
+            return CommonResult.failed(LOGIN_FAILURE_MSG);
         }
 
         LoginUser loginUser = vaResult.getData();
