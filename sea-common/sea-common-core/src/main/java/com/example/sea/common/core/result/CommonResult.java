@@ -1,5 +1,7 @@
 package com.example.sea.common.core.result;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * 返回值封装类
@@ -18,6 +20,7 @@ public class CommonResult<T> {
     /**
      * 数据封装
      */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private T data;
 
     protected CommonResult() {
@@ -137,6 +140,7 @@ public class CommonResult<T> {
      * 判断当前结果是否成功
      * @return true 表示成功，false 表示失败
      */
+    @JsonIgnore
     public boolean isSuccess() {
         return this.code == ResultCode.SUCCESS.getCode();
     }
