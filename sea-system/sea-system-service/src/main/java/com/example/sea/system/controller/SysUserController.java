@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.core.validation.GroupInsert;
-import com.example.sea.common.core.validation.GroupSave;
+import com.example.sea.common.core.validation.GroupUpdate;
 import com.example.sea.common.security.entity.LoginUser;
 import com.example.sea.system.interfaces.dto.SysUserDTO;
 import com.example.sea.system.interfaces.dto.SysUserQueryDTO;
@@ -40,9 +40,9 @@ public class SysUserController {
      * @param sysUserDTO
      * @return
      */
-    @PostMapping("/save")
-    public CommonResult<Boolean> save(@RequestBody @Validated(GroupSave.class) SysUserDTO sysUserDTO) {
-        return sysUsersService.save(sysUserDTO);
+    @PostMapping("/add")
+    public CommonResult<Boolean> add(@RequestBody @Validated(GroupInsert.class) SysUserDTO sysUserDTO) {
+        return sysUsersService.add(sysUserDTO);
     }
 
     /**
@@ -51,7 +51,7 @@ public class SysUserController {
      * @return
      */
     @PostMapping("/update")
-    public CommonResult<Boolean> update(@RequestBody @Validated(GroupInsert.class) SysUserDTO sysUserDTO) {
+    public CommonResult<Boolean> update(@RequestBody @Validated(GroupUpdate.class) SysUserDTO sysUserDTO) {
         return sysUsersService.update(sysUserDTO);
     }
 

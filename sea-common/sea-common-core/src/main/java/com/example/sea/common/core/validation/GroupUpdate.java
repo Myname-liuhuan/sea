@@ -5,4 +5,4 @@ package com.example.sea.common.core.validation;
  * @author liuhuan
  * @date 2025-04-07
  */
-public interface GroupSave {}
+public interface GroupUpdate {}

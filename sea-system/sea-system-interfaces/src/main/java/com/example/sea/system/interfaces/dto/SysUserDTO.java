@@ -2,7 +2,7 @@ package com.example.sea.system.interfaces.dto;
 
 import com.example.sea.common.core.entity.dto.BaseDTO;
 import com.example.sea.common.core.validation.GroupInsert;
-import com.example.sea.common.core.validation.GroupSave;
+import com.example.sea.common.core.validation.GroupUpdate;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,19 +19,19 @@ import lombok.EqualsAndHashCode;
 public class SysUserDTO extends BaseDTO {
 
     /*** 主键id */
-    @NotNull(message = "id不能为空", groups = {GroupInsert.class})
+    @NotNull(message = "id不能为空", groups = {GroupUpdate.class})
     private Long id;
 
     /**
      * 登录用户名
      */
-    @NotBlank(message = "用户名不能为空",  groups = {GroupSave.class})
+    @NotBlank(message = "用户名不能为空",  groups = {GroupInsert.class})
     private String username;
 
     /**
      * 已验证邮箱
      */
-    @NotBlank(message = "邮箱不能为空", groups = {GroupSave.class})
+    @NotBlank(message = "邮箱不能为空", groups = {GroupInsert.class})
     private String email;
 
     /**
@@ -42,7 +42,7 @@ public class SysUserDTO extends BaseDTO {
     /**
      * BCrypt加密
      */
-    @NotBlank(message = "密码不能为空", groups = {GroupSave.class})
+    @NotBlank(message = "密码不能为空", groups = {GroupInsert.class})
     private String password;
 
     /**

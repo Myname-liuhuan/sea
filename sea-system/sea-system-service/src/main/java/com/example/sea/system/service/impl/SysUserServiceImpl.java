@@ -47,7 +47,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
      * 新增用户信息
      */
     @Override
-    public CommonResult<Boolean> save(SysUserDTO sysUserDTO) {
+    public CommonResult<Boolean> add(SysUserDTO sysUserDTO) {
         try {
             SysUser entity = sysUserConverter.dtoToEntity(sysUserDTO);
             //BCrypt加密密码
