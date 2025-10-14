@@ -1,17 +1,49 @@
 package com.example.sea.system.service.impl;
 
 import com.example.sea.system.service.ISysRoleService;
+
+import lombok.RequiredArgsConstructor;
+
+import com.example.sea.common.core.result.CommonResult;
+import com.example.sea.system.converter.SysRoleConverter;
 import com.example.sea.system.dao.SysRoleMapper;
 import com.example.sea.system.entity.SysRole;
+import com.example.sea.system.interfaces.dto.SysRoleDTO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 角色表服务实现类
  * @author admin
  * @date 2025-08-14
  */
+@RequiredArgsConstructor
 @Service
 public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> implements ISysRoleService {
+
+    private  final SysRoleConverter sysRoleConverter;
+
+    /**
+     * 新增角色信息
+     */
+    @Override
+    public CommonResult<Boolean> add(SysRoleDTO sysRoleDTO) {
+        SysRole sysRole = sysRoleConverter.dtoToEntity(sysRoleDTO);
+        boolean result = this.save(sysRole);
+        return CommonResult.success(result);
+    }
+
+    /**
+     * 更新角色信息
+     * 更新角色用户关系
+     */
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public CommonResult<Boolean> edit(SysRoleDTO sysRoleDTO) {
+        SysRole sysRole = sysRoleConverter.dtoToEntity(sysRoleDTO);
+        boolean result = this.updateById(sysRole);
+        return CommonResult.success(result);
+    }
 
 }

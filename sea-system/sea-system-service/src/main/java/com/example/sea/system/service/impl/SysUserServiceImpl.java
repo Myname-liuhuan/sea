@@ -23,6 +23,7 @@ import com.example.sea.system.interfaces.dto.SysUserQueryDTO;
 import com.example.sea.system.interfaces.vo.SysUserVO;
 import com.example.sea.system.service.ISysUserService;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -30,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author liuhuan
  * @date 2025-05-28
  */
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements ISysUserService {
@@ -37,11 +39,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     private final SysUserConverter sysUserConverter;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder =  new BCryptPasswordEncoder();
-
-    @Autowired
-    public SysUserServiceImpl(SysUserConverter sysUserConverter) {
-        this.sysUserConverter = sysUserConverter;
-    }
 
     /**
      * 新增用户信息
