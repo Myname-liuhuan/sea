@@ -92,13 +92,14 @@ public class AuthServiceImpl implements AuthService {
         // 解析刷新token
         Claims claims =  jwtUtil.parseToken(refreshToken);
         String username = (String) claims.get("username");
-        String password = (String) claims.get("password");
         
-        CommonResult<LoginUser> vaResult = validateUser(username, password);
-        if (!vaResult.isSuccess()) {
-            return CommonResult.failed(vaResult.getMessage());
+        CommonResult<LoginUser> remoteResult = systemFeignClient.getLoginUser(username);
+        if (!remoteResult.isSuccess()) {
+            log.error("刷新token失败，token:{} 原因：{}", refreshToken, "用户不存在");
+            return CommonResult.failed("刷新token失败,用户不存在");
         }
-        String newAccessToken = jwtUtil.generateAccessToken(vaResult.getData());
+        
+        String newAccessToken = jwtUtil.generateAccessToken(remoteResult.getData());
         return CommonResult.success(new LoginResponse(newAccessToken, refreshToken, jwtUtil.getAccessTokenExpirationMs()));   
     }
 
