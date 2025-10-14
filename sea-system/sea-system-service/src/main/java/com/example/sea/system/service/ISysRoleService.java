@@ -21,4 +21,11 @@ public interface ISysRoleService extends IService<SysRole> {
 
     CommonResult<Boolean> edit(SysRoleDTO sysRoleDTO);
 
+    /**
+     * 编辑角色下的用户
+     * @param sysRoleDTO
+     * @return
+     */
+    CommonResult<Boolean> editRoleUsers(SysRoleDTO sysRoleDTO);
+
 }

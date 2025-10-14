@@ -12,6 +12,7 @@ import com.example.sea.system.interfaces.dto.SysRoleDTO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 /**
  * 角色表服务实现类
@@ -44,6 +45,18 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         SysRole sysRole = sysRoleConverter.dtoToEntity(sysRoleDTO);
         boolean result = this.updateById(sysRole);
         return CommonResult.success(result);
+    }
+
+    @Override
+    public CommonResult<Boolean> editRoleUsers(SysRoleDTO sysRoleDTO) {
+        Long roleId = sysRoleDTO.getId();
+        // 删除该角色下的所有用户
+        baseMapper.deleteRoleUsersByRoleId(roleId);
+        // 添加新的用户角色关系
+        if(!CollectionUtils.isEmpty(sysRoleDTO.getUserIdList())){
+            baseMapper.insertRoleUsers(roleId, sysRoleDTO.getUserIdList());
+        }
+        return CommonResult.success(true);
     }
 
 }

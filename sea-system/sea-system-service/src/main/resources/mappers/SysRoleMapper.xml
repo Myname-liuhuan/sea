@@ -2,4 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.sea.system.dao.SysRoleMapper">
 
+    <delete id="deleteRoleUsersByRoleId" parameterType="long">
+        DELETE FROM sys_user_role WHERE role_id = #{roleId}
+    </delete>
+
+    <insert id="insertRoleUsers" parameterType="java.util.List">
+        INSERT INTO sys_user_role (user_id, role_id) VALUES
+        <foreach collection="userIdList" item="userId" separator=",">
+            (#{userId}, #{roleId})
+        </foreach>
+    </insert>
+
 </mapper>
