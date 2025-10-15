@@ -5,6 +5,7 @@ import java.util.List;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.system.entity.SysMenu;
+import com.example.sea.system.interfaces.dto.SysMenuDTO;
 import com.example.sea.system.interfaces.vo.SysMenuNodeVO;
 
 /**
@@ -19,5 +20,12 @@ public interface ISysMenuService extends IService<SysMenu> {
      * @return
      */
     CommonResult<List<SysMenuNodeVO>> treeMenu();
+
+    /**
+     * 添加菜单
+     * @param sysMenuDTO
+     * @return
+     */
+    CommonResult<Boolean> add(SysMenuDTO sysMenuDTO);
 
 }

@@ -1,9 +1,14 @@
 package com.example.sea.system.service.impl;
 
 import com.example.sea.system.service.ISysMenuService;
+
+import lombok.RequiredArgsConstructor;
+
 import com.example.sea.common.core.result.CommonResult;
+import com.example.sea.system.converter.SysMenuConverter;
 import com.example.sea.system.dao.SysMenuMapper;
 import com.example.sea.system.entity.SysMenu;
+import com.example.sea.system.interfaces.dto.SysMenuDTO;
 import com.example.sea.system.interfaces.vo.SysMenuNodeVO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
@@ -18,8 +23,11 @@ import org.springframework.stereotype.Service;
  * @author admin
  * @date 2025-08-14
  */
+@RequiredArgsConstructor
 @Service
 public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> implements ISysMenuService {
+
+    private final SysMenuConverter sysMenuConverter;
 
     @Override
     public CommonResult<List<SysMenuNodeVO>> treeMenu() {
@@ -35,6 +43,16 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
                         return rootNode;
                     }).toList();
         return CommonResult.success(nodeList);
+    }
+
+    /**
+     * 添加菜单
+     */
+    @Override
+    public CommonResult<Boolean> add(SysMenuDTO sysMenuDTO) {
+        SysMenu sysMenu = sysMenuConverter.dtoToEntity(sysMenuDTO);
+        boolean result = this.save(sysMenu);
+        return CommonResult.success(result);
     }
 
     /**

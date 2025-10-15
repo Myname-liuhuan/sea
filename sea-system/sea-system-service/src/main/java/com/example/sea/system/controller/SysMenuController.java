@@ -1,6 +1,7 @@
 package com.example.sea.system.controller;
 
 import com.example.sea.common.core.result.CommonResult;
+import com.example.sea.system.interfaces.dto.SysMenuDTO;
 import com.example.sea.system.interfaces.vo.SysMenuNodeVO;
 import com.example.sea.system.service.ISysMenuService;
 import org.springframework.web.bind.annotation.*;
@@ -25,10 +26,19 @@ public class SysMenuController {
         this.sysMenuService = sysMenuService;
     }
 
-    //登录成功后获取menu
+    /**
+     * 登录成功后获取菜单树
+     * @return
+     */
     @GetMapping("/treeMenu")
     public CommonResult<List<SysMenuNodeVO>> treeMenu() {
         return sysMenuService.treeMenu();
+    }
+
+    /** 添加菜单 */
+    @PostMapping("/add")
+    public CommonResult<Boolean> add(@RequestBody SysMenuDTO sysMenuDTO) {
+        return sysMenuService.add(sysMenuDTO);
     }
 
 
