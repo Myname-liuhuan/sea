@@ -98,8 +98,11 @@ public class AuthServiceImpl implements AuthService {
             log.error("刷新token失败，token:{} 原因：{}", refreshToken, "用户不存在");
             return CommonResult.failed("刷新token失败,用户不存在");
         }
-        
-        String newAccessToken = jwtUtil.generateAccessToken(remoteResult.getData());
+        //设置当前token的版本
+        LoginUser loginUser = remoteResult.getData();
+        loginUser.setVersion(jwtRedisUtil.getUserVersion(String.valueOf(loginUser.getId())));
+        // 生成新的accessToken
+        String newAccessToken = jwtUtil.generateAccessToken(loginUser);
         return CommonResult.success(new LoginResponse(newAccessToken, refreshToken, jwtUtil.getAccessTokenExpirationMs()));   
     }
 
