@@ -4,6 +4,7 @@ import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.core.validation.GroupInsert;
 import com.example.sea.common.core.validation.GroupUpdate;
 import com.example.sea.system.interfaces.dto.SysRoleDTO;
+import com.example.sea.system.interfaces.dto.SysRoleUserDTO;
 import com.example.sea.system.service.ISysRoleService;
 
 import lombok.RequiredArgsConstructor;
@@ -39,7 +40,7 @@ public class SysRoleController {
      * @return
      */
     @PostMapping("/editRoleUsers")
-    public CommonResult<Boolean> editRoleUsers(@RequestBody @Validated(GroupUpdate.class) SysRoleDTO sysRoleDTO){
-        return sysRoleService.editRoleUsers(sysRoleDTO);
+    public CommonResult<Boolean> editRoleUsers(@RequestBody @Validated(GroupUpdate.class) SysRoleUserDTO sysRoleUserDTO){
+        return sysRoleService.editRoleUsers(sysRoleUserDTO);
     }
 }

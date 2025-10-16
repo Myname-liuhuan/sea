@@ -10,8 +10,8 @@ INSERT INTO `sys_user` (`id`, `username`, `mobile`, `email`, `password_hash`, `a
 
 -- 2. 角色数据
 INSERT INTO `sys_role` (`id`, `role_name`, `role_code`, `role_desc`, `role_sort`, `data_scope`, `status`, `create_time`, `update_time`, `create_by`, `update_by`, `del_flag`) VALUES
-(1, '管理员', 'admin', '系统管理员，拥有所有权限', 1, 1, 1, NOW(), NOW(), NULL, NULL, 0),
-(2, '普通用户', 'user', '普通用户，拥有基础权限', 2, 1, 1, NOW(), NOW(), NULL, NULL, 0);
+(1, '管理员', 'ROLE_ADMIN', '系统管理员，拥有所有权限', 1, 1, 1, NOW(), NOW(), NULL, NULL, 0),
+(2, '普通用户', 'ROLE_USER', '普通用户，拥有基础权限', 2, 1, 1, NOW(), NOW(), NULL, NULL, 0);
 
 -- 3. 菜单数据
 -- 首页模块

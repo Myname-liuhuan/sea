@@ -9,6 +9,7 @@ import com.example.sea.system.converter.SysRoleConverter;
 import com.example.sea.system.dao.SysRoleMapper;
 import com.example.sea.system.entity.SysRole;
 import com.example.sea.system.interfaces.dto.SysRoleDTO;
+import com.example.sea.system.interfaces.dto.SysRoleUserDTO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +24,7 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> implements ISysRoleService {
 
-    private  final SysRoleConverter sysRoleConverter;
+    private final SysRoleConverter sysRoleConverter;
 
     /**
      * 新增角色信息
@@ -47,14 +48,15 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
         return CommonResult.success(result);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public CommonResult<Boolean> editRoleUsers(SysRoleDTO sysRoleDTO) {
-        Long roleId = sysRoleDTO.getId();
+    public CommonResult<Boolean> editRoleUsers(SysRoleUserDTO sysRoleUserDTO) {
+        Long roleId = sysRoleUserDTO.getRoleId();
         // 删除该角色下的所有用户
         baseMapper.deleteRoleUsersByRoleId(roleId);
         // 添加新的用户角色关系
-        if(!CollectionUtils.isEmpty(sysRoleDTO.getUserIdList())){
-            baseMapper.insertRoleUsers(roleId, sysRoleDTO.getUserIdList());
+        if(!CollectionUtils.isEmpty(sysRoleUserDTO.getUserIdList())){
+            baseMapper.insertRoleUsers(roleId, sysRoleUserDTO.getUserIdList());
         }
         return CommonResult.success(true);
     }

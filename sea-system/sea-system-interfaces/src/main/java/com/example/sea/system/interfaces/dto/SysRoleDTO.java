@@ -1,7 +1,5 @@
 package com.example.sea.system.interfaces.dto;
 
-import java.util.List;
-
 import com.example.sea.common.core.entity.dto.BaseDTO;
 import com.example.sea.common.core.validation.GroupInsert;
 import com.example.sea.common.core.validation.GroupUpdate;
@@ -49,11 +47,6 @@ public class SysRoleDTO extends BaseDTO {
      * 状态（1正常 0停用）
      */
     private  String  status;
-
-    /**
-     * 该角色下用户ID集合
-     */
-    private List<Long> userIdList;
 
     
 }
