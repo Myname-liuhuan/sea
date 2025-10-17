@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 
 import com.example.sea.system.entity.SysMenu;
 import com.example.sea.system.interfaces.dto.SysMenuDTO;
+import com.example.sea.system.interfaces.vo.SysMenuNodeVO;
 
 /**
  * sys_menu 表实体类转换器
@@ -19,4 +20,11 @@ public interface SysMenuConverter {
      * @return
      */
     public SysMenu dtoToEntity(SysMenuDTO dto);
+
+    /**
+     * entity转nodeVO
+     * @param entity
+     * @return
+     */
+    public SysMenuNodeVO entityToNodeVO(SysMenu entity);
 }

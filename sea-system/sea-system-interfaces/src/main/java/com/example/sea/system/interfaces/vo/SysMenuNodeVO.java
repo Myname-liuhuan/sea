@@ -1,5 +1,6 @@
 package com.example.sea.system.interfaces.vo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Data;
@@ -13,7 +14,7 @@ import lombok.Data;
 @Data
 public class SysMenuNodeVO {
 
-    List<SysMenuNodeVO> children;
+    private List<SysMenuNodeVO> children = new ArrayList<>();
 
     /**
      * 菜单ID

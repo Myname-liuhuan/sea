@@ -1,6 +1,7 @@
 package com.example.sea.system.controller;
 
 import com.example.sea.common.core.result.CommonResult;
+import com.example.sea.common.core.validation.GroupInsert;
 import com.example.sea.system.interfaces.dto.SysMenuDTO;
 import com.example.sea.system.interfaces.vo.SysMenuNodeVO;
 import com.example.sea.system.service.ISysMenuService;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * 菜单权限表控制器
@@ -37,7 +39,7 @@ public class SysMenuController {
 
     /** 添加菜单 */
     @PostMapping("/add")
-    public CommonResult<Boolean> add(@RequestBody SysMenuDTO sysMenuDTO) {
+    public CommonResult<Boolean> add(@RequestBody @Validated(GroupInsert.class) SysMenuDTO sysMenuDTO) {
         return sysMenuService.add(sysMenuDTO);
     }
 
