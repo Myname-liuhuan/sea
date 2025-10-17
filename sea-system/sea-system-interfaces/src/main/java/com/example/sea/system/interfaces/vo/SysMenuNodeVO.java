@@ -14,7 +14,7 @@ import lombok.Data;
 @Data
 public class SysMenuNodeVO {
 
-    private List<SysMenuNodeVO> children = new ArrayList<>();
+    private List<SysMenuNodeVO> children;
 
     /**
      * 菜单ID

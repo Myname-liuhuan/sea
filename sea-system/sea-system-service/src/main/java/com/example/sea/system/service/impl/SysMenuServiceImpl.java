@@ -15,7 +15,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -35,15 +37,13 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     public CommonResult<List<SysMenuNodeVO>> treeMenu() {
         //先查出所有菜单
         List<SysMenu> menuList = list();
-        List<SysMenuNodeVO> nodeList =
-                    menuList.stream()
-                    .filter(menu -> Objects.isNull(menu.getParentId()) || menu.getParentId() == 0)
-                    .map(menu -> {
-                        SysMenuNodeVO rootNode = sysMenuConverter.entityToNodeVO(menu);
-                        buildMenuTree(menuList, rootNode);
-                        return rootNode;
-                    }).toList();
-        return CommonResult.success(nodeList);
+        //再分组
+        final Map<Long, List<SysMenuNodeVO>> childrenMap = menuList.stream()
+            .collect(Collectors.groupingBy(
+                SysMenu::getParentId,
+                Collectors.mapping(sysMenuConverter::entityToNodeVO, Collectors.toList())
+            ));
+        return CommonResult.success(buildTreeFromMap(childrenMap, 0L));
     }
 
     /**
@@ -57,19 +57,17 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     }
 
     /**
-     * 递归构建菜单树
-     * @param menuList 菜单列表
-     * @param parentNode 父节点
-     * @return  菜单节点列表
+     * 从Map中递归构建树结构
+     * @param childrenMap parentId到子节点的映射
+     * @param parentId 父节点ID
+     * @return 子节点列表
      */
-    private void buildMenuTree(List<SysMenu> menuList, SysMenuNodeVO parentNode) {
-        for (SysMenu menu : menuList) {
-            if (menu.getParentId().equals(parentNode.getId())) {
-                SysMenuNodeVO childNode = sysMenuConverter.entityToNodeVO(menu);
-                buildMenuTree(menuList, childNode);
-                parentNode.getChildren().add(childNode);
-            }
-        }
+    private List<SysMenuNodeVO> buildTreeFromMap(Map<Long, List<SysMenuNodeVO>> childrenMap, Long parentId) {
+        List<SysMenuNodeVO> children = childrenMap.getOrDefault(parentId, new ArrayList<>());
+        children.forEach(child -> 
+            child.setChildren(buildTreeFromMap(childrenMap, child.getId()))
+        );
+        return children;
     }
 
     
