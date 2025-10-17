@@ -62,16 +62,14 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
      * @param parentNode 父节点
      * @return  菜单节点列表
      */
-    private List<SysMenuNodeVO> buildMenuTree(List<SysMenu> menuList, SysMenuNodeVO parentNode) {
+    private void buildMenuTree(List<SysMenu> menuList, SysMenuNodeVO parentNode) {
         for (SysMenu menu : menuList) {
             if (menu.getParentId().equals(parentNode.getId())) {
                 SysMenuNodeVO childNode = sysMenuConverter.entityToNodeVO(menu);
-                log.error("parentNode:{}, \n childNode:{}",parentNode, childNode);
                 buildMenuTree(menuList, childNode);
                 parentNode.getChildren().add(childNode);
             }
         }
-        return new ArrayList<>();
     }
 
     
