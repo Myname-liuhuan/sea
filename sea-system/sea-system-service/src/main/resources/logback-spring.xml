@@ -96,25 +96,15 @@
     </root>
 
     <!-- MyBatis / JDBC SQL 日志单独配置 -->
-    <!-- com.example.sea这个最为重要,不扫描业务包不会显示sql -->
-    <logger name="com.example.sea.system" level="DEBUG" additivity="false">
-        <appender-ref ref="CONSOLE"/>
+    <!-- com.example.sea这个最为重要,不扫描业务包不会显示sql,且业务包logger需要开启additivity="true" -->
+    <!-- logger标签默认继承root标签的配置(主要是appender-ref标签)，通过设置additivity="false"可以阻止继承，
+    这样就只会输出到SQL_FILE中，而不会再输出到根日志的文件和控制台中，避免重复日志，
+    反面例子是如果 additivity="false" 且自己没有写<appender-ref ref="ERROR_FILE"/> 那么代码中手动log.error的内容将不会被保存到日志文件 -->
+    <logger name="com.example.sea.system" level="DEBUG" additivity="true">
         <appender-ref ref="SQL_FILE"/>
     </logger>
     <logger name="org.apache.ibatis" level="DEBUG" additivity="false">
         <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="SQL_FILE"/>
-    </logger>
-    <logger name="java.sql" level="DEBUG" additivity="false">
-        <appender-ref ref="SQL_FILE"/>
-    </logger>
-     <logger name="java.sql.Connection" level="DEBUG" additivity="false">
-        <appender-ref ref="SQL_FILE"/>
-    </logger>
-    <logger name="java.sql.Statement" level="DEBUG" additivity="false">
-        <appender-ref ref="SQL_FILE"/>
-    </logger>
-    <logger name="java.sql.PreparedStatement" level="DEBUG" additivity="false">
         <appender-ref ref="SQL_FILE"/>
     </logger>
 
