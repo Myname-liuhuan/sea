@@ -12,3 +12,15 @@ spring:
 logging:
   level:
     com.example.sea.auth: DEBUG
+
+# SpringDoc OpenAPI Configuration
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+    display-request-duration: true
+  packages-to-scan: com.example.sea.auth
+  paths-to-match: /**
