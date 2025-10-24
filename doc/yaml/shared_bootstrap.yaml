@@ -11,7 +11,7 @@ jwt:
   expirationMs: 3600000 # 1小时,AccessToken 过期时间（毫秒）
   refreshExpirationMs: 604800000 # 7天,RefreshToken 过期时间（毫秒）
 
-# SpringDoc OpenAPI 统一基础配置（适用于业务服务，不适用于网关）
+# SpringDoc OpenAPI 统一基础配置
 springdoc:
   api-docs:
     enabled: true
@@ -24,9 +24,11 @@ springdoc:
     display-request-duration: true
     display-operation-id: false
     disable-swagger-default-url: true
+    doc-expansion: none           # 控制 tag 展开行为（none | list | full）
+    defaultModelsExpandDepth: 1   # 模型（左侧Schemas）的展开层级
+    defaultModelExpandDepth: 2    # DTO字段展开层级
   paths-to-match: /**
   # 服务特定的packages-to-scan将在各自配置中定义
-  # 注意：网关服务使用WebFlux，需要单独配置，不使用此共享配置
 
 #请求白名单
 security:
