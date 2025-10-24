@@ -3,4 +3,4 @@ spring:
   profiles:
     active: local
   application:
-    name: sea-media-service
+    name: sea-media

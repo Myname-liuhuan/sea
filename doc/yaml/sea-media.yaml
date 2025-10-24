@@ -1,5 +1,5 @@
 server:
-  port: 8083
+  port: 8082
 
 spring:
   # 数据源配置
@@ -12,10 +12,14 @@ spring:
 
 # MyBatis-Plus配置
 mybatis-plus:
-  mapper-locations: classpath*:/mappers/**/*.xml
+  mapper-locations: classpath*:/mapper/**/*.xml
   configuration:
     map-underscore-to-camel-case: true
 
 # SpringDoc 服务特定配置
 springdoc:
-  packages-to-scan: com.example.sea.system
+  packages-to-scan: com.example.sea.media
+
+logging:
+  level:
+    com.example.sea.media: DEBUG

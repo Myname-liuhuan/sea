@@ -14,6 +14,7 @@ spring:
           enabled: true
           lower-case-service-id: true
       routes:
+        # 业务服务路由
         - id: sea-auth
           uri: lb://sea-auth
           order: 1
@@ -35,3 +36,47 @@ spring:
             - Path=/api/system/**
           filters:
             - StripPrefix=2
+
+        # SpringDoc API文档路由
+        - id: sea-auth-docs
+          uri: lb://sea-auth
+          order: 10
+          predicates:
+            - Path=/sea-auth/v3/api-docs/**
+          filters:
+            - StripPrefix=1
+        - id: sea-system-docs
+          uri: lb://sea-system
+          order: 11
+          predicates:
+            - Path=/sea-system/v3/api-docs/**
+          filters:
+            - StripPrefix=1
+        - id: sea-media-docs
+          uri: lb://sea-media
+          order: 12
+          predicates:
+            - Path=/sea-media/v3/api-docs/**
+          filters:
+            - StripPrefix=1
+
+# SpringDoc 网关聚合配置
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    urls:
+      - name: 认证服务
+        url: sea-auth/v3/api-docs
+      - name: 系统服务
+        url: sea-system/v3/api-docs
+      - name: 媒体服务
+        url: sea-media/v3/api-docs
+    operations-sorter: method
+    tags-sorter: alpha
+    display-request-duration: true
+  webjars:
+    prefix: /webjars

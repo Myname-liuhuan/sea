@@ -11,6 +11,23 @@ jwt:
   expirationMs: 3600000 # 1小时,AccessToken 过期时间（毫秒）
   refreshExpirationMs: 604800000 # 7天,RefreshToken 过期时间（毫秒）
 
+# SpringDoc OpenAPI 统一基础配置（适用于业务服务，不适用于网关）
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+    display-request-duration: true
+    display-operation-id: false
+    disable-swagger-default-url: true
+  paths-to-match: /**
+  # 服务特定的packages-to-scan将在各自配置中定义
+  # 注意：网关服务使用WebFlux，需要单独配置，不使用此共享配置
+
 #请求白名单
 security:
   whitelist:
@@ -20,6 +37,7 @@ security:
     - /register
     - /public/**
     - /v3/api-docs/**
+    - /*/v3/api-docs/**
     - /swagger-ui/**
     - /swagger-ui.html
     - /webjars/**

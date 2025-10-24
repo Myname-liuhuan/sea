@@ -13,14 +13,6 @@ logging:
   level:
     com.example.sea.auth: DEBUG
 
-# SpringDoc OpenAPI Configuration
+# SpringDoc 服务特定配置
 springdoc:
-  api-docs:
-    path: /v3/api-docs
-  swagger-ui:
-    path: /swagger-ui.html
-    operations-sorter: method
-    tags-sorter: alpha
-    display-request-duration: true
   packages-to-scan: com.example.sea.auth
-  paths-to-match: /**
