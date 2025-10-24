@@ -19,6 +19,9 @@ import com.example.sea.system.interfaces.dto.SysUserQueryDTO;
 import com.example.sea.system.interfaces.vo.SysUserVO;
 import com.example.sea.system.service.ISysUserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 /**
  * 用户表控制器
  * @author liuhuan
@@ -26,6 +29,7 @@ import com.example.sea.system.service.ISysUserService;
  */
 @RestController
 @RequestMapping("/sysUser")
+@Tag(name = "用户管理", description = "系统用户相关操作接口")
 public class SysUserController {
 
     private final ISysUserService sysUsersService;
@@ -41,6 +45,7 @@ public class SysUserController {
      * @return
      */
     @PostMapping("/add")
+    @Operation(summary = "新增用户", description = "创建新的系统用户，需要传入用户基本信息")
     public CommonResult<Boolean> add(@RequestBody @Validated(GroupInsert.class) SysUserDTO sysUserDTO) {
         return sysUsersService.add(sysUserDTO);
     }
@@ -51,6 +56,7 @@ public class SysUserController {
      * @return
      */
     @PostMapping("/update")
+    @Operation(summary = "更新用户信息",description = "更新现有用户的基本信息，需要传入完整的用户信息")
     public CommonResult<Boolean> update(@RequestBody @Validated(GroupUpdate.class) SysUserDTO sysUserDTO) {
         return sysUsersService.update(sysUserDTO);
     }
@@ -61,6 +67,7 @@ public class SysUserController {
      * @return
      */         
     @GetMapping("/list")
+    @Operation(summary = "查询用户列表", description = "根据查询条件分页获取用户列表，支持模糊查询")
     public CommonResult<List<SysUserVO>> list(SysUserQueryDTO sysUserQueryDTO) {
         return sysUsersService.list(sysUserQueryDTO);
     }
@@ -77,6 +84,7 @@ public class SysUserController {
      * @return
      */
     @GetMapping("/getLoginUser")
+    @Operation(summary = "获取登录用户信息", description = "根据用户名获取用户的登录信息，包括权限和角色信息")
     public CommonResult<LoginUser> getLoginUser(String username) {
         return sysUsersService.getLoginUser(username);
     }
