@@ -2,7 +2,6 @@ package com.example.sea.system.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,23 +20,20 @@ import com.example.sea.system.service.ISysUserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 /**
  * 用户表控制器
  * @author liuhuan
  * @date 2025-05-28
  */
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/sysUser")
 @Tag(name = "用户管理", description = "系统用户相关操作接口")
 public class SysUserController {
 
     private final ISysUserService sysUsersService;
-
-    @Autowired
-    public SysUserController(ISysUserService sysUsersService){
-        this.sysUsersService = sysUsersService;
-    }
 
     /**
      * 新增用户

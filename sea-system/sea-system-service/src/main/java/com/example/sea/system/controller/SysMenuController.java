@@ -5,11 +5,14 @@ import com.example.sea.common.core.validation.GroupInsert;
 import com.example.sea.system.interfaces.dto.SysMenuDTO;
 import com.example.sea.system.interfaces.vo.SysMenuNodeVO;
 import com.example.sea.system.service.ISysMenuService;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 
 /**
@@ -17,16 +20,13 @@ import org.springframework.validation.annotation.Validated;
  * @author admin
  * @date 2025-08-14
  */
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/sysMenu")
+@Tag(name = "菜单管理", description = "系统菜单相关操作接口")
 public class SysMenuController {
 
     private final ISysMenuService sysMenuService;
-
-    @Autowired
-    public SysMenuController(ISysMenuService sysMenuService){
-        this.sysMenuService = sysMenuService;
-    }
 
     /**
      * 登录成功后获取菜单树

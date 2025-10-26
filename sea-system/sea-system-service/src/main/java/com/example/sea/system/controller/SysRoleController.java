@@ -7,6 +7,7 @@ import com.example.sea.system.interfaces.dto.SysRoleDTO;
 import com.example.sea.system.interfaces.dto.SysRoleUserDTO;
 import com.example.sea.system.service.ISysRoleService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ import org.springframework.validation.annotation.Validated;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/sysRole")
+@Tag(name = "角色管理", description = "系统角色相关操作接口")
 public class SysRoleController {
 
     private final ISysRoleService sysRoleService;
