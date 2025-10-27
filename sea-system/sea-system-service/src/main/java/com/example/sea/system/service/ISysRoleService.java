@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.system.entity.SysRole;
 import com.example.sea.system.interfaces.dto.SysRoleDTO;
+import com.example.sea.system.interfaces.dto.SysRoleMenuDTO;
 import com.example.sea.system.interfaces.dto.SysRoleUserDTO;
 
 /**
@@ -27,6 +28,13 @@ public interface ISysRoleService extends IService<SysRole> {
      * @param sysRoleDTO
      * @return
      */
-    CommonResult<Boolean> editRoleUsers(SysRoleUserDTO sysRoleDTO);
+    CommonResult<Boolean> editRoleUserRelation(SysRoleUserDTO sysRoleDTO);
+
+    /**
+     * 编辑角色下的菜单
+     * @param sysMenuUserDTO
+     * @return
+     */
+    CommonResult<Void> editRoleMenuRelation(SysRoleMenuDTO sysMenuUserDTO);
 
 }

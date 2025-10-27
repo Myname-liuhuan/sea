@@ -4,6 +4,7 @@ import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.core.validation.GroupInsert;
 import com.example.sea.common.core.validation.GroupUpdate;
 import com.example.sea.system.interfaces.dto.SysRoleDTO;
+import com.example.sea.system.interfaces.dto.SysRoleMenuDTO;
 import com.example.sea.system.interfaces.dto.SysRoleUserDTO;
 import com.example.sea.system.service.ISysRoleService;
 
@@ -41,8 +42,18 @@ public class SysRoleController {
      * @param sysRoleDTO
      * @return
      */
-    @PostMapping("/editRoleUsers")
-    public CommonResult<Boolean> editRoleUsers(@RequestBody @Validated(GroupUpdate.class) SysRoleUserDTO sysRoleUserDTO){
-        return sysRoleService.editRoleUsers(sysRoleUserDTO);
+    @PostMapping("/editRoleUserRelation")
+    public CommonResult<Boolean> editRoleUserRelation(@RequestBody @Validated(GroupUpdate.class) SysRoleUserDTO sysRoleUserDTO){
+        return sysRoleService.editRoleUserRelation(sysRoleUserDTO);
+    }
+
+    /**
+     * 编辑角色下的菜单
+     * @param sysMenuUserDTO
+     * @return
+     */
+    @PostMapping("/editRoleMenuRelation")
+    public CommonResult<Void> editRoleMenuRelation(@RequestBody @Validated(GroupUpdate.class) SysRoleMenuDTO sysMenuUserDTO){
+        return sysRoleService.editRoleMenuRelation(sysMenuUserDTO);
     }
 }

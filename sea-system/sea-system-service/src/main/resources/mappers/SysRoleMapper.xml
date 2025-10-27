@@ -13,4 +13,15 @@
         </foreach>
     </insert>
 
+    <delete id="deleteRoleMenusByRoleId" parameterType="long">
+        DELETE FROM sys_role_menu WHERE role_id = #{roleId}
+    </delete>
+
+    <insert id="insertRoleMenus" parameterType="java.util.List">
+        INSERT INTO sys_role_menu (role_id, menu_id) VALUES
+        <foreach collection="menuIdList" item="menuId" separator=",">
+            (#{roleId}, #{menuId})
+        </foreach>
+    </insert>
+
 </mapper>

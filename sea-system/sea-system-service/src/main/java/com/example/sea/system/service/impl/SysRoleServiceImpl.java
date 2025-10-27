@@ -9,6 +9,7 @@ import com.example.sea.system.converter.SysRoleConverter;
 import com.example.sea.system.dao.SysRoleMapper;
 import com.example.sea.system.entity.SysRole;
 import com.example.sea.system.interfaces.dto.SysRoleDTO;
+import com.example.sea.system.interfaces.dto.SysRoleMenuDTO;
 import com.example.sea.system.interfaces.dto.SysRoleUserDTO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
@@ -50,7 +51,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public CommonResult<Boolean> editRoleUsers(SysRoleUserDTO sysRoleUserDTO) {
+    public CommonResult<Boolean> editRoleUserRelation(SysRoleUserDTO sysRoleUserDTO) {
         Long roleId = sysRoleUserDTO.getRoleId();
         // 删除该角色下的所有用户
         baseMapper.deleteRoleUsersByRoleId(roleId);
@@ -59,6 +60,19 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
             baseMapper.insertRoleUsers(roleId, sysRoleUserDTO.getUserIdList());
         }
         return CommonResult.success(true);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public CommonResult<Void> editRoleMenuRelation(SysRoleMenuDTO sysMenuUserDTO) {
+        Long roleId = sysMenuUserDTO.getRoleId();
+        // 删除该角色下的所有菜单
+        baseMapper.deleteRoleMenusByRoleId(roleId);
+        // 添加新的角色菜单关系
+        if(!CollectionUtils.isEmpty(sysMenuUserDTO.getMenuIdList())){
+            baseMapper.insertRoleMenus(roleId, sysMenuUserDTO.getMenuIdList());
+        }
+        return CommonResult.success();
     }
 
 }

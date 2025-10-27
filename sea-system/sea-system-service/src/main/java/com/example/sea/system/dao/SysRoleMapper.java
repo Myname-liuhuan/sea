@@ -29,4 +29,17 @@ public interface SysRoleMapper extends BaseMapper<SysRole> {
      */
     void insertRoleUsers(@Param("roleId") Long roleId, @Param("userIdList") List<Long> userIdList);
 
+    /**
+     * 通过角色ID删除角色和菜单关联
+     * @param roleId
+     */
+    void deleteRoleMenusByRoleId(Long roleId);
+
+    /**
+     * 批量新增角色菜单关联
+     * @param roleId
+     * @param menuIdList
+     */
+    void insertRoleMenus(@Param("roleId") Long roleId,@Param("menuIdList") List<Long> menuIdList);
+
 }
