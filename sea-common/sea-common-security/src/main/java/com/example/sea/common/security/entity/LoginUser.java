@@ -8,6 +8,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Data;
 
 /**
@@ -34,6 +36,7 @@ public class LoginUser implements UserDetails {
     List<String> perms;
 
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // 将字符串权限转换为GrantedAuthority对象
@@ -42,21 +45,25 @@ public class LoginUser implements UserDetails {
                 .collect(Collectors.toList());
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
         return true; // 账户未过期
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
         return true; // 账户未锁定
     }
 
+    @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
         return true; // 凭证未过期
     }
 
+    @JsonIgnore
     @Override
     public boolean isEnabled() {
         return true; // 账户启用
