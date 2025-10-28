@@ -35,6 +35,8 @@ security:
   whitelist:
     - /api/auth/login
     - /login
+    - /api/auth/refresh
+    - /refresh
     - /api/auth/register
     - /register
     - /public/**
