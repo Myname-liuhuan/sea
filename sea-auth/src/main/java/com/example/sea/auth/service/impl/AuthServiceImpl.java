@@ -2,7 +2,6 @@ package com.example.sea.auth.service.impl;
 
 import java.util.Objects;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +16,7 @@ import com.example.sea.common.security.utils.JwtRedisUtil;
 import com.example.sea.common.security.utils.JwtUtil;
 
 import io.jsonwebtoken.Claims;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author liuhuan
  * @date 2025-08-04
  */
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -35,13 +36,6 @@ public class AuthServiceImpl implements AuthService {
     private static final String LOGIN_FAILURE_MSG = "用户名或密码错误";
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder =  new BCryptPasswordEncoder();
-
-    @Autowired
-    public AuthServiceImpl(JwtUtil jwtUtil, JwtRedisUtil jwtRedisUtil, SystemFeignClient systemFeignClient) {
-        this.jwtUtil = jwtUtil;
-        this.jwtRedisUtil = jwtRedisUtil;
-        this.systemFeignClient = systemFeignClient;
-    }
 
     /**
      * 用户登录，生成 JWT 令牌
