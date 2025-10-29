@@ -39,8 +39,12 @@ public class LoginUser implements UserDetails {
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // 将字符串权限转换为GrantedAuthority对象
+        // 将字符串权限转换为GrantedAuthority对象，过滤空权限
+        if (perms == null || perms.isEmpty()) {
+            return java.util.Collections.emptyList();
+        }
         return perms.stream()
+                .filter(perm -> perm != null && !perm.trim().isEmpty())
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
