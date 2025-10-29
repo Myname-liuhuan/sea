@@ -29,12 +29,21 @@ public class SysMenuController {
     private final ISysMenuService sysMenuService;
 
     /**
-     * 登录成功后获取菜单树
+     * 当前登录用户的菜单树
      * @return
      */
-    @GetMapping("/treeMenu")
-    public CommonResult<List<SysMenuNodeVO>> treeMenu() {
-        return sysMenuService.treeMenu();
+    @GetMapping("/myMenuTree")
+    public CommonResult<List<SysMenuNodeVO>> myMenuTree() {
+        return sysMenuService.myMenuTree();
+    }
+
+    /**
+     * 获取所有菜单树
+     * @return
+     */
+    @GetMapping("/allMenuTree")
+    public CommonResult<List<SysMenuNodeVO>> allMenuTree() {
+        return sysMenuService.allMenuTree();
     }
 
     /** 添加菜单 */

@@ -16,10 +16,16 @@ import com.example.sea.system.interfaces.vo.SysMenuNodeVO;
 public interface ISysMenuService extends IService<SysMenu> {
 
     /**
+     * 获取当前用户的菜单树
+     * @return
+     */
+    CommonResult<List<SysMenuNodeVO>> myMenuTree();
+
+    /**
      * 获取菜单树
      * @return
      */
-    CommonResult<List<SysMenuNodeVO>> treeMenu();
+    CommonResult<List<SysMenuNodeVO>> allMenuTree();
 
     /**
      * 添加菜单

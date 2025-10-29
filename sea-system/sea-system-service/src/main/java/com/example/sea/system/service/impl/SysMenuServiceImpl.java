@@ -1,25 +1,24 @@
 package com.example.sea.system.service.impl;
 
-import com.example.sea.system.service.ISysMenuService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.sea.common.core.result.CommonResult;
+import com.example.sea.common.security.utils.SecurityContextUtil;
 import com.example.sea.system.converter.SysMenuConverter;
 import com.example.sea.system.dao.SysMenuMapper;
 import com.example.sea.system.entity.SysMenu;
 import com.example.sea.system.interfaces.dto.SysMenuDTO;
 import com.example.sea.system.interfaces.vo.SysMenuNodeVO;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.example.sea.system.service.ISysMenuService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 菜单权限表服务实现类
@@ -34,7 +33,23 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     private final SysMenuConverter sysMenuConverter;
 
     @Override
-    public CommonResult<List<SysMenuNodeVO>> treeMenu() {
+    public CommonResult<List<SysMenuNodeVO>> myMenuTree() {
+        Long userId = SecurityContextUtil.getUserId();
+        
+        //查询当前用户的菜单列表
+        List<SysMenu> menuList = this.baseMapper.selectMenuListByUserId(userId);
+        
+        //再分组
+        final Map<Long, List<SysMenuNodeVO>> childrenMap = menuList.stream()
+            .collect(Collectors.groupingBy(
+                SysMenu::getParentId,
+                Collectors.mapping(sysMenuConverter::entityToNodeVO, Collectors.toList())
+            ));
+        return CommonResult.success(buildTreeFromMap(childrenMap, 0L));
+    }
+
+    @Override
+    public CommonResult<List<SysMenuNodeVO>> allMenuTree() {
         //先查出所有菜单
         List<SysMenu> menuList = list();
         //再分组

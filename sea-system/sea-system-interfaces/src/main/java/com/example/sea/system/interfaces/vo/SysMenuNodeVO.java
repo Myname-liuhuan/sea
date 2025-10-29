@@ -1,6 +1,5 @@
 package com.example.sea.system.interfaces.vo;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Data;
