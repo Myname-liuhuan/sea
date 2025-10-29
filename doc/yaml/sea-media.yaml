@@ -2,6 +2,9 @@ server:
   port: 8082
 
 spring:
+  web:
+    resources:
+      add-mappings: false # 关闭Spring Boot默认的静态资源映射
   # 数据源配置
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/sea?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=GMT%2B8

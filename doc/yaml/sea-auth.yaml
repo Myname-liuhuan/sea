@@ -3,6 +3,9 @@ server:
 
 #spring data redis 配置
 spring:
+  web:
+    resources:
+      add-mappings: false # 关闭Spring Boot默认的静态资源映射
   redis:
     host: 127.0.0.1
     port: 6379
