@@ -7,7 +7,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @MapperScan("com.example.sea.media.dao")
 @EnableDiscoveryClient
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.example.sea.media", "com.example.sea.common"} )
 public class SeaMediaServiceApplication {
 
 	public static void main(String[] args) {
