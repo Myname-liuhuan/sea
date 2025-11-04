@@ -2,6 +2,11 @@ server:
   port: 8082
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
+      file-size-threshold: 10MB
   web:
     resources:
       add-mappings: false # 关闭Spring Boot默认的静态资源映射
