@@ -5,16 +5,10 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-import org.bytedeco.javacv.FFmpegFrameGrabber;
-import org.bytedeco.javacv.FFmpegFrameRecorder;
-import org.bytedeco.javacv.Frame;
-import org.bytedeco.javacv.FrameGrabber;
-import org.bytedeco.javacv.FrameRecorder;
-import org.bytedeco.javacv.Java2DFrameConverter;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,14 +16,8 @@ import com.example.sea.media.service.WatermarkService;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-
 /**
- * 水印服务实现类
+ * 水印服务实现类 - 使用宿主机ffmpeg
  * @author liuhuan
  * @date 2025/11/4
  */
@@ -55,12 +43,11 @@ public class WatermarkServiceImpl implements WatermarkService {
         String outputFileName = UUID.randomUUID().toString() + "_watermarked" + fileExtension;
         File outputFile = outputDir.resolve(outputFileName).toFile();
         
-        FFmpegFrameGrabber grabber = null;
-        FFmpegFrameRecorder recorder = null;
+        File tempInputFile = null;
         
         try {
             // 保存上传的文件到临时文件
-            File tempInputFile = File.createTempFile("input_", fileExtension);
+            tempInputFile = File.createTempFile("input_", fileExtension);
             try (InputStream inputStream = videoFile.getInputStream();
                  FileOutputStream outputStream = new FileOutputStream(tempInputFile)) {
                 byte[] buffer = new byte[8192];
@@ -70,65 +57,10 @@ public class WatermarkServiceImpl implements WatermarkService {
                 }
             }
             
-            // 初始化视频抓取器
-            grabber = new FFmpegFrameGrabber(tempInputFile);
-            grabber.start();
+            // 使用ffmpeg添加文字水印
+            addTextWatermarkWithFFmpeg(tempInputFile, outputFile, watermarkText);
             
-            // 获取视频信息
-            int videoWidth = grabber.getImageWidth();
-            int videoHeight = grabber.getImageHeight();
-            int videoBitrate = grabber.getVideoBitrate();
-            double frameRate = grabber.getFrameRate();
-            int audioChannels = grabber.getAudioChannels();
-            int audioBitrate = grabber.getAudioBitrate();
-            int sampleRate = grabber.getSampleRate();
-            
-            log.info("视频信息 - 宽度：{}，高度：{}，帧率：{}，视频码率：{}", 
-                    videoWidth, videoHeight, frameRate, videoBitrate);
-            
-            // 初始化视频录制器
-            recorder = new FFmpegFrameRecorder(outputFile, videoWidth, videoHeight, audioChannels);
-            recorder.setVideoCodec(grabber.getVideoCodec());
-            recorder.setFormat(grabber.getFormat());
-            recorder.setFrameRate(frameRate);
-            recorder.setVideoBitrate(videoBitrate);
-            recorder.setAudioCodec(grabber.getAudioCodec());
-            recorder.setAudioBitrate(audioBitrate);
-            recorder.setSampleRate(sampleRate);
-            
-            recorder.start();
-            
-            Java2DFrameConverter converter = new Java2DFrameConverter();
-            Frame frame;
-            int frameCount = 0;
-            
-            // 处理每一帧
-            while ((frame = grabber.grab()) != null) {
-                if (frame.image != null) {
-                    // 处理视频帧
-                    BufferedImage bufferedImage = converter.convert(frame);
-                    BufferedImage watermarkedImage = addTextWatermark(bufferedImage, watermarkText, frameCount);
-                    Frame watermarkedFrame = converter.convert(watermarkedImage);
-                    recorder.record(watermarkedFrame);
-                    frameCount++;
-                } else if (frame.samples != null) {
-                    // 处理音频帧
-                    recorder.record(frame);
-                }
-            }
-            
-            log.info("视频水印添加完成，共处理 {} 帧", frameCount);
-            
-            // 停止录制器
-            recorder.stop();
-            recorder.release();
-            
-            // 停止抓取器
-            grabber.stop();
-            grabber.release();
-            
-            // 删除临时文件
-            tempInputFile.delete();
+            log.info("视频水印添加完成，输出文件：{}", outputFile.getAbsolutePath());
             
             return outputFile;
             
@@ -136,71 +68,250 @@ public class WatermarkServiceImpl implements WatermarkService {
             log.error("添加视频水印失败", e);
             throw new RuntimeException("添加视频水印失败：" + e.getMessage(), e);
         } finally {
-            // 确保资源被释放
-            if (recorder != null) {
-                try {
-                    recorder.stop();
-                    recorder.release();
-                } catch (FrameRecorder.Exception e) {
-                    log.error("释放录制器资源失败", e);
-                }
-            }
-            if (grabber != null) {
-                try {
-                    grabber.stop();
-                    grabber.release();
-                } catch (FrameGrabber.Exception e) {
-                    log.error("释放抓取器资源失败", e);
-                }
+            // 删除临时输入文件
+            if (tempInputFile != null && tempInputFile.exists()) {
+                tempInputFile.delete();
             }
         }
     }
     
     /**
-     * 给图片添加文字水印
+     * 使用ffmpeg命令行添加文字水印
      * 
-     * @param sourceImage 源图片
+     * @param inputFile 输入视频文件
+     * @param outputFile 输出视频文件
      * @param watermarkText 水印文字
-     * @param frameNumber 帧号
-     * @return 添加水印后的图片
+     * @throws Exception 处理异常
      */
-    private BufferedImage addTextWatermark(BufferedImage sourceImage, String watermarkText, int frameNumber) {
-        int width = sourceImage.getWidth();
-        int height = sourceImage.getHeight();
+    private void addTextWatermarkWithFFmpeg(File inputFile, File outputFile, String watermarkText) {
+        // 首先尝试使用drawtext滤镜
+        try {
+            addTextWatermarkWithAlternative(inputFile, outputFile, watermarkText);
+        } catch (Exception e) {
+            log.warn("使用drawtext滤镜失败，尝试替代方案：{}", e.getMessage());
+            throw new RuntimeException("使用drawtext滤镜添加水印失败：" + e.getMessage(), e);
+        }
+    }
+    
+    
+    /**
+     * 使用替代方案添加文字水印（使用overlay滤镜）
+     * 创建一个透明图片作为水印，然后overlay到视频上
+     */
+    private void addTextWatermarkWithAlternative(File inputFile, File outputFile, String watermarkText) throws Exception {
+        log.info("使用替代方案添加水印：创建透明图片并overlay");
         
-        // 创建目标图片
-        BufferedImage targetImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2d = targetImage.createGraphics();
+        // 创建一个临时图片文件作为水印
+        File watermarkImage = createTextWatermarkImage(watermarkText);
         
-        // 设置渲染提示
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        try {
+            // 构建ffmpeg命令
+            List<String> command = new ArrayList<>();
+            
+            // 检查ffmpeg是否可用
+            String ffmpegCmd = getFFmpegCommand();
+            command.add(ffmpegCmd);
+            
+            // 输入文件
+            command.add("-i");
+            command.add(inputFile.getAbsolutePath());
+            
+            // 水印图片
+            command.add("-i");
+            command.add(watermarkImage.getAbsolutePath());
+            
+            // 视频滤镜：overlay水印图片
+            String filter = "overlay=W-w-10:H-h-10:format=auto,format=yuv420p";
+            
+            command.add("-filter_complex");
+            command.add(filter);
+            
+            // 音频编码：直接复制，不重新编码
+            command.add("-c:a");
+            command.add("copy");
+            
+            // 视频编码：使用libx264，保持质量
+            command.add("-c:v");
+            command.add("libx264");
+            
+            // 预设：快速编码
+            command.add("-preset");
+            command.add("fast");
+            
+            // 输出文件
+            command.add("-y"); // 覆盖输出文件
+            command.add(outputFile.getAbsolutePath());
+            
+            // 执行命令
+            executeFFmpegCommand(command);
+            
+        } finally {
+            // 删除临时水印图片
+            if (watermarkImage != null && watermarkImage.exists()) {
+                watermarkImage.delete();
+            }
+        }
+    }
+    
+    /**
+     * 创建文字水印图片
+     * 使用纯Java创建透明背景的文字图片，避免FFmpeg字体问题
+     */
+    private File createTextWatermarkImage(String text) throws Exception {
+        log.info("使用纯Java创建文字水印图片");
         
-        // 绘制原图
-        g2d.drawImage(sourceImage, 0, 0, null);
+        File watermarkFile = File.createTempFile("watermark_", ".png");
+        // 使用纯Java创建透明背景的文字图片
+        int width = 200;
+        int height = 50;
         
-        // 设置水印文字属性
-        g2d.setColor(new Color(255, 255, 255, 128)); // 白色半透明
-        int fontSize = Math.min(width, height) / 20; // 根据视频尺寸调整字体大小
-        Font font = new Font("微软雅黑", Font.BOLD, fontSize);
+        // 创建BufferedImage
+        java.awt.image.BufferedImage image = new java.awt.image.BufferedImage(
+            width, height, java.awt.image.BufferedImage.TYPE_INT_ARGB);
+        
+        // 获取Graphics2D对象
+        java.awt.Graphics2D g2d = image.createGraphics();
+        
+        // 设置抗锯齿
+        g2d.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING, 
+                            java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(java.awt.RenderingHints.KEY_TEXT_ANTIALIASING, 
+                            java.awt.RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        
+        // 设置透明背景
+        g2d.setComposite(java.awt.AlphaComposite.Clear);
+        g2d.fillRect(0, 0, width, height);
+        g2d.setComposite(java.awt.AlphaComposite.SrcOver);
+        
+        // 设置字体和颜色
+        java.awt.Font font = new java.awt.Font("Arial", java.awt.Font.BOLD, 20);
         g2d.setFont(font);
+        g2d.setColor(java.awt.Color.WHITE);
         
-        // 计算文字位置（右下角）
-        int textWidth = g2d.getFontMetrics().stringWidth(watermarkText);
-        int textHeight = g2d.getFontMetrics().getHeight();
-        int x = width - textWidth - 20;
-        int y = height - textHeight - 20;
-        
-        // 绘制文字阴影
-        g2d.setColor(new Color(0, 0, 0, 128));
-        g2d.drawString(watermarkText, x + 2, y + 2);
+        // 计算文字位置（居中）
+        java.awt.FontMetrics fm = g2d.getFontMetrics();
+        int textWidth = fm.stringWidth(text);
+        int textHeight = fm.getHeight();
+        int x = (width - textWidth) / 2;
+        int y = (height - textHeight) / 2 + fm.getAscent();
         
         // 绘制文字
-        g2d.setColor(new Color(255, 255, 255, 200));
-        g2d.drawString(watermarkText, x, y);
+        g2d.drawString(text, x, y);
         
+        // 释放资源
         g2d.dispose();
         
-        return targetImage;
+        // 保存为PNG文件
+        javax.imageio.ImageIO.write(image, "PNG", watermarkFile);
+        
+        log.info("文字水印图片创建成功：{}", watermarkFile.getAbsolutePath());
+        return watermarkFile;
     }
+    
+    
+    /**
+     * 获取ffmpeg命令
+     * 仅检查系统PATH中的ffmpeg，如果没有则直接报错
+     * 
+     * @return ffmpeg命令路径
+     * @throws Exception 如果找不到ffmpeg
+     */
+    private String getFFmpegCommand() throws Exception {
+        // 仅尝试系统PATH中的ffmpeg命令
+        String[] checkCommands = {"ffmpeg", "ffmpeg.exe"};
+        
+        for (String cmd : checkCommands) {
+            try {
+                Process process = new ProcessBuilder(cmd, "-version")
+                    .redirectErrorStream(true)
+                    .start();
+                
+                int exitCode = process.waitFor();
+                if (exitCode == 0) {
+                    log.info("找到ffmpeg命令：{}", cmd);
+                    return cmd;
+                }
+            } catch (Exception e) {
+                log.debug("尝试命令 {} 失败：{}", cmd, e.getMessage());
+            }
+        }
+        
+        throw new RuntimeException("未找到ffmpeg命令，请确保ffmpeg已安装并在系统PATH环境变量中");
+    }
+    
+    /**
+     * 执行ffmpeg命令
+     * 
+     * @param command 命令列表
+     * @throws Exception 执行异常
+     */
+    private void executeFFmpegCommand(List<String> command) throws Exception {
+        String commandStr = String.join(" ", command);
+        log.info("执行ffmpeg命令：{}", commandStr);
+        
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
+        processBuilder.redirectErrorStream(true); // 合并错误流到标准输出
+        
+        // 设置环境变量以避免Fontconfig错误
+        setupEnvironmentVariables(processBuilder);
+        
+        Process process = processBuilder.start();
+        
+        // 读取输出（用于调试和错误诊断）
+        StringBuilder output = new StringBuilder();
+        try (InputStream inputStream = process.getInputStream()) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                String chunk = new String(buffer, 0, bytesRead);
+                output.append(chunk);
+                log.debug("ffmpeg输出片段：{}", chunk.trim());
+            }
+        }
+        
+        // 等待命令执行完成
+        int exitCode = process.waitFor();
+        
+        String fullOutput = output.toString();
+        if (fullOutput.length() > 0) {
+            log.info("ffmpeg完整输出：{}", fullOutput);
+        }
+        
+        if (exitCode != 0) {
+            String errorMsg = String.format("ffmpeg命令执行失败，退出码：%d，命令：%s，输出：%s", 
+                                          exitCode, commandStr, fullOutput);
+            log.error(errorMsg);
+            throw new RuntimeException(errorMsg);
+        }
+        
+        log.info("ffmpeg命令执行成功");
+    }
+    
+    /**
+     * 设置环境变量以避免Fontconfig错误
+     */
+    private void setupEnvironmentVariables(ProcessBuilder processBuilder) {
+        try {
+            // 获取当前环境变量
+            java.util.Map<String, String> env = processBuilder.environment();
+            
+            // 设置Fontconfig相关环境变量
+            // 在Windows上，这可以帮助避免Fontconfig错误
+            String fontConfigFile = env.get("FONTCONFIG_FILE");
+            if (fontConfigFile == null || fontConfigFile.isEmpty()) {
+                // 尝试设置一个默认的字体配置
+                env.put("FONTCONFIG_FILE", "nul");
+                log.debug("设置FONTCONFIG_FILE环境变量为nul");
+            }
+            
+            // 设置其他可能相关的环境变量
+            env.put("FC_DEBUG", "0"); // 禁用Fontconfig调试输出
+            
+            log.debug("已设置环境变量以避免Fontconfig错误");
+        } catch (Exception e) {
+            log.warn("设置环境变量时出错：{}", e.getMessage());
+        }
+    }
+    
 }

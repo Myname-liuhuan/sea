@@ -68,12 +68,6 @@
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
 
-		<!-- JavaCV视频工具插件 -->
-		<dependency>
-			<groupId>org.bytedeco</groupId>
-			<artifactId>javacv-platform</artifactId>
-			<version>1.5.10</version>
-		</dependency>
 
 	</dependencies>
 
