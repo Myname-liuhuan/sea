@@ -23,6 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.sea.media.service.WatermarkService;
 
 import lombok.extern.slf4j.Slf4j;
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.geometry.Positions;
 
 /**
  * 水印服务实现类 - 使用宿主机ffmpeg
@@ -128,6 +130,48 @@ public class WatermarkServiceImpl implements WatermarkService {
             if (tempInputFile != null && tempInputFile.exists()) {
                 tempInputFile.delete();
             }
+        }
+    }
+
+    @Override
+    public File addTextWatermark2Image(MultipartFile file, String watermarkText) {
+        log.info("开始给图片添加文字水印，文件名：{}，水印内容：{}", file.getOriginalFilename(), watermarkText);
+        try {
+            // 创建输出目录
+            Path outputDir = Files.createTempDirectory("tempImage");
+            if (!Files.exists(outputDir)) {
+                Files.createDirectories(outputDir);
+            }
+            
+            // 生成输出文件名
+            String originalFilename = file.getOriginalFilename();
+            String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            String outputFileName = UUID.randomUUID().toString() + "_watermarked" + fileExtension;
+            File outputFile = outputDir.resolve(outputFileName).toFile();
+            
+            // 创建文字水印图片
+            File watermarkImage = createTextWatermarkImage(watermarkText);
+            
+            try {
+                // 使用thumbnailator添加水印
+                Thumbnails.of(file.getInputStream())
+                    .scale(1.0) // 保持原始尺寸
+                    .watermark(Positions.BOTTOM_RIGHT, javax.imageio.ImageIO.read(watermarkImage), 0.8f) // 80%透明度
+                    .toFile(outputFile);
+                
+                log.info("图片水印添加完成，输出文件：{}", outputFile.getAbsolutePath());
+                return outputFile;
+                
+            } finally {
+                // 删除临时水印图片
+                if (watermarkImage != null && watermarkImage.exists()) {
+                    watermarkImage.delete();
+                }
+            }
+            
+        } catch (Exception e) {
+            log.error("添加图片水印失败", e);
+            throw new RuntimeException("添加图片水印失败：" + e.getMessage(), e);
         }
     }
 
@@ -370,7 +414,6 @@ public class WatermarkServiceImpl implements WatermarkService {
             log.error(errorMsg);
             throw new RuntimeException(errorMsg);
         }
-        
         log.info("ffmpeg命令执行成功");
     }
 }
