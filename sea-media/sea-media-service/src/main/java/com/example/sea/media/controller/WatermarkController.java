@@ -20,6 +20,7 @@ import com.example.sea.media.service.WatermarkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -27,14 +28,14 @@ import lombok.extern.slf4j.Slf4j;
  * @author liuhuan
  * @date 2025/11/4
  */
+@RequiredArgsConstructor
 @Slf4j
 @RestController
 @RequestMapping("/watermark")
 @Tag(name = "水印管理", description = "视频水印相关接口")
 public class WatermarkController {
     
-    @Autowired
-    private WatermarkService watermarkService;
+    private final WatermarkService watermarkService;
 
     /**
      * 给视频添加文字水印
@@ -73,6 +74,46 @@ public class WatermarkController {
         } catch (Exception e) {
             log.error("视频水印处理失败", e);
             throw new RuntimeException("视频水印处理失败：" + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 给PDF添加文字水印
+     */
+    @PostMapping("/addTextWatermark2PDF")
+    @Operation(summary = "给PDF添加文字水印", description = "上传PDF文件并添加文字水印，返回带水印的PDF文件")
+    public ResponseEntity<InputStreamResource> addTextWatermark2PDF(
+            @Parameter(description = "PDF文件", required = true) @RequestParam("file") MultipartFile file,
+            @Parameter(description = "水印文字内容", required = true) @RequestParam("watermarkText") String watermarkText) {
+        
+        log.info("接收到PDF水印请求，文件名：{}，水印内容：{}", file.getOriginalFilename(), watermarkText);
+        
+        try {
+            // 调用service处理PDF水印
+            File watermarkedFile = watermarkService.addTextWatermark2PDF(file, watermarkText);
+            
+            // 设置响应头，触发浏览器下载
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, 
+                    "attachment; filename*=UTF-8''" + java.net.URLEncoder.encode(
+                            "watermarked_" + file.getOriginalFilename(), "UTF-8"));
+            headers.add(HttpHeaders.CONTENT_TYPE, "application/pdf");
+            
+            // 返回文件流
+            InputStream inputStream = new FileInputStream(watermarkedFile);
+            InputStreamResource resource = new InputStreamResource(inputStream);
+            
+            log.info("PDF水印处理完成，返回文件：{}", watermarkedFile.getName());
+            
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentLength(watermarkedFile.length())
+                    .contentType(MediaType.parseMediaType("application/pdf"))
+                    .body(resource);
+                    
+        } catch (Exception e) {
+            log.error("PDF水印处理失败", e);
+            throw new RuntimeException("PDF水印处理失败：" + e.getMessage(), e);
         }
     }
     

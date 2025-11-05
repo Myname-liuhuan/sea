@@ -9,6 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.Standard14Fonts;
+import org.apache.pdfbox.pdmodel.graphics.state.PDExtendedGraphicsState;
+import org.apache.pdfbox.util.Matrix;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -74,7 +82,55 @@ public class WatermarkServiceImpl implements WatermarkService {
             }
         }
     }
-    
+
+    @Override
+    public File addTextWatermark2PDF(MultipartFile pdfFile, String watermarkText) throws Exception {
+        log.info("开始给PDF添加文字水印，文件名：{}，水印内容：{}", pdfFile.getOriginalFilename(), watermarkText);
+        
+        // 创建输出目录
+        Path outputDir = Files.createTempDirectory("tempPDF");
+        if (!Files.exists(outputDir)) {
+            Files.createDirectories(outputDir);
+        }
+        
+        // 生成输出文件名
+        String originalFilename = pdfFile.getOriginalFilename();
+        String fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+        String outputFileName = UUID.randomUUID().toString() + "_watermarked" + fileExtension;
+        File outputFile = outputDir.resolve(outputFileName).toFile();
+        
+        File tempInputFile = null;
+        
+        try {
+            // 保存上传的PDF文件到临时文件
+            tempInputFile = File.createTempFile("input_", fileExtension);
+            try (InputStream inputStream = pdfFile.getInputStream();
+                 FileOutputStream outputStream = new FileOutputStream(tempInputFile)) {
+                byte[] buffer = new byte[8192];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+            }
+            
+            // 使用PDFBox添加文字水印
+            addTextWatermarkToPDF(tempInputFile, outputFile, watermarkText);
+            
+            log.info("PDF水印添加完成，输出文件：{}", outputFile.getAbsolutePath());
+            
+            return outputFile;
+            
+        } catch (Exception e) {
+            log.error("添加PDF水印失败", e);
+            throw new RuntimeException("添加PDF水印失败：" + e.getMessage(), e);
+        } finally {
+            // 删除临时输入文件
+            if (tempInputFile != null && tempInputFile.exists()) {
+                tempInputFile.delete();
+            }
+        }
+    }
+
     /**
      * 使用ffmpeg命令行添加文字水印
      * 
@@ -190,6 +246,86 @@ public class WatermarkServiceImpl implements WatermarkService {
         
         log.info("文字水印图片创建成功：{}", watermarkFile.getAbsolutePath());
         return watermarkFile;
+    }
+    
+    /**
+     * 使用PDFBox给PDF添加文字水印
+     * 
+     * @param inputFile 输入PDF文件
+     * @param outputFile 输出PDF文件
+     * @param watermarkText 水印文字
+     * @throws Exception 处理异常
+     */
+    private void addTextWatermarkToPDF(File inputFile, File outputFile, String watermarkText) throws Exception {
+        log.info("使用PDFBox给PDF添加文字水印");
+        
+        try (PDDocument document = Loader.loadPDF(inputFile)) {
+            // 设置水印透明度
+            PDExtendedGraphicsState graphicsState = new PDExtendedGraphicsState();
+            graphicsState.setNonStrokingAlphaConstant(0.3f); // 30%透明度
+            
+            // 获取字体
+            PDType1Font font = new PDType1Font(Standard14Fonts.FontName.HELVETICA_BOLD);
+            
+            // 遍历所有页面添加水印
+            for (PDPage page : document.getPages()) {
+                try (PDPageContentStream contentStream = new PDPageContentStream(
+                        document, page, PDPageContentStream.AppendMode.APPEND, true, true)) {
+                    
+                    // 设置图形状态（透明度）
+                    contentStream.setGraphicsStateParameters(graphicsState);
+                    
+                    // 设置字体和大小
+                    contentStream.setFont(font, 50);
+                    
+                    // 设置水印颜色（灰色）- PDFBox 3.0需要使用0..1范围的浮点数
+                    contentStream.setNonStrokingColor(0.5f, 0.5f, 0.5f);
+                    
+                    // 获取页面尺寸
+                    float pageWidth = page.getMediaBox().getWidth();
+                    float pageHeight = page.getMediaBox().getHeight();
+                    
+                    // 计算文字尺寸（近似）
+                    float textWidth = watermarkText.length() * 30; // 近似估算
+                    float textHeight = 50;
+                    
+                    // 计算水印位置（页面中心）
+                    float centerX = pageWidth / 2;
+                    float centerY = pageHeight / 2;
+                    
+                    // 保存当前转换矩阵
+                    contentStream.saveGraphicsState();
+                    
+                    // 旋转45度，创建斜水印效果
+                    Matrix rotationMatrix = Matrix.getRotateInstance(Math.toRadians(45), centerX, centerY);
+                    contentStream.transform(rotationMatrix);
+                    
+                    // 开始文本
+                    contentStream.beginText();
+                    
+                    // 设置文本位置（相对于旋转后的坐标系，居中显示）
+                    contentStream.newLineAtOffset(-textWidth / 2, -textHeight / 2);
+                    
+                    // 显示文本
+                    contentStream.showText(watermarkText);
+                    
+                    // 结束文本
+                    contentStream.endText();
+                    
+                    // 恢复图形状态
+                    contentStream.restoreGraphicsState();
+                }
+            }
+            
+            // 保存文档
+            document.save(outputFile);
+            log.info("PDF水印添加成功，输出文件：{}", outputFile.getAbsolutePath());
+            
+        } catch (Exception e) {
+            String errorMsg = "PDF水印处理失败：" + e.getMessage();
+            log.error(errorMsg, e);
+            throw new RuntimeException(errorMsg, e);
+        }
     }
     
     /**

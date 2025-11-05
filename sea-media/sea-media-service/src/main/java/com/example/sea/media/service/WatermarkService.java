@@ -20,5 +20,14 @@ public interface WatermarkService {
      * @throws Exception 处理异常
      */
     File addTextWatermarkToVideo(MultipartFile videoFile, String watermarkText) throws Exception;
+
+    /**
+     * 给PDF添加文字水印
+     * @param pdfFile PDF文件
+     * @param watermarkText 水印文字内容
+     * @return 添加水印后的PDF文件
+     * @throws Exception 处理异常
+     */
+    File addTextWatermark2PDF(MultipartFile pdfFile, String watermarkText) throws Exception;
     
 }
