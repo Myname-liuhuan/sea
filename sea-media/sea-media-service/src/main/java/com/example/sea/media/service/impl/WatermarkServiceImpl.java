@@ -83,33 +83,16 @@ public class WatermarkServiceImpl implements WatermarkService {
      * @param watermarkText 水印文字
      * @throws Exception 处理异常
      */
-    private void addTextWatermarkWithFFmpeg(File inputFile, File outputFile, String watermarkText) {
-        // 首先尝试使用drawtext滤镜
-        try {
-            addTextWatermarkWithAlternative(inputFile, outputFile, watermarkText);
-        } catch (Exception e) {
-            log.warn("使用drawtext滤镜失败，尝试替代方案：{}", e.getMessage());
-            throw new RuntimeException("使用drawtext滤镜添加水印失败：" + e.getMessage(), e);
-        }
-    }
-    
-    
-    /**
-     * 使用替代方案添加文字水印（使用overlay滤镜）
-     * 创建一个透明图片作为水印，然后overlay到视频上
-     */
-    private void addTextWatermarkWithAlternative(File inputFile, File outputFile, String watermarkText) throws Exception {
-        log.info("使用替代方案添加水印：创建透明图片并overlay");
+    private void addTextWatermarkWithFFmpeg(File inputFile, File outputFile, String watermarkText) throws Exception{
+        log.info("添加水印方案：创建透明图片并overlay");
         
         // 创建一个临时图片文件作为水印
         File watermarkImage = createTextWatermarkImage(watermarkText);
-        
         try {
-            // 构建ffmpeg命令
+           // 构建ffmpeg命令
             List<String> command = new ArrayList<>();
             
-            // 检查ffmpeg是否可用
-            String ffmpegCmd = getFFmpegCommand();
+            String ffmpegCmd = "ffmpeg";
             command.add(ffmpegCmd);
             
             // 输入文件
@@ -144,7 +127,8 @@ public class WatermarkServiceImpl implements WatermarkService {
             
             // 执行命令
             executeFFmpegCommand(command);
-            
+        } catch (Exception e) {
+            throw new RuntimeException("使用drawtext滤镜添加水印失败：" + e.getMessage(), e);
         } finally {
             // 删除临时水印图片
             if (watermarkImage != null && watermarkImage.exists()) {
@@ -208,37 +192,6 @@ public class WatermarkServiceImpl implements WatermarkService {
         return watermarkFile;
     }
     
-    
-    /**
-     * 获取ffmpeg命令
-     * 仅检查系统PATH中的ffmpeg，如果没有则直接报错
-     * 
-     * @return ffmpeg命令路径
-     * @throws Exception 如果找不到ffmpeg
-     */
-    private String getFFmpegCommand() throws Exception {
-        // 仅尝试系统PATH中的ffmpeg命令
-        String[] checkCommands = {"ffmpeg", "ffmpeg.exe"};
-        
-        for (String cmd : checkCommands) {
-            try {
-                Process process = new ProcessBuilder(cmd, "-version")
-                    .redirectErrorStream(true)
-                    .start();
-                
-                int exitCode = process.waitFor();
-                if (exitCode == 0) {
-                    log.info("找到ffmpeg命令：{}", cmd);
-                    return cmd;
-                }
-            } catch (Exception e) {
-                log.debug("尝试命令 {} 失败：{}", cmd, e.getMessage());
-            }
-        }
-        
-        throw new RuntimeException("未找到ffmpeg命令，请确保ffmpeg已安装并在系统PATH环境变量中");
-    }
-    
     /**
      * 执行ffmpeg命令
      * 
@@ -251,10 +204,7 @@ public class WatermarkServiceImpl implements WatermarkService {
         
         ProcessBuilder processBuilder = new ProcessBuilder(command);
         processBuilder.redirectErrorStream(true); // 合并错误流到标准输出
-        
-        // 设置环境变量以避免Fontconfig错误
-        setupEnvironmentVariables(processBuilder);
-        
+                
         Process process = processBuilder.start();
         
         // 读取输出（用于调试和错误诊断）
@@ -287,31 +237,4 @@ public class WatermarkServiceImpl implements WatermarkService {
         
         log.info("ffmpeg命令执行成功");
     }
-    
-    /**
-     * 设置环境变量以避免Fontconfig错误
-     */
-    private void setupEnvironmentVariables(ProcessBuilder processBuilder) {
-        try {
-            // 获取当前环境变量
-            java.util.Map<String, String> env = processBuilder.environment();
-            
-            // 设置Fontconfig相关环境变量
-            // 在Windows上，这可以帮助避免Fontconfig错误
-            String fontConfigFile = env.get("FONTCONFIG_FILE");
-            if (fontConfigFile == null || fontConfigFile.isEmpty()) {
-                // 尝试设置一个默认的字体配置
-                env.put("FONTCONFIG_FILE", "nul");
-                log.debug("设置FONTCONFIG_FILE环境变量为nul");
-            }
-            
-            // 设置其他可能相关的环境变量
-            env.put("FC_DEBUG", "0"); // 禁用Fontconfig调试输出
-            
-            log.debug("已设置环境变量以避免Fontconfig错误");
-        } catch (Exception e) {
-            log.warn("设置环境变量时出错：{}", e.getMessage());
-        }
-    }
-    
 }
