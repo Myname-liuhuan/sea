@@ -39,3 +39,7 @@ logs/
 #排除effective-pom.xml
 */effective-pom.xml
 
+### claude ###
+.claude/
+CLAUDE.md
+
