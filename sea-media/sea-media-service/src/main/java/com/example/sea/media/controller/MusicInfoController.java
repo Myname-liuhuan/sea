@@ -6,16 +6,21 @@ import com.example.sea.media.entity.MusicInfo;
 import com.example.sea.media.interfaces.vo.MusicInfoVO;
 import com.example.sea.media.interfaces.vo.MusicInfoVO2;
 import com.example.sea.media.service.MusicInfoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/media/music")
+@Tag(name = "音乐管理", description = "音乐信息相关操作接口")
+@RequiredArgsConstructor
 public class MusicInfoController {
-    @Autowired
-    MusicInfoService musicInfoService;
+
+    private final MusicInfoService musicInfoService;
 
     /**
      * 保存音乐信息
@@ -24,6 +29,7 @@ public class MusicInfoController {
      * @return
      */
     @PostMapping("/saveMusicInfo")
+    @Operation(summary = "保存音乐信息", description = "创建新的音乐信息记录")
     public CommonResult<Integer> saveMusicInfo(@RequestBody MusicInfo musicInfo){
         return musicInfoService.saveMusicInfo(musicInfo);
     }
@@ -35,6 +41,7 @@ public class MusicInfoController {
      * @return
      */
     @GetMapping("/pageList")
+    @Operation(summary = "分页查询音乐", description = "根据条件分页查询音乐信息")
     public CommonResult<Page<MusicInfoVO>> pageList(MusicInfo musicInfo, Integer pageNum, Integer pageSize){
         return musicInfoService.pageList(musicInfo,pageNum == null? 1 :pageNum, pageSize == null? 10 : pageSize);
     }
@@ -46,6 +53,7 @@ public class MusicInfoController {
      * @return
      */
     @GetMapping("/pageListJoinSong")
+    @Operation(summary = "分页查询音乐(含歌手)", description = "分页查询音乐信息并关联歌手表")
     public CommonResult<Page<MusicInfoVO2>> pageListJoinSong(MusicInfo musicInfo, Integer pageNum, Integer pageSize){
         return musicInfoService.pageListJoinSong(musicInfo, pageNum == null || pageNum <= 0? 1 :pageNum, pageSize == null? 10 : pageSize);
     }
@@ -56,6 +64,7 @@ public class MusicInfoController {
      * @return
      */
     @PostMapping("/logicalDeleteById")
+    @Operation(summary = "逻辑删除音乐", description = "根据ID逻辑删除音乐信息")
     public CommonResult<Integer> logicalDeleteById(@RequestBody Long id){
         return musicInfoService.logicalDeleteById(id);
     }
@@ -66,6 +75,7 @@ public class MusicInfoController {
      * @return
      */
     @PostMapping("/logicalBatchDeleteByIds")
+    @Operation(summary = "批量逻辑删除音乐", description = "批量逻辑删除音乐信息")
     public CommonResult<Integer> logicalBatchDeleteByIds(@RequestBody List<MusicInfo> list){
         return musicInfoService.logicalBatchDeleteByIds(list);
     }

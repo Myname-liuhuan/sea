@@ -6,6 +6,7 @@ import com.example.sea.system.interfaces.dto.SysMenuDTO;
 import com.example.sea.system.interfaces.vo.SysMenuNodeVO;
 import com.example.sea.system.service.ISysMenuService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +34,7 @@ public class SysMenuController {
      * @return
      */
     @GetMapping("/myMenuTree")
+    @Operation(summary = "获取当前用户菜单树", description = "获取当前登录用户的菜单权限树")
     public CommonResult<List<SysMenuNodeVO>> myMenuTree() {
         return sysMenuService.myMenuTree();
     }
@@ -42,12 +44,14 @@ public class SysMenuController {
      * @return
      */
     @GetMapping("/allMenuTree")
+    @Operation(summary = "获取所有菜单树", description = "获取系统中所有的菜单权限树")
     public CommonResult<List<SysMenuNodeVO>> allMenuTree() {
         return sysMenuService.allMenuTree();
     }
 
     /** 添加菜单 */
     @PostMapping("/add")
+    @Operation(summary = "新增菜单", description = "创建新的菜单权限，需要传入菜单基本信息")
     public CommonResult<Boolean> add(@RequestBody @Validated(GroupInsert.class) SysMenuDTO sysMenuDTO) {
         return sysMenuService.add(sysMenuDTO);
     }

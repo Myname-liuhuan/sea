@@ -14,6 +14,10 @@ import com.example.sea.auth.validation.GroupLogin;
 import com.example.sea.auth.validation.GroupRefresh;
 import com.example.sea.common.core.result.CommonResult;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+
 /**
  * 认证控制器
  * @author liuhuan
@@ -21,15 +25,17 @@ import com.example.sea.common.core.result.CommonResult;
  */
 @RestController
 @RequestMapping("/")
+@Tag(name = "认证管理", description = "用户认证相关操作接口")
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
 
     /**
      * 用户登录
      */
     @PostMapping("/login")
+    @Operation(summary = "用户登录", description = "用户使用用户名和密码登录，返回访问令牌和刷新令牌")
     public CommonResult<LoginResponse> login(@RequestBody @Validated(GroupLogin.class) LoginRequestDTO loginRequest) {
         return authService.authenticate(loginRequest.getUsername(), loginRequest.getPassword());
     }
@@ -38,6 +44,7 @@ public class AuthController {
      * 刷新token
      */
     @PostMapping("/refresh")
+    @Operation(summary = "刷新令牌", description = "使用刷新令牌获取新的访问令牌")
     public CommonResult<LoginResponse> refresh(@RequestBody @Validated(GroupRefresh.class) LoginRequestDTO loginRequest) {
         return authService.refreshToken(loginRequest);  
     }

@@ -12,9 +12,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.media.service.VideoService;
-import com.example.sea.media.service.WatermarkService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -34,7 +32,6 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "视频处理", description = "视频处理接口")
 public class VideoController {
 
-    private final WatermarkService watermarkService;
     private final VideoService videoService;
 
     /**
