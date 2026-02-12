@@ -15,8 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
+import org.springframework.http.ContentDisposition;
 
 /**
  * @author liuhuan
@@ -43,9 +46,13 @@ public class CodeGenerationController {
     @GetMapping("/generate")
     public ResponseEntity<byte[]> generateCode(@Validated CodeGenerateDTO codeGenerateDTO) throws IOException {
         byte[] zipBytes = codeGenerationService.generateCode(codeGenerateDTO);
-        
+
+        ContentDisposition disposition = ContentDisposition.builder("attachment")
+                .filename("generated-code.zip", StandardCharsets.UTF_8)
+                .build();
+
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"generated-code.zip\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, disposition.toString())
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(zipBytes);
     }
@@ -61,9 +68,14 @@ public class CodeGenerationController {
         byte[] zipBytes = codeGenerationService.generateCodeByConfig(codeGenerateDTO);
         //当前时间yyyyMMddHHmmss字符串
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-        
+        String filename = "generated-code" + LocalDateTime.now().format(formatter) + ".zip";
+
+        ContentDisposition disposition = ContentDisposition.builder("attachment")
+                .filename(filename, StandardCharsets.UTF_8)
+                .build();
+
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"generated-code" + LocalDateTime.now().format(formatter) + ".zip\"")
+                .header(HttpHeaders.CONTENT_DISPOSITION, disposition.toString())
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(zipBytes);
     }

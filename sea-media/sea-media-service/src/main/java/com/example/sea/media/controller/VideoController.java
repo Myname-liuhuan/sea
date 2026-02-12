@@ -1,8 +1,10 @@
 package com.example.sea.media.controller;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -55,8 +57,13 @@ public class VideoController {
 
             FileSystemResource resource = new FileSystemResource(audioFile);
 
+            // 使用 ContentDisposition 正确处理中文文件名编码 (RFC 5987)
+            ContentDisposition disposition = ContentDisposition.builder("attachment")
+                    .filename(downloadFilename, StandardCharsets.UTF_8)
+                    .build();
+
             return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + downloadFilename + "\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, disposition.toString())
                     .contentType(MediaType.parseMediaType("audio/mpeg"))
                     .contentLength(audioFile.length())
                     .body(resource);
