@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.sea.common.core.exception.BusinessException;
 import com.example.sea.media.service.VideoService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -70,7 +71,8 @@ public class VideoController {
 
         } catch (Exception e) {
             log.error("提取音频失败", e);
-            return ResponseEntity.internalServerError().build();
+            // 抛出业务异常，由全局异常处理器统一处理并返回 CommonResult
+            throw new BusinessException("提取音频失败：" + e.getMessage(), e);
         }
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.sea.common.core.exception.BusinessException;
 import com.example.sea.media.service.WatermarkService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -72,7 +73,8 @@ public class WatermarkController {
                     
         } catch (Exception e) {
             log.error("视频水印处理失败", e);
-            throw new RuntimeException("视频水印处理失败：" + e.getMessage(), e);
+            // 抛出业务异常，由全局异常处理器统一处理并返回 CommonResult
+            throw new BusinessException("视频水印处理失败：" + e.getMessage(), e);
         }
     }
 
@@ -112,7 +114,8 @@ public class WatermarkController {
                     
         } catch (Exception e) {
             log.error("PDF水印处理失败", e);
-            throw new RuntimeException("PDF水印处理失败：" + e.getMessage(), e);
+            // 抛出业务异常，由全局异常处理器统一处理并返回 CommonResult
+            throw new BusinessException("PDF水印处理失败：" + e.getMessage(), e);
         }
     }
 
@@ -157,7 +160,8 @@ public class WatermarkController {
                     
         } catch (Exception e) {
             log.error("图片水印处理失败", e);
-            throw new RuntimeException("图片水印处理失败：" + e.getMessage(), e);
+            // 抛出业务异常，由全局异常处理器统一处理并返回 CommonResult
+            throw new BusinessException("图片水印处理失败：" + e.getMessage(), e);
         }
     }
     
