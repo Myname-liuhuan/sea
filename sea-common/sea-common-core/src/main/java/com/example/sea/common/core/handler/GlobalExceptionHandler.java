@@ -12,6 +12,7 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
@@ -93,9 +94,23 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public CommonResult<String> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException ex, HttpServletRequest request) {
-        String message = String.format("Content-Type '%s' 不被支持，请使用支持的Content-Type: %s", 
+        String message = String.format("Content-Type '%s' 不被支持，请使用支持的Content-Type: %s",
             ex.getContentType(), ex.getSupportedMediaTypes().stream().map(MediaType::toString).collect(Collectors.joining("或")));
-        logger.warn("Content-Type not supported - Path: {}, Method: {}, Error: {}", 
+        logger.warn("Content-Type not supported - Path: {}, Method: {}, Error: {}",
+            request.getRequestURI(), request.getMethod(), message);
+        return CommonResult.failed(message);
+    }
+
+    /**
+     * 处理Multipart请求异常（如：未使用multipart/form-data上传文件）
+     * @param ex 异常对象
+     * @param request 请求对象
+     * @return 响应结果
+     */
+    @ExceptionHandler(MultipartException.class)
+    public CommonResult<String> handleMultipartException(MultipartException ex, HttpServletRequest request) {
+        String message = "Current request is not a multipart request";
+        logger.warn("Multipart request error - Path: {}, Method: {}, Error: {}",
             request.getRequestURI(), request.getMethod(), message);
         return CommonResult.failed(message);
     }
