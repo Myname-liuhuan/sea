@@ -27,3 +27,18 @@ mybatis-plus:
 # SpringDoc 服务特定配置
 springdoc:
   packages-to-scan: com.example.sea.media
+
+#本地文件存储配置
+sea:
+  oss:
+    enabled: true
+    endpoint: http://localhost:9000                    # MinIO 服务地址
+    access-key-id: admin                         # MinIO 用户名
+    secret-access-key: 12345678                     # MinIO 密码
+    bucket-name: sea-media                            # 存储桶名称（需要提前创建）
+    region: us-east-1                                 # 区域（MinIO 可不设置或设为 us-east-1）
+    path-style-access: true                           # Path-Style 访问（MinIO 必须启用）
+    connection-timeout: 10000                         # 连接超时（毫秒）
+    read-timeout: 60000                               # 读取超时（毫秒）
+    write-timeout: 60000                              # 写入超时（毫秒）
+    max-connections: 50                               # 最大连接数
