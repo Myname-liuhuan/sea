@@ -36,6 +36,13 @@ spring:
             - Path=/api/system/**
           filters:
             - StripPrefix=2
+        - id: sea-code
+          uri: lb://sea-code
+          order: 4
+          predicates:
+            - Path=/api/code/**
+          filters:
+            - StripPrefix=2
 
         # SpringDoc API文档路由
         - id: sea-auth-docs
@@ -59,6 +66,13 @@ spring:
             - Path=/sea-media/v3/api-docs/**
           filters:
             - StripPrefix=1
+        - id: sea-code-docs
+          uri: lb://sea-code
+          order: 13
+          predicates:
+            - Path=/sea-code/v3/api-docs/**
+          filters:
+            - StripPrefix=1
 
 # SpringDoc 网关聚合配置
 springdoc:
@@ -75,6 +89,8 @@ springdoc:
         url: sea-system/v3/api-docs
       - name: 媒体服务
         url: sea-media/v3/api-docs
+      - name: 代码生成服务
+        url: sea-code/v3/api-docs
     operations-sorter: method
     tags-sorter: alpha
     display-request-duration: true
