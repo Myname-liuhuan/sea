@@ -2,8 +2,8 @@ package com.example.sea.system.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.sea.system.entity.SysUser;
-import com.example.sea.system.interfaces.dto.SysUserQueryDTO;
-import com.example.sea.system.interfaces.vo.SysUserVO;
+import com.example.sea.system.api.dto.SysUserQueryDTO;
+import com.example.sea.system.api.vo.SysUserVO;
 
 import java.util.List;
 

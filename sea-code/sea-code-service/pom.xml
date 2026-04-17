@@ -50,7 +50,7 @@
         </dependency>
         <dependency>
             <groupId>com.example</groupId>
-            <artifactId>sea-code-interfaces</artifactId>
+            <artifactId>sea-code-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 

@@ -44,7 +44,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.example</groupId>
-			<artifactId>sea-system-interfaces</artifactId>
+			<artifactId>sea-system-api</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
@@ -63,6 +63,12 @@
             <artifactId>lombok-mapstruct-binding</artifactId>
         </dependency>
 
+<!--		junit依赖-->
+	    <dependency>
+				<groupId>org.springframework.boot</groupId>
+		        <artifactId>spring-boot-starter-test</artifactId>
+		        <scope>test</scope>
+		</dependency>
     </dependencies>
 
 </project>

@@ -13,9 +13,9 @@ import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.core.validation.GroupInsert;
 import com.example.sea.common.core.validation.GroupUpdate;
 import com.example.sea.common.security.entity.LoginUser;
-import com.example.sea.system.interfaces.dto.SysUserDTO;
-import com.example.sea.system.interfaces.dto.SysUserQueryDTO;
-import com.example.sea.system.interfaces.vo.SysUserVO;
+import com.example.sea.system.api.dto.SysUserDTO;
+import com.example.sea.system.api.dto.SysUserQueryDTO;
+import com.example.sea.system.api.vo.SysUserVO;
 import com.example.sea.system.service.ISysUserService;
 
 import io.swagger.v3.oas.annotations.Operation;

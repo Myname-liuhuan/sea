@@ -3,7 +3,7 @@ package com.example.sea.system.converter;
 import org.mapstruct.Mapper;
 
 import com.example.sea.system.entity.SysRole;
-import com.example.sea.system.interfaces.dto.SysRoleDTO;
+import com.example.sea.system.api.dto.SysRoleDTO;
 
 /**
  * sys_role 表实体类转换器

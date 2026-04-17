@@ -2,8 +2,8 @@ package com.example.sea.system.controller;
 
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.core.validation.GroupInsert;
-import com.example.sea.system.interfaces.dto.SysMenuDTO;
-import com.example.sea.system.interfaces.vo.SysMenuNodeVO;
+import com.example.sea.system.api.dto.SysMenuDTO;
+import com.example.sea.system.api.vo.SysMenuNodeVO;
 import com.example.sea.system.service.ISysMenuService;
 
 import io.swagger.v3.oas.annotations.Operation;

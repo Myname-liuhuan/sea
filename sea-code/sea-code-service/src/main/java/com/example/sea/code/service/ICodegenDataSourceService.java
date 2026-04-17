@@ -2,9 +2,9 @@ package com.example.sea.code.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.sea.code.entity.CodegenDataSource;
-import com.example.sea.code.interfaces.dto.CodeGenDataSourceDTO;
-import com.example.sea.code.interfaces.vo.CodegenDataSourceVO;
-import com.example.sea.code.interfaces.vo.TableColumnsVO;
+import com.example.sea.code.api.dto.CodeGenDataSourceDTO;
+import com.example.sea.code.api.vo.CodegenDataSourceVO;
+import com.example.sea.code.api.vo.TableColumnsVO;
 import com.example.sea.common.core.result.CommonResult;
 
 import java.util.List;

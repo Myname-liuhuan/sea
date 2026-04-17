@@ -1,11 +1,11 @@
 package com.example.sea.code.controller;
 
-import com.example.sea.code.interfaces.dto.CodeGenDataSourceDTO;
-import com.example.sea.code.interfaces.dto.CodeGenerateDTO;
-import com.example.sea.code.interfaces.dto.GroupCheck;
-import com.example.sea.code.interfaces.dto.GroupSave;
-import com.example.sea.code.interfaces.vo.CodegenDataSourceVO;
-import com.example.sea.code.interfaces.vo.TableColumnsVO;
+import com.example.sea.code.api.dto.CodeGenDataSourceDTO;
+import com.example.sea.code.api.dto.CodeGenerateDTO;
+import com.example.sea.code.api.dto.GroupCheck;
+import com.example.sea.code.api.dto.GroupSave;
+import com.example.sea.code.api.vo.CodegenDataSourceVO;
+import com.example.sea.code.api.vo.TableColumnsVO;
 import com.example.sea.code.service.ICodegenDataSourceService;
 import com.example.sea.code.service.ICodeGenerationService;
 import com.example.sea.common.core.result.CommonResult;

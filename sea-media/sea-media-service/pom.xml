@@ -58,7 +58,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.example</groupId>
-			<artifactId>sea-media-interfaces</artifactId>
+			<artifactId>sea-media-api</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 

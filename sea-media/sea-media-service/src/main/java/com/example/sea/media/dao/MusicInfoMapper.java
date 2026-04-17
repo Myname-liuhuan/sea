@@ -3,7 +3,7 @@ package com.example.sea.media.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.sea.media.entity.MusicInfo;
-import com.example.sea.media.interfaces.vo.MusicInfoVO2;
+import com.example.sea.media.api.vo.MusicInfoVO2;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;

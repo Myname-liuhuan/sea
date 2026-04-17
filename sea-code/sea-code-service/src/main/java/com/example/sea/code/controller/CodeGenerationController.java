@@ -1,6 +1,6 @@
 package com.example.sea.code.controller;
 
-import com.example.sea.code.interfaces.dto.CodeGenerateDTO;
+import com.example.sea.code.api.dto.CodeGenerateDTO;
 import com.example.sea.code.service.ICodeGenerationService;
 
 import org.springframework.beans.factory.annotation.Autowired;

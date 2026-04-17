@@ -15,7 +15,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>sea-code-interfaces</module>
+        <module>sea-code-api</module>
         <module>sea-code-service</module>
     </modules>
 

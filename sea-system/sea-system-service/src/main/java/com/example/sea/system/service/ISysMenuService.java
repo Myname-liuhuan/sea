@@ -5,8 +5,8 @@ import java.util.List;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.system.entity.SysMenu;
-import com.example.sea.system.interfaces.dto.SysMenuDTO;
-import com.example.sea.system.interfaces.vo.SysMenuNodeVO;
+import com.example.sea.system.api.dto.SysMenuDTO;
+import com.example.sea.system.api.vo.SysMenuNodeVO;
 
 /**
  * 菜单权限表服务接口

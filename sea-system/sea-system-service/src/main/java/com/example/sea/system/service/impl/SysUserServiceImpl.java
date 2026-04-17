@@ -17,9 +17,9 @@ import com.example.sea.common.security.entity.LoginUser;
 import com.example.sea.system.converter.SysUserConverter;
 import com.example.sea.system.dao.SysUserMapper;
 import com.example.sea.system.entity.SysUser;
-import com.example.sea.system.interfaces.dto.SysUserDTO;
-import com.example.sea.system.interfaces.dto.SysUserQueryDTO;
-import com.example.sea.system.interfaces.vo.SysUserVO;
+import com.example.sea.system.api.dto.SysUserDTO;
+import com.example.sea.system.api.dto.SysUserQueryDTO;
+import com.example.sea.system.api.vo.SysUserVO;
 import com.example.sea.system.service.ISysUserService;
 
 import lombok.RequiredArgsConstructor;

@@ -17,7 +17,7 @@
         del_flag
     </sql>
 
-    <select id="list" resultType="com.example.sea.system.interfaces.vo.SysUserVO">
+    <select id="list" resultType="com.example.sea.system.api.vo.SysUserVO">
         SELECT 
         <include refid="Base_Column_List"/>
         FROM sys_user

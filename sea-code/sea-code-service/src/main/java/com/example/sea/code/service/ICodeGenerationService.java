@@ -2,7 +2,7 @@ package com.example.sea.code.service;
 
 import java.io.IOException;
 
-import com.example.sea.code.interfaces.dto.CodeGenerateDTO;
+import com.example.sea.code.api.dto.CodeGenerateDTO;
 
 /**
  * 代码生成服务接口

@@ -3,9 +3,9 @@ package com.example.sea.system.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.system.entity.SysRole;
-import com.example.sea.system.interfaces.dto.SysRoleDTO;
-import com.example.sea.system.interfaces.dto.SysRoleMenuDTO;
-import com.example.sea.system.interfaces.dto.SysRoleUserDTO;
+import com.example.sea.system.api.dto.SysRoleDTO;
+import com.example.sea.system.api.dto.SysRoleMenuDTO;
+import com.example.sea.system.api.dto.SysRoleUserDTO;
 
 /**
  * 角色表服务接口

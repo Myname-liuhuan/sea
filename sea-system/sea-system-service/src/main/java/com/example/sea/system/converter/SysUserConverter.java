@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import com.example.sea.system.entity.SysUser;
-import com.example.sea.system.interfaces.dto.SysUserDTO;
+import com.example.sea.system.api.dto.SysUserDTO;
 
 /**
  * 使用mapstruct 因为其效率远大于spring的beanutils.copyProperties

@@ -6,9 +6,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.security.entity.LoginUser;
 import com.example.sea.system.entity.SysUser;
-import com.example.sea.system.interfaces.dto.SysUserDTO;
-import com.example.sea.system.interfaces.dto.SysUserQueryDTO;
-import com.example.sea.system.interfaces.vo.SysUserVO;
+import com.example.sea.system.api.dto.SysUserDTO;
+import com.example.sea.system.api.dto.SysUserQueryDTO;
+import com.example.sea.system.api.vo.SysUserVO;
 
 /**
  * 用户表服务接口

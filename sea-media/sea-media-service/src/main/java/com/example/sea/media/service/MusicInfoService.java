@@ -4,8 +4,8 @@ package com.example.sea.media.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.media.entity.MusicInfo;
-import com.example.sea.media.interfaces.vo.MusicInfoVO;
-import com.example.sea.media.interfaces.vo.MusicInfoVO2;
+import com.example.sea.media.api.vo.MusicInfoVO;
+import com.example.sea.media.api.vo.MusicInfoVO2;
 
 import java.util.List;
 

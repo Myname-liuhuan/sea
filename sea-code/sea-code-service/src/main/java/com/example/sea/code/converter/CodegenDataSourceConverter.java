@@ -5,7 +5,7 @@ import java.util.List;
 import org.mapstruct.Mapper;
 
 import com.example.sea.code.entity.CodegenDataSource;
-import com.example.sea.code.interfaces.vo.CodegenDataSourceVO;
+import com.example.sea.code.api.vo.CodegenDataSourceVO;
 
 /**
  * 数据源信息表 bean 转换器

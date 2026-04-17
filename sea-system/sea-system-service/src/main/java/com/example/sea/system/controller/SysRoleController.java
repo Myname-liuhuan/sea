@@ -3,9 +3,9 @@ package com.example.sea.system.controller;
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.core.validation.GroupInsert;
 import com.example.sea.common.core.validation.GroupUpdate;
-import com.example.sea.system.interfaces.dto.SysRoleDTO;
-import com.example.sea.system.interfaces.dto.SysRoleMenuDTO;
-import com.example.sea.system.interfaces.dto.SysRoleUserDTO;
+import com.example.sea.system.api.dto.SysRoleDTO;
+import com.example.sea.system.api.dto.SysRoleMenuDTO;
+import com.example.sea.system.api.dto.SysRoleUserDTO;
 import com.example.sea.system.service.ISysRoleService;
 
 import io.swagger.v3.oas.annotations.Operation;

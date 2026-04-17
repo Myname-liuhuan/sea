@@ -5,7 +5,7 @@ import com.example.sea.common.core.constants.SystemConstant;
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.media.dao.MusicSingerMapper;
 import com.example.sea.media.entity.MusicSinger;
-import com.example.sea.media.interfaces.vo.MusicSingerVO;
+import com.example.sea.media.api.vo.MusicSingerVO;
 import com.example.sea.media.service.MusicSingerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

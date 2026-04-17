@@ -14,7 +14,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>sea-poi-interfaces</module>
+        <module>sea-poi-api</module>
         <module>sea-poi-service</module>
     </modules>
 

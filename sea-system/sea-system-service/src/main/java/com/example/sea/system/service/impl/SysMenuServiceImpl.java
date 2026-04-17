@@ -13,8 +13,8 @@ import com.example.sea.common.security.utils.SecurityContextUtil;
 import com.example.sea.system.converter.SysMenuConverter;
 import com.example.sea.system.dao.SysMenuMapper;
 import com.example.sea.system.entity.SysMenu;
-import com.example.sea.system.interfaces.dto.SysMenuDTO;
-import com.example.sea.system.interfaces.vo.SysMenuNodeVO;
+import com.example.sea.system.api.dto.SysMenuDTO;
+import com.example.sea.system.api.vo.SysMenuNodeVO;
 import com.example.sea.system.service.ISysMenuService;
 
 import lombok.RequiredArgsConstructor;
