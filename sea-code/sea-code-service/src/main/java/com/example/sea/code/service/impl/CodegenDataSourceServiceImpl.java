@@ -3,7 +3,7 @@ package com.example.sea.code.service.impl;
 import com.example.sea.code.service.ICodegenDataSourceService;
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.code.dao.CodegenDataSourceMapper;
-import com.example.sea.code.entity.CodegenDataSource;
+import com.example.sea.code.entity.CodegenDataSourcePO;
 import com.example.sea.code.api.dto.CodeGenDataSourceDTO;
 import com.example.sea.code.api.vo.CodegenDataSourceVO;
 import com.example.sea.code.api.vo.TableColumnsVO;
@@ -29,7 +29,7 @@ import java.util.Objects;
  * @date 2025-03-31
  */
 @Service
-public class CodegenDataSourceServiceImpl extends ServiceImpl<CodegenDataSourceMapper, CodegenDataSource> implements ICodegenDataSourceService {
+public class CodegenDataSourceServiceImpl extends ServiceImpl<CodegenDataSourceMapper, CodegenDataSourcePO> implements ICodegenDataSourceService {
 
 
     private final CodegenDataSourceConverter cDataSourceConverter;
@@ -84,13 +84,13 @@ public class CodegenDataSourceServiceImpl extends ServiceImpl<CodegenDataSourceM
 
         // 检查数据源是否已存在
         if (lambdaQuery()
-            .eq(CodegenDataSource::getName, codeGenDataSourceDTO.getName())
+            .eq(CodegenDataSourcePO::getName, codeGenDataSourceDTO.getName())
             .exists()) {
             return CommonResult.failed("数据源名称已存在");
         }
 
         // 转换为实体并保存
-        CodegenDataSource dataSource = new CodegenDataSource()
+        CodegenDataSourcePO dataSource = new CodegenDataSourcePO()
             .setName(codeGenDataSourceDTO.getName())
             .setDbType(codeGenDataSourceDTO.getDbType())
             .setHost(codeGenDataSourceDTO.getHost())
@@ -114,7 +114,7 @@ public class CodegenDataSourceServiceImpl extends ServiceImpl<CodegenDataSourceM
     @Override
     public CommonResult<List<String>> listDataBase(Long dataSourceId) {
         // 获取数据源信息
-        CodegenDataSource dataSource = getById(dataSourceId);
+        CodegenDataSourcePO dataSource = getById(dataSourceId);
         if (dataSource == null) {
             return CommonResult.failed("数据源不存在");
         }
@@ -176,7 +176,7 @@ public class CodegenDataSourceServiceImpl extends ServiceImpl<CodegenDataSourceM
     @Override
     public CommonResult<List<String>> listTable(Long dataSourceId, String database) {
         // 获取数据源信息
-        CodegenDataSource dataSource = getById(dataSourceId);
+        CodegenDataSourcePO dataSource = getById(dataSourceId);
         if (dataSource == null) {
             return CommonResult.failed("数据源不存在");
         }
@@ -243,7 +243,7 @@ public class CodegenDataSourceServiceImpl extends ServiceImpl<CodegenDataSourceM
     @Override
     public CommonResult<List<TableColumnsVO>> listColumns(Long dataSourceId, String database, String tableName) {
         // 获取数据源信息
-        CodegenDataSource dataSource = getById(dataSourceId);
+        CodegenDataSourcePO dataSource = getById(dataSourceId);
         if (dataSource == null) {
             return CommonResult.failed("数据源不存在");
         }

@@ -19,7 +19,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 @TableName("sys_user")
-public class SysUser extends BaseEntity{
+public class SysUserPO extends BaseEntity{
 
     /**
      * 登录用户名

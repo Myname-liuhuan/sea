@@ -2,7 +2,7 @@ package com.example.sea.system.converter;
 
 import org.mapstruct.Mapper;
 
-import com.example.sea.system.entity.SysMenu;
+import com.example.sea.system.entity.SysMenuPO;
 import com.example.sea.system.api.dto.SysMenuDTO;
 import com.example.sea.system.api.vo.SysMenuNodeVO;
 
@@ -13,18 +13,18 @@ import com.example.sea.system.api.vo.SysMenuNodeVO;
  */
 @Mapper(componentModel = "spring")
 public interface SysMenuConverter {
-    
+
     /**
      * dto转entity
      * @param dto
      * @return
      */
-    public SysMenu dtoToEntity(SysMenuDTO dto);
+    public SysMenuPO dtoToEntity(SysMenuDTO dto);
 
     /**
      * entity转nodeVO
      * @param entity
      * @return
      */
-    public SysMenuNodeVO entityToNodeVO(SysMenu entity);
+    public SysMenuNodeVO entityToNodeVO(SysMenuPO entity);
 }

@@ -16,7 +16,7 @@ import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.security.entity.LoginUser;
 import com.example.sea.system.converter.SysUserConverter;
 import com.example.sea.system.dao.SysUserMapper;
-import com.example.sea.system.entity.SysUser;
+import com.example.sea.system.entity.SysUserPO;
 import com.example.sea.system.api.dto.SysUserDTO;
 import com.example.sea.system.api.dto.SysUserQueryDTO;
 import com.example.sea.system.api.vo.SysUserVO;
@@ -33,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 @Service
-public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements ISysUserService {
+public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserPO> implements ISysUserService {
 
     private final SysUserConverter sysUserConverter;
 
@@ -45,7 +45,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Override
     public CommonResult<Boolean> add(SysUserDTO sysUserDTO) {
         try {
-            SysUser entity = sysUserConverter.dtoToEntity(sysUserDTO);
+            SysUserPO entity = sysUserConverter.dtoToEntity(sysUserDTO);
             //BCrypt加密密码
             entity.setPasswordHash(bCryptPasswordEncoder.encode(sysUserDTO.getPassword()));
             boolean result = this.save(entity);
@@ -66,7 +66,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
      */
     @Override
     public CommonResult<Boolean> update(SysUserDTO sysUserDTO) {
-        SysUser entity = sysUserConverter.dtoToEntity(sysUserDTO);
+        SysUserPO entity = sysUserConverter.dtoToEntity(sysUserDTO);
         //BCrypt加密密码
         if (Objects.nonNull(sysUserDTO.getPassword())) {
             entity.setPasswordHash(bCryptPasswordEncoder.encode(sysUserDTO.getPassword()));
@@ -94,15 +94,15 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             return CommonResult.failed("用户名不能为空");
         }
         //lambdaquery通过用户名查询用户
-        List<SysUser> userList = this.baseMapper.selectList(
-            Wrappers.<SysUser>lambdaQuery().eq(SysUser::getUsername, username)
+        List<SysUserPO> userList = this.baseMapper.selectList(
+            Wrappers.<SysUserPO>lambdaQuery().eq(SysUserPO::getUsername, username)
         );
 
         if (CollectionUtils.isEmpty(userList)) {
             return CommonResult.failed("用户不存在");
         }
 
-        SysUser sysUser = userList.get(0);
+        SysUserPO sysUser = userList.get(0);
         LoginUser loginUser = new LoginUser();
         BeanUtils.copyProperties(sysUser, loginUser);
         loginUser.setPassword(sysUser.getPasswordHash());

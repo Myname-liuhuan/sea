@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 @TableName("codegen_data_source")
-public class CodegenDataSource extends BaseEntity {
+public class CodegenDataSourcePO extends BaseEntity {
 
     /**
      * 数据源名称

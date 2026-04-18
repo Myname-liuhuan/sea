@@ -3,7 +3,7 @@ package com.example.sea.system.converter;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import com.example.sea.system.entity.SysUser;
+import com.example.sea.system.entity.SysUserPO;
 import com.example.sea.system.api.dto.SysUserDTO;
 
 /**
@@ -23,6 +23,6 @@ public interface SysUserConverter {
      * @return
      */
     @Mapping(target = "passwordHash", source = "password")
-    public SysUser dtoToEntity(SysUserDTO dto);
+    public SysUserPO dtoToEntity(SysUserDTO dto);
 
 }

@@ -1,6 +1,6 @@
 package com.example.sea.system.dao;
 
-import com.example.sea.system.entity.SysRole;
+import com.example.sea.system.entity.SysRolePO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;
@@ -14,7 +14,7 @@ import org.apache.ibatis.annotations.Param;
  * @date 2025-08-14
  */
 @Mapper
-public interface SysRoleMapper extends BaseMapper<SysRole> {
+public interface SysRoleMapper extends BaseMapper<SysRolePO> {
 
     /**
      * 通过角色ID删除角色和用户关联

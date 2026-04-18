@@ -2,7 +2,7 @@ package com.example.sea.media.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.sea.common.core.result.CommonResult;
-import com.example.sea.media.entity.MusicSinger;
+import com.example.sea.media.entity.MusicSingerPO;
 import com.example.sea.media.api.vo.MusicSingerVO;
 import com.example.sea.media.service.MusicSingerService;
 import org.springframework.web.bind.annotation.*;
@@ -27,19 +27,19 @@ public class MusicSingerController {
      */
     @GetMapping("/getList")
     @Operation(summary = "获取歌手列表", description = "根据条件查询歌手信息列表")
-    public CommonResult<List<MusicSingerVO>> getList(MusicSinger musicSinger) {
+    public CommonResult<List<MusicSingerVO>> getList(MusicSingerPO musicSinger) {
         return musicSingerService.getList(musicSinger);
     }
 
     @PostMapping("/saveMusicSinger")
     @Operation(summary = "保存歌手信息", description = "创建新的歌手信息记录")
-    public CommonResult<Integer> saveMusicSinger(@RequestBody MusicSinger musicSinger){
+    public CommonResult<Integer> saveMusicSinger(@RequestBody MusicSingerPO musicSinger){
         return musicSingerService.saveMusicSinger(musicSinger);
     }
 
     @GetMapping("/pageList")
     @Operation(summary = "分页查询歌手", description = "根据条件分页查询歌手信息")
-    public CommonResult<Page<MusicSingerVO>> pageList(MusicSinger musicSinger, Integer pageNum, Integer pageSize){
+    public CommonResult<Page<MusicSingerVO>> pageList(MusicSingerPO musicSinger, Integer pageNum, Integer pageSize){
         return musicSingerService.pageList(musicSinger, pageNum == null? 1 :pageNum, pageSize == null? 10 : pageSize);
     }
 
@@ -51,8 +51,8 @@ public class MusicSingerController {
 
     @PostMapping("/logicalBatchDeleteByIds")
     @Operation(summary = "批量逻辑删除歌手", description = "批量逻辑删除歌手信息")
-    public CommonResult<Integer> logicalBatchDeleteByIds(@RequestBody List<MusicSinger> list){
+    public CommonResult<Integer> logicalBatchDeleteByIds(@RequestBody List<MusicSingerPO> list){
         return musicSingerService.logicalBatchDeleteByIds(list);
      }
-    
+
 }

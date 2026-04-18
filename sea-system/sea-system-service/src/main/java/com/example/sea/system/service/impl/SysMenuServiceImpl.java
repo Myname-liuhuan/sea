@@ -12,7 +12,7 @@ import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.security.utils.SecurityContextUtil;
 import com.example.sea.system.converter.SysMenuConverter;
 import com.example.sea.system.dao.SysMenuMapper;
-import com.example.sea.system.entity.SysMenu;
+import com.example.sea.system.entity.SysMenuPO;
 import com.example.sea.system.api.dto.SysMenuDTO;
 import com.example.sea.system.api.vo.SysMenuNodeVO;
 import com.example.sea.system.service.ISysMenuService;
@@ -28,21 +28,21 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> implements ISysMenuService {
+public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenuPO> implements ISysMenuService {
 
     private final SysMenuConverter sysMenuConverter;
 
     @Override
     public CommonResult<List<SysMenuNodeVO>> myMenuTree() {
         Long userId = SecurityContextUtil.getUserId();
-        
+
         //查询当前用户的菜单列表
-        List<SysMenu> menuList = this.baseMapper.selectMenuListByUserId(userId);
-        
+        List<SysMenuPO> menuList = this.baseMapper.selectMenuListByUserId(userId);
+
         //再分组
         final Map<Long, List<SysMenuNodeVO>> childrenMap = menuList.stream()
             .collect(Collectors.groupingBy(
-                SysMenu::getParentId,
+                SysMenuPO::getParentId,
                 Collectors.mapping(sysMenuConverter::entityToNodeVO, Collectors.toList())
             ));
         return CommonResult.success(buildTreeFromMap(childrenMap, 0L));
@@ -51,11 +51,11 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     @Override
     public CommonResult<List<SysMenuNodeVO>> allMenuTree() {
         //先查出所有菜单
-        List<SysMenu> menuList = list();
+        List<SysMenuPO> menuList = list();
         //再分组
         final Map<Long, List<SysMenuNodeVO>> childrenMap = menuList.stream()
             .collect(Collectors.groupingBy(
-                SysMenu::getParentId,
+                SysMenuPO::getParentId,
                 Collectors.mapping(sysMenuConverter::entityToNodeVO, Collectors.toList())
             ));
         return CommonResult.success(buildTreeFromMap(childrenMap, 0L));
@@ -66,7 +66,7 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
      */
     @Override
     public CommonResult<Boolean> add(SysMenuDTO sysMenuDTO) {
-        SysMenu sysMenu = sysMenuConverter.dtoToEntity(sysMenuDTO);
+        SysMenuPO sysMenu = sysMenuConverter.dtoToEntity(sysMenuDTO);
         boolean result = this.save(sysMenu);
         return CommonResult.success(result);
     }

@@ -15,9 +15,9 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("d_singer")
-public class MusicSinger {
+public class MusicSingerPO {
 
-    @TableId(type = IdType.ASSIGN_ID) 
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     //歌手名称

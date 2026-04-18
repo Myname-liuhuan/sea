@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 @TableName("sys_menu")
-public class SysMenu  extends BaseEntity {
+public class SysMenuPO extends BaseEntity {
 
 
     /**

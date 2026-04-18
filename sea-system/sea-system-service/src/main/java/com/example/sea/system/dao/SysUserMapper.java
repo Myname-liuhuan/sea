@@ -1,7 +1,7 @@
 package com.example.sea.system.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.sea.system.entity.SysUser;
+import com.example.sea.system.entity.SysUserPO;
 import com.example.sea.system.api.dto.SysUserQueryDTO;
 import com.example.sea.system.api.vo.SysUserVO;
 
@@ -15,7 +15,7 @@ import org.apache.ibatis.annotations.Mapper;
  * @date 2025-05-28
  */
 @Mapper
-public interface SysUserMapper extends BaseMapper<SysUser> {
+public interface SysUserMapper extends BaseMapper<SysUserPO> {
 
     /**
      * 查询用户列表

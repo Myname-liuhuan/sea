@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.sea.common.core.constants.SystemConstant;
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.media.dao.MusicSingerMapper;
-import com.example.sea.media.entity.MusicSinger;
+import com.example.sea.media.entity.MusicSingerPO;
 import com.example.sea.media.api.vo.MusicSingerVO;
 import com.example.sea.media.service.MusicSingerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +19,12 @@ public class MusicSingerServiceImpl implements MusicSingerService {
     MusicSingerMapper musicSingerMapper;
 
     @Override
-    public CommonResult<List<MusicSingerVO>> getList(MusicSinger musicSinger) {
+    public CommonResult<List<MusicSingerVO>> getList(MusicSingerPO musicSinger) {
         return CommonResult.success(musicSingerMapper.getList(musicSinger));
     }
 
     @Override
-    public CommonResult<Integer> saveMusicSinger(MusicSinger musicSinger) {
+    public CommonResult<Integer> saveMusicSinger(MusicSingerPO musicSinger) {
         if (musicSinger.getId() == null) {
             return CommonResult.success(musicSingerMapper.insert(musicSinger));
         }
@@ -35,7 +35,7 @@ public class MusicSingerServiceImpl implements MusicSingerService {
      * 分页查询
      */
     @Override
-    public CommonResult<Page<MusicSingerVO>> pageList(MusicSinger musicSinger, Integer pageNum, Integer pageSize) {
+    public CommonResult<Page<MusicSingerVO>> pageList(MusicSingerPO musicSinger, Integer pageNum, Integer pageSize) {
         List<MusicSingerVO> records =  musicSingerMapper.pageList(musicSinger, (pageNum - 1) * pageSize, pageSize);
         int total = musicSingerMapper.getTotal();
 
@@ -53,14 +53,14 @@ public class MusicSingerServiceImpl implements MusicSingerService {
      */
     @Override
     public CommonResult<Integer> logicalDeleteById(Long id) {
-        MusicSinger musicSinger = new MusicSinger();
+        MusicSingerPO musicSinger = new MusicSingerPO();
         musicSinger.setId(id);
         musicSinger.setDelFlag(1);
         return CommonResult.success(musicSingerMapper.updateById(musicSinger));
     }
 
     @Override
-    public CommonResult<Integer> logicalBatchDeleteByIds(List<MusicSinger> list) {
+    public CommonResult<Integer> logicalBatchDeleteByIds(List<MusicSingerPO> list) {
         //验证ids空
         if (list == null || list.size() == 0) {
             return CommonResult.failed("选择行不能为空");

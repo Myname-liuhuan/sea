@@ -1,7 +1,7 @@
 package com.example.sea.code.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.sea.code.entity.CodegenDataSource;
+import com.example.sea.code.entity.CodegenDataSourcePO;
 import com.example.sea.code.api.dto.CodeGenDataSourceDTO;
 import com.example.sea.code.api.vo.CodegenDataSourceVO;
 import com.example.sea.code.api.vo.TableColumnsVO;
@@ -14,7 +14,7 @@ import java.util.List;
  * @author liuhuan
  * @date 2025-03-31
  */
-public interface ICodegenDataSourceService extends IService<CodegenDataSource> {
+public interface ICodegenDataSourceService extends IService<CodegenDataSourcePO> {
 
     /**
      * 校验数据源是否有效

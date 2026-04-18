@@ -19,7 +19,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @TableName("d_music")
-public class MusicInfo {
+public class MusicInfoPO {
 
     // id主键
     @TableId(type = IdType.ASSIGN_ID) //插入时雪花算法生成id

@@ -5,7 +5,7 @@ import java.util.List;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.security.entity.LoginUser;
-import com.example.sea.system.entity.SysUser;
+import com.example.sea.system.entity.SysUserPO;
 import com.example.sea.system.api.dto.SysUserDTO;
 import com.example.sea.system.api.dto.SysUserQueryDTO;
 import com.example.sea.system.api.vo.SysUserVO;
@@ -15,7 +15,7 @@ import com.example.sea.system.api.vo.SysUserVO;
  * @author liuhuan
  * @date 2025-05-28
  */
-public interface ISysUserService extends IService<SysUser> {
+public interface ISysUserService extends IService<SysUserPO> {
 
     /**
      * 保存用户信息

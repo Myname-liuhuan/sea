@@ -1,6 +1,6 @@
 package com.example.sea.system.dao;
 
-import com.example.sea.system.entity.SysDept;
+import com.example.sea.system.entity.SysDeptPO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -10,6 +10,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @date 2025-08-14
  */
 @Mapper
-public interface SysDeptMapper extends BaseMapper<SysDept> {
+public interface SysDeptMapper extends BaseMapper<SysDeptPO> {
 
 }

@@ -1,6 +1,6 @@
 package com.example.sea.code.dao;
 
-import com.example.sea.code.entity.CodegenDataSource;
+import com.example.sea.code.entity.CodegenDataSourcePO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -10,6 +10,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @date 2025-03-31
  */
 @Mapper
-public interface CodegenDataSourceMapper extends BaseMapper<CodegenDataSource> {
+public interface CodegenDataSourceMapper extends BaseMapper<CodegenDataSourcePO> {
 
 }

@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.example.sea.common.core.result.CommonResult;
-import com.example.sea.system.entity.SysMenu;
+import com.example.sea.system.entity.SysMenuPO;
 import com.example.sea.system.api.dto.SysMenuDTO;
 import com.example.sea.system.api.vo.SysMenuNodeVO;
 
@@ -13,7 +13,7 @@ import com.example.sea.system.api.vo.SysMenuNodeVO;
  * @author admin
  * @date 2025-08-14
  */
-public interface ISysMenuService extends IService<SysMenu> {
+public interface ISysMenuService extends IService<SysMenuPO> {
 
     /**
      * 获取当前用户的菜单树

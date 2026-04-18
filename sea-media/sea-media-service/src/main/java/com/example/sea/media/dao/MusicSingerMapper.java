@@ -2,7 +2,7 @@ package com.example.sea.media.dao;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.example.sea.media.entity.MusicSinger;
+import com.example.sea.media.entity.MusicSingerPO;
 import com.example.sea.media.api.vo.MusicSingerVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -10,15 +10,15 @@ import org.apache.ibatis.annotations.Select;
 import java.util.List;
 
 @Mapper
-public interface MusicSingerMapper extends BaseMapper<MusicSinger> {
+public interface MusicSingerMapper extends BaseMapper<MusicSingerPO> {
 
-    List<MusicSingerVO> getList(MusicSinger musicSinger);
+    List<MusicSingerVO> getList(MusicSingerPO musicSinger);
 
-    List<MusicSingerVO> pageList(MusicSinger musicSinger, Integer offset, Integer pageSize);
+    List<MusicSingerVO> pageList(MusicSingerPO musicSinger, Integer offset, Integer pageSize);
 
     @Select("SELECT FOUND_ROWS()")
     Integer getTotal();
 
-    Integer logicalBatchDeleteByIds(List<MusicSinger> list);
-    
+    Integer logicalBatchDeleteByIds(List<MusicSingerPO> list);
+
 }

@@ -2,7 +2,7 @@ package com.example.sea.system.converter;
 
 import org.mapstruct.Mapper;
 
-import com.example.sea.system.entity.SysRole;
+import com.example.sea.system.entity.SysRolePO;
 import com.example.sea.system.api.dto.SysRoleDTO;
 
 /**
@@ -12,12 +12,12 @@ import com.example.sea.system.api.dto.SysRoleDTO;
  */
 @Mapper(componentModel = "spring")
 public interface SysRoleConverter {
-    
+
     /**
      * dto转entity
      * @param dto
      * @return
      */
-    public SysRole dtoToEntity(SysRoleDTO dto);
-    
+    public SysRolePO dtoToEntity(SysRoleDTO dto);
+
 }

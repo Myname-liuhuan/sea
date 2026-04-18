@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.system.converter.SysRoleConverter;
 import com.example.sea.system.dao.SysRoleMapper;
-import com.example.sea.system.entity.SysRole;
+import com.example.sea.system.entity.SysRolePO;
 import com.example.sea.system.api.dto.SysRoleDTO;
 import com.example.sea.system.api.dto.SysRoleMenuDTO;
 import com.example.sea.system.api.dto.SysRoleUserDTO;
@@ -23,7 +23,7 @@ import org.springframework.util.CollectionUtils;
  */
 @RequiredArgsConstructor
 @Service
-public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> implements ISysRoleService {
+public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRolePO> implements ISysRoleService {
 
     private final SysRoleConverter sysRoleConverter;
 
@@ -32,7 +32,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
      */
     @Override
     public CommonResult<Boolean> add(SysRoleDTO sysRoleDTO) {
-        SysRole sysRole = sysRoleConverter.dtoToEntity(sysRoleDTO);
+        SysRolePO sysRole = sysRoleConverter.dtoToEntity(sysRoleDTO);
         boolean result = this.save(sysRole);
         return CommonResult.success(result);
     }
@@ -44,7 +44,7 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole> impl
     @Transactional(rollbackFor = Exception.class)
     @Override
     public CommonResult<Boolean> edit(SysRoleDTO sysRoleDTO) {
-        SysRole sysRole = sysRoleConverter.dtoToEntity(sysRoleDTO);
+        SysRolePO sysRole = sysRoleConverter.dtoToEntity(sysRoleDTO);
         boolean result = this.updateById(sysRole);
         return CommonResult.success(result);
     }

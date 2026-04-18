@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.mapstruct.Mapper;
 
-import com.example.sea.code.entity.CodegenDataSource;
+import com.example.sea.code.entity.CodegenDataSourcePO;
 import com.example.sea.code.api.vo.CodegenDataSourceVO;
 
 /**
@@ -23,7 +23,7 @@ public interface CodegenDataSourceConverter {
      * @param codegenDataSource 数据源信息表实体类
      * @return 数据源信息表视图对象
      */
-    CodegenDataSourceVO entityToVo(CodegenDataSource codegenDataSource);
+    CodegenDataSourceVO entityToVo(CodegenDataSourcePO codegenDataSource);
 
     /**
      * 实体类列表转换为视图对象列表
@@ -32,7 +32,7 @@ public interface CodegenDataSourceConverter {
      * @param list
      * @return
      */
-    List<CodegenDataSourceVO> entityToVo(List<CodegenDataSource> list);
+    List<CodegenDataSourceVO> entityToVo(List<CodegenDataSourcePO> list);
 
 
     /**
@@ -40,5 +40,5 @@ public interface CodegenDataSourceConverter {
      * @param codegenDataSourceVO 数据源信息表视图对象
      * @return 数据源信息表实体类
      */
-    CodegenDataSource voToEntity(CodegenDataSourceVO codegenDataSourceVO);
+    CodegenDataSourcePO voToEntity(CodegenDataSourceVO codegenDataSourceVO);
 }

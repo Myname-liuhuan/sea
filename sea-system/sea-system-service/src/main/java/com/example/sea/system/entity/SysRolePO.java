@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 @TableName("sys_role")
-public class SysRole extends BaseEntity {
+public class SysRolePO extends BaseEntity {
 
     /**
      * 角色名称
@@ -44,5 +44,5 @@ public class SysRole extends BaseEntity {
      */
     private  String  status;
 
-    
+
 }

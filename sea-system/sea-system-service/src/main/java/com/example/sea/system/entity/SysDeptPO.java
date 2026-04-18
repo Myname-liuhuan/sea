@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 @TableName("sys_dept")
-public class SysDept extends BaseEntity {
+public class SysDeptPO extends BaseEntity {
 
 
     /**

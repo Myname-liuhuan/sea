@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.sea.common.core.constants.SystemConstant;
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.media.dao.MusicInfoMapper;
-import com.example.sea.media.entity.MusicInfo;
+import com.example.sea.media.entity.MusicInfoPO;
 import com.example.sea.media.api.vo.MusicInfoVO;
 import com.example.sea.media.api.vo.MusicInfoVO2;
 import com.example.sea.media.service.MusicInfoService;
@@ -27,7 +27,7 @@ public class MusicInfoServiceImpl implements MusicInfoService {
      * 保存音乐信息
      */
     @Override
-    public CommonResult<Integer> saveMusicInfo(MusicInfo musicInfo) {
+    public CommonResult<Integer> saveMusicInfo(MusicInfoPO musicInfo) {
         if (musicInfo.getId() == null) {
             return CommonResult.success(musicInfoMapper.insert(musicInfo));
         } else {
@@ -39,11 +39,11 @@ public class MusicInfoServiceImpl implements MusicInfoService {
      * 分页查询音乐信息
      */
     @Override
-    public CommonResult<Page<MusicInfoVO>> pageList(MusicInfo musicInfo, Integer pageNum, Integer pageSize) {
-        Page<MusicInfo> page = new Page<>(pageNum, pageSize);
-        LambdaQueryWrapper<MusicInfo> queryWrapper = new LambdaQueryWrapper<>();
+    public CommonResult<Page<MusicInfoVO>> pageList(MusicInfoPO musicInfo, Integer pageNum, Integer pageSize) {
+        Page<MusicInfoPO> page = new Page<>(pageNum, pageSize);
+        LambdaQueryWrapper<MusicInfoPO> queryWrapper = new LambdaQueryWrapper<>();
         //如果有条件可以在这里queryWrapper中方法添加
-        queryWrapper.eq(MusicInfo::getDelFlag, SystemConstant.DEL_FLAG_NO);
+        queryWrapper.eq(MusicInfoPO::getDelFlag, SystemConstant.DEL_FLAG_NO);
                     
         page = musicInfoMapper.selectPage(page, queryWrapper);
 
@@ -64,8 +64,8 @@ public class MusicInfoServiceImpl implements MusicInfoService {
      * 分页查询音乐信息,且关联歌手表获取歌手姓名
      */
     @Transactional
-    @Override   
-    public CommonResult<Page<MusicInfoVO2>> pageListJoinSong(MusicInfo musicInfo, Integer pageNum, Integer pageSize) {
+    @Override
+    public CommonResult<Page<MusicInfoVO2>> pageListJoinSong(MusicInfoPO musicInfo, Integer pageNum, Integer pageSize) {
         List<MusicInfoVO2> records =  musicInfoMapper.pageListJoinSong(musicInfo, (pageNum -1) * pageSize, pageSize);
         int total = musicInfoMapper.getTotal();
 
@@ -98,7 +98,7 @@ public class MusicInfoServiceImpl implements MusicInfoService {
      */
     @Override
     public CommonResult<Integer> logicalDeleteById(Long id) {
-        MusicInfo musicInfo = new MusicInfo();
+        MusicInfoPO musicInfo = new MusicInfoPO();
         musicInfo.setId(id);
         musicInfo.setDelFlag(SystemConstant.DEL_FLAG_YES);
         return CommonResult.success(musicInfoMapper.updateById(musicInfo));
@@ -108,7 +108,7 @@ public class MusicInfoServiceImpl implements MusicInfoService {
      * 批量逻辑删除音乐信息
      */
     @Override
-    public CommonResult<Integer> logicalBatchDeleteByIds(List<MusicInfo> list) {
+    public CommonResult<Integer> logicalBatchDeleteByIds(List<MusicInfoPO> list) {
         //验证ids空
         if (list == null || list.size() == 0) {
             return CommonResult.failed("选择行不能为空");

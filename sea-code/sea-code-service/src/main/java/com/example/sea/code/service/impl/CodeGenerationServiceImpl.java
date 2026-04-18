@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.generator.FastAutoGenerator;
 import com.baomidou.mybatisplus.generator.config.OutputFile;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
-import com.example.sea.code.entity.CodegenDataSource;
+import com.example.sea.code.entity.CodegenDataSourcePO;
 import com.example.sea.code.api.dto.CodeGenColumnSettingDTO;
 import com.example.sea.code.api.dto.CodeGenerateDTO;
 import com.example.sea.code.dao.CodegenDataSourceMapper;
@@ -59,7 +59,7 @@ public class CodeGenerationServiceImpl implements ICodeGenerationService {
             Path tempDir = Files.createTempDirectory(TEMP_DIR_PREFIX);
 
             // 查询数据源信息
-            CodegenDataSource dataSource = codegenDataSourceMapper.selectById(codeGenerateDTO.getDataSourceId());
+            CodegenDataSourcePO dataSource = codegenDataSourceMapper.selectById(codeGenerateDTO.getDataSourceId());
             if (Objects.isNull(dataSource)) {
                 throw new BusinessException("数据源不存在");
             }
@@ -120,7 +120,7 @@ public class CodeGenerationServiceImpl implements ICodeGenerationService {
             Path tempDir = Files.createTempDirectory(TEMP_DIR_PREFIX);
 
             // 查询数据源信息
-            CodegenDataSource dataSource = codegenDataSourceMapper.selectById(codeGenerateDTO.getDataSourceId());
+            CodegenDataSourcePO dataSource = codegenDataSourceMapper.selectById(codeGenerateDTO.getDataSourceId());
             if (Objects.isNull(dataSource)) {
                 throw new BusinessException("数据源不存在");
             }
