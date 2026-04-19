@@ -7,7 +7,7 @@ spring:
       add-mappings: false # 关闭Spring Boot默认的静态资源映射
   # 数据源配置
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/sea?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=GMT%2B8
+    url: jdbc:mysql://127.0.0.1:3306/sea_system?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=GMT%2B8
     username: root
     password: lh123456
     driver-class-name: com.mysql.cj.jdbc.Driver

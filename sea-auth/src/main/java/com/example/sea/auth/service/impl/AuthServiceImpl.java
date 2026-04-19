@@ -45,7 +45,7 @@ public class AuthServiceImpl implements AuthService {
      */
     @Override
     public CommonResult<LoginResponse> authenticate(String username, String password) {
-        CommonResult<LoginUser> vaResult = validateUser(username, password);
+        CommonResult<LoginUser> vaResult = this.validateUser(username, password);
         if (!vaResult.isSuccess()) {
             log.error("用户登录失败:用户名称{},失败原因:{}",username, vaResult.getMessage());
             return CommonResult.failed(LOGIN_FAILURE_MSG);
@@ -67,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
 
     /**
      * 通过 refreshToken 刷新 AccessToken
-     * @param refreshToken 刷新令牌
+     * @param loginRequest 刷新令牌
      * @return 新的访问令牌AccessToken
      */
     @Override

@@ -21,7 +21,7 @@ public interface AuthService {
     
     /**
      * 刷新token
-     * @param refreshToken 刷新token
+     * @param loginRequest 刷新token入参
      * @return 新token
      */
     CommonResult<LoginResponse> refreshToken(LoginRequestDTO loginRequest);

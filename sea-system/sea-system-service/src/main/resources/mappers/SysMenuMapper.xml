@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.sea.system.dao.SysMenuMapper">
 
-    <select id="selectMenuListByUserId" resultType="com.example.sea.system.entity.SysMenu">
+    <select id="selectMenuListByUserId" resultType="com.example.sea.system.entity.SysMenuPO">
         SELECT sm.* FROM sys_menu sm
         INNER JOIN sys_role_menu srm ON sm.id = srm.menu_id
         INNER JOIN sys_user_role sur ON srm.role_id = sur.role_id

@@ -3,6 +3,8 @@ package com.example.sea.system.controller;
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.core.validation.GroupInsert;
 import com.example.sea.common.core.validation.GroupUpdate;
+import com.example.sea.common.security.annotation.Permission;
+import com.example.sea.system.api.constants.PermissionConstants;
 import com.example.sea.system.api.dto.SysRoleDTO;
 import com.example.sea.system.api.dto.SysRoleMenuDTO;
 import com.example.sea.system.api.dto.SysRoleUserDTO;
@@ -29,12 +31,14 @@ public class SysRoleController {
     private final ISysRoleService sysRoleService;
 
     @PostMapping("/add")
+    @Permission(PermissionConstants.SYS_ROLE_ADD)
     @Operation(summary = "新增角色", description = "创建新的系统角色，需要传入角色基本信息")
     public CommonResult<Boolean> add(@RequestBody @Validated(GroupInsert.class) SysRoleDTO sysRoleDTO){
         return sysRoleService.add(sysRoleDTO);
     }
 
     @PostMapping("/edit")
+    @Permission(PermissionConstants.SYS_ROLE_EDIT)
     @Operation(summary = "编辑角色", description = "编辑现有角色信息，需要传入完整的角色信息")
     public CommonResult<Boolean> edit(@RequestBody @Validated(GroupUpdate.class) SysRoleDTO sysRoleDTO){
         return sysRoleService.edit(sysRoleDTO);
@@ -42,7 +46,6 @@ public class SysRoleController {
 
     /**
      * 编辑角色下的用户
-     * @param sysRoleDTO
      * @return
      */
     @PostMapping("/editRoleUserRelation")

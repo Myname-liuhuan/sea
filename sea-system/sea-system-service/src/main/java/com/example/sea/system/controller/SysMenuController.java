@@ -2,6 +2,8 @@ package com.example.sea.system.controller;
 
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.core.validation.GroupInsert;
+import com.example.sea.common.security.annotation.Permission;
+import com.example.sea.system.api.constants.PermissionConstants;
 import com.example.sea.system.api.dto.SysMenuDTO;
 import com.example.sea.system.api.vo.SysMenuNodeVO;
 import com.example.sea.system.service.ISysMenuService;
@@ -51,6 +53,7 @@ public class SysMenuController {
 
     /** 添加菜单 */
     @PostMapping("/add")
+    @Permission(PermissionConstants.SYS_MENU_ADD)
     @Operation(summary = "新增菜单", description = "创建新的菜单权限，需要传入菜单基本信息")
     public CommonResult<Boolean> add(@RequestBody @Validated(GroupInsert.class) SysMenuDTO sysMenuDTO) {
         return sysMenuService.add(sysMenuDTO);
