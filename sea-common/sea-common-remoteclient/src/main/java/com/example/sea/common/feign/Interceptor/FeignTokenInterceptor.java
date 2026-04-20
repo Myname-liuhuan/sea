@@ -15,6 +15,8 @@ import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import jakarta.servlet.http.HttpServletRequest;
 
+import java.util.Objects;
+
 /**
  * Feign 请求拦截器，用于传递和生成 JWT Token
  * @author liuhuan
@@ -36,7 +38,7 @@ public class FeignTokenInterceptor implements RequestInterceptor {
 
     /**
      * 给feign请求添加token通过security验证
-     * 有token就直接透传,没有但是在白名单中就生成白名单token
+     * 有有效token就直接透传,没有有效token但在白名单中就生成白名单token
      */
     @Override
     public void apply(RequestTemplate template) {
@@ -46,13 +48,11 @@ public class FeignTokenInterceptor implements RequestInterceptor {
 
         HttpServletRequest request = attrs.getRequest();
 
-        // 透传 token
-        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (StringUtils.hasText(token)) {
+        String token = this.resolveValidToken(request);
+        if (Objects.nonNull(token)) {
             template.header(HttpHeaders.AUTHORIZATION, token);
         } else {
             String path = request.getRequestURI();
-            // 在白名单中生成认证token
             for (String pattern : securityProperties.getWhitelist()) {
                 if (pathMatcher.match(pattern, path)) {
                     String whiteToken = jwtUtil.generateWhiteToken();
@@ -61,6 +61,24 @@ public class FeignTokenInterceptor implements RequestInterceptor {
                 }
             }
         }
+    }
+
+    /**
+     * 将无效token转化为null
+     * @param request
+     * @return
+     */
+    private String resolveValidToken(HttpServletRequest request) {
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (!StringUtils.hasText(token)) {
+            return null;
+        }
+        try{
+            jwtUtil.parseToken(token);
+        }catch(Exception e){
+            return null;
+        }
+        return token;
     }
 
 }
