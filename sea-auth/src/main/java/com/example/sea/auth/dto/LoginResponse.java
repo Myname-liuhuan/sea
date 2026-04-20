@@ -6,26 +6,26 @@ package com.example.sea.auth.dto;
  * @date 2025-08-04
  */
 public class LoginResponse {
-    private String token;
+    private String accessToken;
     private String refreshToken;
     private Long expiresIn;
 
-    public LoginResponse(String token) {
-        this.token = token;
+    public LoginResponse(String accessToken) {
+        this.accessToken = accessToken;
     }
 
-    public LoginResponse(String token, String refreshToken, Long expiresIn) {
-        this.token = token;
+    public LoginResponse(String accessToken, String refreshToken, Long expiresIn) {
+        this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.expiresIn = expiresIn;
     }
 
-    public String getToken() {
-        return token;
+    public String getAccessToken() {
+        return accessToken;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     public String getRefreshToken() {
