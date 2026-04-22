@@ -33,11 +33,11 @@ springdoc:
 #请求白名单
 security:
   whitelist:
-    - /api/auth/login
+    - /auth/login
     - /login
-    - /api/auth/refresh
+    - /auth/refresh
     - /refresh
-    - /api/auth/register
+    - /auth/register
     - /register
     - /public/**
     - /v3/api-docs/**
