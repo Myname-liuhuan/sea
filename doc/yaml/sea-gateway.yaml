@@ -19,30 +19,30 @@ spring:
           uri: lb://sea-auth
           order: 1
           predicates:
-            - Path=/api/auth/**
+            - Path=/auth/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
         - id: sea-media
           uri: lb://sea-media
           order: 3
           predicates:
-            - Path=/api/media/**
+            - Path=/media/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
         - id: sea-system
           uri: lb://sea-system
           order: 2
           predicates:
-            - Path=/api/system/**
+            - Path=/system/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
         - id: sea-code
           uri: lb://sea-code
           order: 4
           predicates:
-            - Path=/api/code/**
+            - Path=/code/**
           filters:
-            - StripPrefix=2
+            - StripPrefix=1
 
         # SpringDoc API文档路由
         - id: sea-auth-docs
