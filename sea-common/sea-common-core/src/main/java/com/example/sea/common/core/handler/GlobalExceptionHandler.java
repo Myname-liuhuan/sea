@@ -4,6 +4,8 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
@@ -23,11 +25,13 @@ import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * 全局异常处理类
+ * 这里@Order注解的值越越小越优先，GlobalExceptionHandler这里设置最大（最晚）用作兜底
  * @description 全局异常处理类
  * @author liuhuan
  * @date 2025-04-01
  */
 @RestControllerAdvice
+@Order(Ordered.LOWEST_PRECEDENCE)
 public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
