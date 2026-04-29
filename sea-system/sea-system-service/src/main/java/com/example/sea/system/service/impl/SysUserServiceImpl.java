@@ -4,8 +4,10 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.Objects;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.sea.common.mybatis.constants.DeletedEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -80,29 +82,31 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserPO> im
 
     @Override
     public CommonResult<List<SysUserVO>> list(SysUserQueryParam sysUserQueryParam) {
-        List<SysUserPO> userList = this.baseMapper.selectList(
-                lambdaQuery().eq(SysUserPO::getDelFlag, 0)
-                        .likeRight(StringUtils.isNotBlank(sysUserQueryParam.getUsername()), SysUserPO::getUsername, sysUserQueryParam.getUsername())
-                        .likeRight(StringUtils.isNotBlank(sysUserQueryParam.getEmail()), SysUserPO::getEmail, sysUserQueryParam.getEmail())
-                        .eq(Objects.nonNull(sysUserQueryParam.getMobile()), SysUserPO::getMobile, sysUserQueryParam.getMobile())
-                        .likeRight(StringUtils.isNotBlank(sysUserQueryParam.getAvatarUrl()), SysUserPO::getAvatarUrl, sysUserQueryParam.getAvatarUrl())
-                        .gt(Objects.nonNull(sysUserQueryParam.getCreateTimeStart()), SysUserPO::getCreateTime, sysUserQueryParam.getCreateTimeStart())
-                        .le(Objects.nonNull(sysUserQueryParam.getCreateTimeEnd()), SysUserPO::getCreateTime, sysUserQueryParam.getCreateTimeEnd())
-        );
+        LambdaQueryWrapper<SysUserPO> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(SysUserPO::getDelFlag, DeletedEnum.NORMAL.getCode())
+                .likeRight(StringUtils.isNotBlank(sysUserQueryParam.getUsername()), SysUserPO::getUsername, sysUserQueryParam.getUsername())
+                .likeRight(StringUtils.isNotBlank(sysUserQueryParam.getEmail()), SysUserPO::getEmail, sysUserQueryParam.getEmail())
+                .eq(Objects.nonNull(sysUserQueryParam.getMobile()), SysUserPO::getMobile, sysUserQueryParam.getMobile())
+                .likeRight(StringUtils.isNotBlank(sysUserQueryParam.getAvatarUrl()), SysUserPO::getAvatarUrl, sysUserQueryParam.getAvatarUrl())
+                .gt(Objects.nonNull(sysUserQueryParam.getCreateTimeStart()), SysUserPO::getCreateTime, sysUserQueryParam.getCreateTimeStart())
+                .le(Objects.nonNull(sysUserQueryParam.getCreateTimeEnd()), SysUserPO::getCreateTime, sysUserQueryParam.getCreateTimeEnd());
+
+        List<SysUserPO> userList = this.baseMapper.selectList(wrapper);
         return CommonResult.success(sysUserConverter.convertPoListToVoList(userList));
     }
 
     @Override
     public CommonResult<PageResult<SysUserVO>> page(SysUserQueryParam sysUserQueryParam) {
         IPage<SysUserPO> page = new Page<>(sysUserQueryParam.getPageNum(), sysUserQueryParam.getPageSize());
-        this.baseMapper.selectPage(page, lambdaQuery().eq(SysUserPO::getDelFlag, 0)
+        LambdaQueryWrapper<SysUserPO> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(SysUserPO::getDelFlag, DeletedEnum.NORMAL.getCode())
                 .likeRight(StringUtils.isNotBlank(sysUserQueryParam.getUsername()), SysUserPO::getUsername, sysUserQueryParam.getUsername())
                 .likeRight(StringUtils.isNotBlank(sysUserQueryParam.getEmail()), SysUserPO::getEmail, sysUserQueryParam.getEmail())
                 .eq(Objects.nonNull(sysUserQueryParam.getMobile()), SysUserPO::getMobile, sysUserQueryParam.getMobile())
                 .likeRight(StringUtils.isNotBlank(sysUserQueryParam.getAvatarUrl()), SysUserPO::getAvatarUrl, sysUserQueryParam.getAvatarUrl())
                 .gt(Objects.nonNull(sysUserQueryParam.getCreateTimeStart()), SysUserPO::getCreateTime, sysUserQueryParam.getCreateTimeStart())
-                .le(Objects.nonNull(sysUserQueryParam.getCreateTimeEnd()), SysUserPO::getCreateTime, sysUserQueryParam.getCreateTimeEnd())
-        );
+                .le(Objects.nonNull(sysUserQueryParam.getCreateTimeEnd()), SysUserPO::getCreateTime, sysUserQueryParam.getCreateTimeEnd());
+        this.baseMapper.selectPage(page, wrapper);
 
         //构建返回值
         PageResult<SysUserVO> pageResult = new PageResult<>();
