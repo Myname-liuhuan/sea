@@ -1,10 +1,13 @@
 package com.example.sea.system.converter;
 
+import com.example.sea.system.api.vo.SysUserVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import com.example.sea.system.entity.SysUserPO;
 import com.example.sea.system.api.dto.SysUserDTO;
+
+import java.util.List;
 
 /**
  * 使用mapstruct 因为其效率远大于spring的beanutils.copyProperties
@@ -23,6 +26,7 @@ public interface SysUserConverter {
      * @return
      */
     @Mapping(target = "passwordHash", source = "password")
-    public SysUserPO dtoToEntity(SysUserDTO dto);
+    SysUserPO dtoToEntity(SysUserDTO dto);
 
+    List<SysUserVO> convertPoListToVoList(List<SysUserPO> userList);
 }

@@ -3,11 +3,11 @@
 <mapper namespace="com.example.sea.system.dao.SysUserMapper">
     <sql id="Base_Column_List">
         id,
-        username, 
-        mobile, 
-        email, 
+        username,
+        mobile,
+        email,
         avatar_url,
-        profile, 
+        profile,
         is_banned,
         banned_until,
         create_time,
@@ -17,25 +17,21 @@
         del_flag
     </sql>
 
-    <select id="list" resultType="com.example.sea.system.api.vo.SysUserVO">
-        SELECT 
-        <include refid="Base_Column_List"/>
+    <select id="count" resultType="Long">
+        SELECT COUNT(*)
         FROM sys_user
         <where>
-            <if test="username != null and username != ''">
-                AND username LIKE CONCAT('%', #{username}, '%')
+            <if test="dto.username != null and dto.username != ''">
+                AND username LIKE CONCAT('%', #{dto.username}, '%')
             </if>
-             <if test="mobile != null and mobile != ''">
-                AND mobile LIKE CONCAT('%', #{mobile}, '%')
+             <if test="dto.mobile != null and dto.mobile != ''">
+                AND mobile LIKE CONCAT('%', #{dto.mobile}, '%')
             </if>
-            <if test="email != null and email != ''">
-                AND email LIKE CONCAT('%', #{email}, '%')
+            <if test="dto.email != null and dto.email != ''">
+                AND email LIKE CONCAT('%', #{dto.email}, '%')
             </if>
-           
         </where>
-        ORDER BY create_time DESC
     </select>
-
 
     <select id="getRoleCodeByUserId" resultType="String">
         SELECT r.role_code
@@ -45,10 +41,10 @@
     </select>
 
     <select id="getPermsByUserId" resultType="String">
-        SELECT sm.perms  
+        SELECT sm.perms
         FROM sys_role_menu srm
-        JOIN sys_menu sm  ON srm.menu_id  = sm.id 
-        JOIN sys_user_role sur ON srm.role_id  = sur.role_id 
+        JOIN sys_menu sm  ON srm.menu_id  = sm.id
+        JOIN sys_user_role sur ON srm.role_id  = sur.role_id
         WHERE sur.user_id = #{userId} AND sm.perms IS NOT NULL AND sm.perms != ''
     </select>
 

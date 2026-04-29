@@ -2,6 +2,7 @@ package com.example.sea.system.controller;
 
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,13 +11,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.sea.common.core.result.CommonResult;
+import com.example.sea.common.core.result.PageResult;
 import com.example.sea.common.core.validation.GroupInsert;
 import com.example.sea.common.core.validation.GroupUpdate;
 import com.example.sea.common.security.annotation.Permission;
 import com.example.sea.common.security.entity.LoginUser;
 import com.example.sea.system.api.constants.PermissionConstants;
 import com.example.sea.system.api.dto.SysUserDTO;
-import com.example.sea.system.api.dto.SysUserQueryDTO;
+import com.example.sea.system.api.param.SysUserQueryParam;
 import com.example.sea.system.api.vo.SysUserVO;
 import com.example.sea.system.service.ISysUserService;
 
@@ -62,20 +64,32 @@ public class SysUserController {
     }
 
     /**
-     * 查询用户列表
-     * @param sysUserQueryDTO
+     * 分页查询用户列表
+     * @param sysUserQueryParam
      * @return
-     */         
+     */
+    @GetMapping("/page")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_USER_LIST + "')")
+    @Operation(summary = "分页查询用户列表", description = "根据查询条件分页获取用户列表，支持模糊查询")
+    public CommonResult<PageResult<SysUserVO>> page(SysUserQueryParam sysUserQueryParam) {
+        return sysUsersService.page(sysUserQueryParam);
+    }
+
+    /**
+     * 查询用户列表
+     * @param sysUserQueryParam
+     * @return
+     */
     @GetMapping("/list")
-    @Permission(PermissionConstants.SYS_USER_LIST)
-    @Operation(summary = "查询用户列表", description = "根据查询条件分页获取用户列表，支持模糊查询")
-    public CommonResult<List<SysUserVO>> list(SysUserQueryDTO sysUserQueryDTO) {
-        return sysUsersService.list(sysUserQueryDTO);
+    @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_USER_LIST + "')")
+    @Operation(summary = "查询用户列表", description = "根据查询条件获取用户列表，支持模糊查询")
+    public CommonResult<List<SysUserVO>> list(SysUserQueryParam sysUserQueryParam) {
+        return sysUsersService.list(sysUserQueryParam);
     }
 
     /**
      * 根据用户名获取登录用户信息
-     * 
+     *
      * ::@RequestParam String username 要求请求参数里必须有 username 这个名字的参数。
             当传的是 usname=888,没有匹配到 username。
             SpringMVC 在绑定阶段就发现 缺少必须参数，于是直接抛出 MissingServletRequestParameterException → 400 Bad Request。
