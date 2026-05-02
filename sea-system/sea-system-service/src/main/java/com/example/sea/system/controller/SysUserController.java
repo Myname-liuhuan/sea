@@ -14,7 +14,6 @@ import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.core.result.PageResult;
 import com.example.sea.common.core.validation.GroupInsert;
 import com.example.sea.common.core.validation.GroupUpdate;
-import com.example.sea.common.security.annotation.Permission;
 import com.example.sea.common.security.entity.LoginUser;
 import com.example.sea.system.api.constants.PermissionConstants;
 import com.example.sea.system.api.dto.SysUserDTO;
@@ -45,7 +44,7 @@ public class SysUserController {
      * @return
      */
     @PostMapping("/add")
-    @Permission(PermissionConstants.SYS_USER_ADD)
+    @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_USER_ADD + "')")
     @Operation(summary = "新增用户", description = "创建新的系统用户，需要传入用户基本信息")
     public CommonResult<Boolean> add(@RequestBody @Validated(GroupInsert.class) SysUserDTO sysUserDTO) {
         return sysUsersService.add(sysUserDTO);
@@ -57,7 +56,7 @@ public class SysUserController {
      * @return
      */
     @PostMapping("/update")
-    @Permission(PermissionConstants.SYS_USER_EDIT)
+    @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_USER_EDIT + "')")
     @Operation(summary = "更新用户信息",description = "更新现有用户的基本信息，需要传入完整的用户信息")
     public CommonResult<Boolean> update(@RequestBody @Validated(GroupUpdate.class) SysUserDTO sysUserDTO) {
         return sysUsersService.update(sysUserDTO);

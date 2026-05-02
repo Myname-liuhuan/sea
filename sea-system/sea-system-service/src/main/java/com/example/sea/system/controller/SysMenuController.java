@@ -2,7 +2,6 @@ package com.example.sea.system.controller;
 
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.core.validation.GroupInsert;
-import com.example.sea.common.security.annotation.Permission;
 import com.example.sea.system.api.constants.PermissionConstants;
 import com.example.sea.system.api.dto.SysMenuDTO;
 import com.example.sea.system.api.vo.SysMenuNodeVO;
@@ -12,11 +11,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-import org.springframework.validation.annotation.Validated;
 
 /**
  * 菜单权限表控制器
@@ -53,7 +52,7 @@ public class SysMenuController {
 
     /** 添加菜单 */
     @PostMapping("/add")
-    @Permission(PermissionConstants.SYS_MENU_ADD)
+    @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_MENU_ADD + "')")
     @Operation(summary = "新增菜单", description = "创建新的菜单权限，需要传入菜单基本信息")
     public CommonResult<Boolean> add(@RequestBody @Validated(GroupInsert.class) SysMenuDTO sysMenuDTO) {
         return sysMenuService.add(sysMenuDTO);
