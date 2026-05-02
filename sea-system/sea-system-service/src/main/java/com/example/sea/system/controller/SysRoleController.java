@@ -1,6 +1,17 @@
 package com.example.sea.system.controller;
 
+import java.util.List;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.sea.common.core.result.CommonResult;
+import com.example.sea.common.core.result.PageResult;
 import com.example.sea.common.core.validation.GroupInsert;
 import com.example.sea.common.core.validation.GroupUpdate;
 import com.example.sea.common.security.annotation.Permission;
@@ -8,14 +19,13 @@ import com.example.sea.system.api.constants.PermissionConstants;
 import com.example.sea.system.api.dto.SysRoleDTO;
 import com.example.sea.system.api.dto.SysRoleMenuDTO;
 import com.example.sea.system.api.dto.SysRoleUserDTO;
+import com.example.sea.system.api.param.SysRoleQueryParam;
+import com.example.sea.system.api.vo.SysRoleVO;
 import com.example.sea.system.service.ISysRoleService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.web.bind.annotation.*;
-import org.springframework.validation.annotation.Validated;
 
 /**
  * 角色表控制器
@@ -60,8 +70,33 @@ public class SysRoleController {
      * @return
      */
     @PostMapping("/editRoleMenuRelation")
+    @Permission(PermissionConstants.SYS_ROLE_EDIT)
     @Operation(summary = "编辑角色菜单关系", description = "编辑角色下的菜单权限关联关系，可以批量添加或移除角色下的菜单权限")
     public CommonResult<Void> editRoleMenuRelation(@RequestBody @Validated(GroupUpdate.class) SysRoleMenuDTO sysMenuUserDTO){
         return sysRoleService.editRoleMenuRelation(sysMenuUserDTO);
+    }
+
+    /**
+     * 查询角色列表
+     * @param sysRoleQueryParam
+     * @return
+     */
+    @GetMapping("/list")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_ROLE_LIST + "')")
+    @Operation(summary = "查询角色列表", description = "根据查询条件获取角色列表，支持模糊查询")
+    public CommonResult<List<SysRoleVO>> list(SysRoleQueryParam sysRoleQueryParam) {
+        return sysRoleService.list(sysRoleQueryParam);
+    }
+
+    /**
+     * 分页查询角色列表
+     * @param sysRoleQueryParam
+     * @return
+     */
+    @GetMapping("/page")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_ROLE_LIST + "')")
+    @Operation(summary = "分页查询角色列表", description = "根据查询条件分页获取角色列表，支持模糊查询")
+    public CommonResult<PageResult<SysRoleVO>> page(SysRoleQueryParam sysRoleQueryParam) {
+        return sysRoleService.page(sysRoleQueryParam);
     }
 }

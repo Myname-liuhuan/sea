@@ -1,5 +1,12 @@
 package com.example.sea.system.service.impl;
 
+import java.util.List;
+
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.sea.common.core.result.CommonResult;
+import com.example.sea.common.core.result.PageResult;
 import com.example.sea.system.service.ISysRoleService;
 
 import lombok.RequiredArgsConstructor;
@@ -11,6 +18,8 @@ import com.example.sea.system.entity.SysRolePO;
 import com.example.sea.system.api.dto.SysRoleDTO;
 import com.example.sea.system.api.dto.SysRoleMenuDTO;
 import com.example.sea.system.api.dto.SysRoleUserDTO;
+import com.example.sea.system.api.param.SysRoleQueryParam;
+import com.example.sea.system.api.vo.SysRoleVO;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,6 +82,35 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRolePO> im
             baseMapper.insertRoleMenus(roleId, sysMenuUserDTO.getMenuIdList());
         }
         return CommonResult.success();
+    }
+
+    @Override
+    public CommonResult<List<SysRoleVO>> list(SysRoleQueryParam sysRoleQueryParam) {
+        LambdaQueryWrapper<SysRolePO> wrapper = buildQueryWrapper(sysRoleQueryParam);
+        List<SysRolePO> list = this.list(wrapper);
+        List<SysRoleVO> voList = list.stream().map(sysRoleConverter::entityToVO).toList();
+        return CommonResult.success(voList);
+    }
+
+    @Override
+    public CommonResult<PageResult<SysRoleVO>> page(SysRoleQueryParam sysRoleQueryParam) {
+        LambdaQueryWrapper<SysRolePO> wrapper = buildQueryWrapper(sysRoleQueryParam);
+        Page<SysRolePO> page = new Page<>(sysRoleQueryParam.getPageNum(), sysRoleQueryParam.getPageSize());
+        Page<SysRolePO> result = this.page(page, wrapper);
+        List<SysRoleVO> voList = result.getRecords().stream().map(sysRoleConverter::entityToVO).toList();
+        PageResult<SysRoleVO> pageResult = new PageResult<>(voList, result.getTotal(), sysRoleQueryParam.getPageNum(), sysRoleQueryParam.getPageSize());
+        return CommonResult.success(pageResult);
+    }
+
+    private LambdaQueryWrapper<SysRolePO> buildQueryWrapper(SysRoleQueryParam param) {
+        LambdaQueryWrapper<SysRolePO> wrapper = Wrappers.lambdaQuery();
+        wrapper.like(param.getRoleName() != null, SysRolePO::getRoleName, param.getRoleName())
+               .eq(param.getRoleCode() != null, SysRolePO::getRoleCode, param.getRoleCode())
+               .eq(param.getStatus() != null, SysRolePO::getStatus, param.getStatus())
+               .ge(param.getCreateTimeStart() != null, SysRolePO::getCreateTime, param.getCreateTimeStart())
+               .le(param.getCreateTimeEnd() != null, SysRolePO::getCreateTime, param.getCreateTimeEnd())
+               .orderByDesc(SysRolePO::getCreateTime);
+        return wrapper;
     }
 
 }

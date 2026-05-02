@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 
 import com.example.sea.system.entity.SysRolePO;
 import com.example.sea.system.api.dto.SysRoleDTO;
+import com.example.sea.system.api.vo.SysRoleVO;
 
 /**
  * sys_role 表实体类转换器
@@ -19,5 +20,12 @@ public interface SysRoleConverter {
      * @return
      */
     public SysRolePO dtoToEntity(SysRoleDTO dto);
+
+    /**
+     * entity转vo
+     * @param entity
+     * @return
+     */
+    public SysRoleVO entityToVO(SysRolePO entity);
 
 }
