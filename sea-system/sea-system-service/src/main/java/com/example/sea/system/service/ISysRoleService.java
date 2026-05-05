@@ -56,4 +56,6 @@ public interface ISysRoleService extends IService<SysRolePO> {
      */
     CommonResult<PageResult<SysRoleVO>> page(SysRoleQueryParam sysRoleQueryParam);
 
+    CommonResult<List<Long>> getMenuIdsByRoleId(Long roleId);
+
 }

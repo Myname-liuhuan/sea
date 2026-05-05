@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -97,5 +98,12 @@ public class SysRoleController {
     @Operation(summary = "分页查询角色列表", description = "根据查询条件分页获取角色列表，支持模糊查询")
     public CommonResult<PageResult<SysRoleVO>> page(SysRoleQueryParam sysRoleQueryParam) {
         return sysRoleService.page(sysRoleQueryParam);
+    }
+
+    @GetMapping("/menuIds/{roleId}")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_ROLE_LIST + "')")
+    @Operation(summary = "获取角色菜单ID列表", description = "根据角色ID查询该角色已分配的菜单ID列表")
+    public CommonResult<List<Long>> getMenuIdsByRoleId(@PathVariable Long roleId) {
+        return sysRoleService.getMenuIdsByRoleId(roleId);
     }
 }
