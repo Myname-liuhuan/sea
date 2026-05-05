@@ -50,6 +50,11 @@
 			<artifactId>sea-media-api</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>com.example</groupId>
+			<artifactId>sea-common-mybatis</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 
         <!-- SpringDoc OpenAPI -->
         <dependency>
