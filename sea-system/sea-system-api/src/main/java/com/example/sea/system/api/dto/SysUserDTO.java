@@ -3,7 +3,6 @@ package com.example.sea.system.api.dto;
 import com.example.sea.common.core.entity.dto.BaseDTO;
 import com.example.sea.common.core.validation.GroupInsert;
 import com.example.sea.common.core.validation.GroupUpdate;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -35,8 +34,7 @@ public class SysUserDTO extends BaseDTO {
     /**
      * 已验证邮箱
      */
-    @Schema(description = "邮箱 （新增时必填，修改时可选）")
-    @NotBlank(message = "邮箱不能为空", groups = {GroupInsert.class})
+    @Schema(description = "邮箱")
     private String email;
 
     /**

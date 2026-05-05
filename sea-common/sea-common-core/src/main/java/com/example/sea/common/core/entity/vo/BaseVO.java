@@ -13,8 +13,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @Data
 public class BaseVO {
 
-    /** 主键 */
-    private Long id;
+    /** 主键 (返回给前端使用字符类型)*/
+    private String id;
 
     /** 创建时间 */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
