@@ -103,7 +103,14 @@ public class SysRoleController {
     @GetMapping("/menuIds/{roleId}")
     @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_ROLE_LIST + "')")
     @Operation(summary = "获取角色菜单ID列表", description = "根据角色ID查询该角色已分配的菜单ID列表")
-    public CommonResult<List<Long>> getMenuIdsByRoleId(@PathVariable Long roleId) {
+    public CommonResult<List<String>> getMenuIdsByRoleId(@PathVariable Long roleId) {
         return sysRoleService.getMenuIdsByRoleId(roleId);
+    }
+
+    @GetMapping("/userIds/{roleId}")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_ROLE_LIST + "')")
+    @Operation(summary = "获取角色用户ID列表", description = "根据角色ID查询该角色已分配的用户ID列表")
+    public CommonResult<List<String>> getUserIdsByRoleId(@PathVariable Long roleId) {
+        return sysRoleService.getUserIdsByRoleId(roleId);
     }
 }

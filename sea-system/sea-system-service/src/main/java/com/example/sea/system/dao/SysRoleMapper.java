@@ -42,6 +42,8 @@ public interface SysRoleMapper extends BaseMapper<SysRolePO> {
      */
     void insertRoleMenus(@Param("roleId") Long roleId,@Param("menuIdList") List<Long> menuIdList);
 
-    List<Long> selectMenuIdsByRoleId(Long roleId);
+    List<String> selectMenuIdsByRoleId(Long roleId);
+
+    List<String> selectUserIdsByRoleId(Long roleId);
 
 }

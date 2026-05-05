@@ -103,9 +103,15 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRolePO> im
     }
 
     @Override
-    public CommonResult<List<Long>> getMenuIdsByRoleId(Long roleId) {
-        List<Long> menuIds = baseMapper.selectMenuIdsByRoleId(roleId);
+    public CommonResult<List<String>> getMenuIdsByRoleId(Long roleId) {
+        List<String> menuIds = baseMapper.selectMenuIdsByRoleId(roleId);
         return CommonResult.success(menuIds);
+    }
+
+    @Override
+    public CommonResult<List<String>> getUserIdsByRoleId(Long roleId) {
+        List<String> userIds = baseMapper.selectUserIdsByRoleId(roleId);
+        return CommonResult.success(userIds);
     }
 
     private LambdaQueryWrapper<SysRolePO> buildQueryWrapper(SysRoleQueryParam param) {
