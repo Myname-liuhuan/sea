@@ -53,5 +53,12 @@ public interface ISysUserService extends IService<SysUserPO> {
      */
     CommonResult<LoginUser> getLoginUser(String username);
 
+    /**
+     * 删除用户
+     * @param userId 用户ID
+     * @return 结果
+     */
+    CommonResult<Boolean> delete(Long userId);
+
 
 }

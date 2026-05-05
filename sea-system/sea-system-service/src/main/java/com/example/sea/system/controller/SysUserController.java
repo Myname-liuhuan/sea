@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -101,6 +103,18 @@ public class SysUserController {
     @Operation(summary = "获取登录用户信息", description = "根据用户名获取用户的登录信息，包括权限和角色信息")
     public CommonResult<LoginUser> getLoginUser(String username) {
         return sysUsersService.getLoginUser(username);
+    }
+
+    /**
+     * 删除用户
+     * @param userId 用户ID
+     * @return 结果
+     */
+    @DeleteMapping("/{userId}")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_USER_DELETE + "')")
+    @Operation(summary = "删除用户", description = "根据用户ID删除用户")
+    public CommonResult<Boolean> delete(@PathVariable Long userId) {
+        return sysUsersService.delete(userId);
     }
 
 

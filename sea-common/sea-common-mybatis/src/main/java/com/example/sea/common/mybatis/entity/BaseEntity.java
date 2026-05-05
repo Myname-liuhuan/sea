@@ -2,6 +2,7 @@ package com.example.sea.common.mybatis.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -34,6 +35,7 @@ public class BaseEntity {
 
     /** 删除标志（0启用 1删除）*/
     @TableField(fill = FieldFill.INSERT)
+    @TableLogic(value = "0", delval = "1")
     private Integer delFlag;
 
     

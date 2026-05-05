@@ -149,7 +149,15 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserPO> im
         return CommonResult.success(loginUser);
     }
 
-    
+    /**
+     * 删除用户
+     */
+    @Override
+    public CommonResult<Boolean> delete(Long userId) {
+        boolean result = this.removeById(userId);
+        return CommonResult.success(result);
+    }
+
 
 
 }
