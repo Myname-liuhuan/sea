@@ -7,6 +7,7 @@ import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.system.entity.SysMenuPO;
 import com.example.sea.system.api.dto.SysMenuDTO;
 import com.example.sea.system.api.vo.SysMenuNodeVO;
+import com.example.sea.system.api.vo.SysMenuOptionVO;
 
 /**
  * 菜单权限表服务接口
@@ -33,5 +34,11 @@ public interface ISysMenuService extends IService<SysMenuPO> {
      * @return
      */
     CommonResult<Boolean> add(SysMenuDTO sysMenuDTO);
+
+    /**
+     * 获取菜单选项列表（平铺）
+     * @return
+     */
+    CommonResult<List<SysMenuOptionVO>> options();
 
 }

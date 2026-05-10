@@ -5,6 +5,7 @@ import com.example.sea.common.core.validation.GroupInsert;
 import com.example.sea.system.api.constants.PermissionConstants;
 import com.example.sea.system.api.dto.SysMenuDTO;
 import com.example.sea.system.api.vo.SysMenuNodeVO;
+import com.example.sea.system.api.vo.SysMenuOptionVO;
 import com.example.sea.system.service.ISysMenuService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,6 +49,12 @@ public class SysMenuController {
     @Operation(summary = "获取所有菜单树", description = "获取系统中所有的菜单权限树")
     public CommonResult<List<SysMenuNodeVO>> allMenuTree() {
         return sysMenuService.allMenuTree();
+    }
+
+    @GetMapping("/options")
+    @Operation(summary = "获取菜单选项列表", description = "获取所有菜单的平铺列表，用于下拉选择")
+    public CommonResult<List<SysMenuOptionVO>> options() {
+        return sysMenuService.options();
     }
 
     /** 添加菜单 */

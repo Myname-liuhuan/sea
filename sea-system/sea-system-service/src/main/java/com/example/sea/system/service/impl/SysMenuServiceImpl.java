@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.security.utils.SecurityContextUtil;
@@ -15,6 +16,8 @@ import com.example.sea.system.dao.SysMenuMapper;
 import com.example.sea.system.entity.SysMenuPO;
 import com.example.sea.system.api.dto.SysMenuDTO;
 import com.example.sea.system.api.vo.SysMenuNodeVO;
+import com.example.sea.system.constants.SysMenuTypeEnum;
+import com.example.sea.system.api.vo.SysMenuOptionVO;
 import com.example.sea.system.service.ISysMenuService;
 
 import lombok.RequiredArgsConstructor;
@@ -69,6 +72,17 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenuPO> im
         SysMenuPO sysMenu = sysMenuConverter.dtoToEntity(sysMenuDTO);
         boolean result = this.save(sysMenu);
         return CommonResult.success(result);
+    }
+
+    @Override
+    public CommonResult<List<SysMenuOptionVO>> options() {
+        LambdaQueryWrapper<SysMenuPO> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(SysMenuPO::getMenuType, SysMenuTypeEnum.DIRECTORY.getCode(), SysMenuTypeEnum.MENU.getCode())
+            .orderByAsc(SysMenuPO::getOrderNum);
+        List<SysMenuOptionVO> list = list(wrapper).stream()
+            .map(sysMenuConverter::entityToOptionVO)
+            .collect(Collectors.toList());
+        return CommonResult.success(list);
     }
 
     /**
