@@ -16,7 +16,11 @@
 ### 🗃️ 数据库相关 (database/)
 - 数据库设计和使用文档
 
+### ☁️ 云服务相关 (cloud/)
+- [华为云 OBS SDK Content-Length 行为分析](cloud/obs-sdk-putobject-content-length-analysis.md) - putObject不指定Content-Length时的底层机制分析
+
 ## 文档列表
+
 
 ### Spring相关文档
 
@@ -55,7 +59,20 @@
     - [Redis性能调优指南](redis/redis-template-methods-ext-01.md) *（待创建）*
     - [Redis集群配置与使用](redis/redis-template-methods-ext-02.md) *（待创建）*
 
+### 云服务相关文档
+
+#### 1. 华为云 OBS SDK Content-Length 行为分析
+- [华为云 OBS SDK Content-Length 行为分析](cloud/obs-sdk-putobject-content-length-analysis.md)
+  - **创建日期**: 2026-05-15
+  - **最后更新**: 2026-05-15
+  - **分类**: 技术/云存储
+  - **描述**: 深入分析华为云 OBS SDK 在 putObject 不指定 Content-Length 时的底层行为，追踪源码调用链路，消除 OOM 误解
+  
+  - **相关拓展文档**:
+    - *暂无*
+
 ## 待创建文档
+
 
 ### Spring相关
 - [ ] Spring Security配置指南
