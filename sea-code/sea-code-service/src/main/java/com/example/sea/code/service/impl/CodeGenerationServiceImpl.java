@@ -3,7 +3,8 @@ package com.example.sea.code.service.impl;
 import com.baomidou.mybatisplus.generator.FastAutoGenerator;
 import com.baomidou.mybatisplus.generator.config.OutputFile;
 import com.baomidou.mybatisplus.generator.config.StrategyConfig;
-import com.baomidou.mybatisplus.generator.config.rules.ColumnType;
+import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
+import com.baomidou.mybatisplus.generator.config.rules.IColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.VelocityTemplateEngine;
 import com.example.sea.code.common.utils.JdbcUrlBuilder;
@@ -45,7 +46,7 @@ public class CodeGenerationServiceImpl implements ICodeGenerationService {
 
     @Override
     public byte[] generateCode(CodeGenerateDTO codeGenerateDTO) throws IOException {
-        return generateToZip(codeGenerateDTO, null);
+        return generateToZip(codeGenerateDTO, null, null);
     }
 
     @Override
@@ -67,20 +68,12 @@ public class CodeGenerationServiceImpl implements ICodeGenerationService {
                         CodeGenColumnSettingDTO::getEntityType,
                         (existing, replacement) -> existing));
 
-        return generateToZip(codeGenerateDTO, builder -> {
-            builder.entityBuilder()
-                    .addIgnoreColumns(ignoreColumns)
-                    .columnTypeMapping((columnName, defaultType) -> {
-                        String override = typeOverride.get(columnName);
-                        if (override != null) {
-                            return ColumnType.valueOf(override.toUpperCase());
-                        }
-                        return defaultType;
-                    });
-        });
+        return generateToZip(codeGenerateDTO, ignoreColumns, typeOverride);
     }
 
-    private byte[] generateToZip(CodeGenerateDTO dto, Consumer<StrategyConfig.Builder> extraStrategyConfig) throws IOException {
+    private byte[] generateToZip(CodeGenerateDTO dto,
+                                  List<String> ignoreColumns,
+                                  Map<String, String> typeOverride) throws IOException {
         CodegenDataSourcePO dataSource = codegenDataSourceMapper.selectById(dto.getDataSourceId());
         if (Objects.isNull(dataSource)) {
             throw new BusinessException("数据源不存在");
@@ -93,7 +86,7 @@ public class CodeGenerationServiceImpl implements ICodeGenerationService {
             String jdbcUrl = JdbcUrlBuilder.build(
                     dataSource.getDbType(), dataSource.getHost(), dataSource.getPort(), dto.getDbName());
 
-            FastAutoGenerator.create(jdbcUrl, dataSource.getUsername(), dataSource.getPassword())
+            var generator = FastAutoGenerator.create(jdbcUrl, dataSource.getUsername(), dataSource.getPassword())
                     .globalConfig(builder -> builder
                             .author("admin")
                             .commentDate("yyyy-MM-dd")
@@ -101,28 +94,53 @@ public class CodeGenerationServiceImpl implements ICodeGenerationService {
                     .packageConfig(builder -> builder
                             .parent(dto.getPackageName())
                             .mapper("dao")
-                            .pathInfo(Collections.singletonMap(OutputFile.xml, tempDir + "/mappers")))
-                    .strategyConfig(builder -> {
-                        builder.addInclude(dto.getTableName())
-                                .entityBuilder()
-                                .enableLombok()
-                                .naming(NamingStrategy.underline_to_camel)
-                                .columnNaming(NamingStrategy.underline_to_camel)
-                                .controllerBuilder()
-                                .enableRestStyle();
+                            .pathInfo(Collections.singletonMap(OutputFile.xml, tempDir + "/mappers")));
 
-                        if (extraStrategyConfig != null) {
-                            extraStrategyConfig.accept(builder);
-                        }
-                    })
-                    .templateEngine(new VelocityTemplateEngine())
-                    .execute();
+            // 自定义字段类型映射
+            if (typeOverride != null && !typeOverride.isEmpty()) {
+                generator.dataSourceConfig(dsBuilder -> dsBuilder
+                        .typeConvertHandler((globalConfig, typeRegistry, metaInfo) -> {
+                            String columnName = metaInfo.getColumnName();
+                            String customType = typeOverride.get(columnName);
+                            if (customType != null) {
+                                IColumnType resolved = resolveColumnType(customType);
+                                if (resolved != null) {
+                                    return resolved;
+                                }
+                            }
+                            return typeRegistry.getColumnType(metaInfo);
+                        }));
+            }
+
+            generator.strategyConfig((Consumer<StrategyConfig.Builder>) builder -> {
+                builder.addInclude(dto.getTableName())
+                        .entityBuilder()
+                        .enableLombok()
+                        .naming(NamingStrategy.underline_to_camel)
+                        .columnNaming(NamingStrategy.underline_to_camel)
+                        .controllerBuilder()
+                        .enableRestStyle();
+
+                if (ignoreColumns != null && !ignoreColumns.isEmpty()) {
+                    builder.entityBuilder().addIgnoreColumns(ignoreColumns);
+                }
+            })
+            .templateEngine(new VelocityTemplateEngine())
+            .execute();
 
             zipDirectory(tempDir.toFile(), zipOut);
 
             return byteArrayOutputStream.toByteArray();
         } finally {
             FileUtils.deleteDirectory(tempDir.toFile());
+        }
+    }
+
+    private IColumnType resolveColumnType(String typeName) {
+        try {
+            return DbColumnType.valueOf(typeName.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return null;
         }
     }
 
