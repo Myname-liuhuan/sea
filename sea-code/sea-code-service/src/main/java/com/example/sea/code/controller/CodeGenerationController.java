@@ -1,12 +1,16 @@
 package com.example.sea.code.controller;
 
+import com.example.sea.code.api.constants.CodePermissionConstants;
 import com.example.sea.code.api.dto.CodeGenerateDTO;
 import com.example.sea.code.service.ICodeGenerationService;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,30 +25,17 @@ import java.time.format.DateTimeFormatter;
 
 import org.springframework.http.ContentDisposition;
 
-/**
- * 代码生成控制器
- * @author liuhuan
- * @date 2025-02-28
- */
 @RestController
 @RequestMapping("/codegen")
+@RequiredArgsConstructor
+@Tag(name = "代码生成", description = "代码生成相关操作接口")
 public class CodeGenerationController {
 
     private final ICodeGenerationService codeGenerationService;
 
-    @Autowired
-    public CodeGenerationController(ICodeGenerationService codeGenerationService) {
-        this.codeGenerationService = codeGenerationService;
-    }
-
-    /**
-     * 生成代码
-     *
-     * @param codeGenerateDTO 代码生成参数
-     * @return 生成的代码文件
-     * @throws IOException IO异常
-     */
     @GetMapping("/generate")
+    @Operation(summary = "默认生成代码", description = "根据表名和包名生成MyBatis-Plus CRUD代码")
+    @PreAuthorize("hasAuthority('" + CodePermissionConstants.CODE_GENERATE + "')")
     public ResponseEntity<byte[]> generateCode(@Validated CodeGenerateDTO codeGenerateDTO) throws IOException {
         byte[] zipBytes = codeGenerationService.generateCode(codeGenerateDTO);
 
@@ -58,16 +49,11 @@ public class CodeGenerationController {
                 .body(zipBytes);
     }
 
-    /**
-     * 生成代码-自定义实体类字段
-     * @param codeGenerateDTO
-     * @return
-     * @throws IOException
-     */
     @PostMapping("/generateCodeByConfig")
+    @Operation(summary = "自定义配置生成代码", description = "根据自定义列配置生成代码")
+    @PreAuthorize("hasAuthority('" + CodePermissionConstants.CODE_GENERATE + "')")
     public ResponseEntity<byte[]> generateCodeByConfig(@Validated @RequestBody CodeGenerateDTO codeGenerateDTO) throws IOException {
         byte[] zipBytes = codeGenerationService.generateCodeByConfig(codeGenerateDTO);
-        //当前时间yyyyMMddHHmmss字符串
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         String filename = "generated-code" + LocalDateTime.now().format(formatter) + ".zip";
 

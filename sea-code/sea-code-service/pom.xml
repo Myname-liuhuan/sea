@@ -70,13 +70,6 @@
             <artifactId>druid</artifactId>
         </dependency>
 
-        <!-- Zip4j for in-memory zip compression -->
-        <dependency>
-            <groupId>net.lingala.zip4j</groupId>
-            <artifactId>zip4j</artifactId>
-            <version>2.11.5</version>
-        </dependency>
-
         <!-- Apache Commons IO -->
         <dependency>
             <groupId>commons-io</groupId>

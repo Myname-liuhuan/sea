@@ -2,37 +2,32 @@ package com.example.sea.code.api.dto;
 
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-/**
- * 代码生成接口入参 DTO
- * @author liuhuan
- * @date 2025-03-31
- */
 @Data
+@Schema(description = "代码生成参数")
 public class CodeGenerateDTO {
 
-    /** 数据源ID */
     @NotNull(message = "数据源ID不能为空")
+    @Schema(description = "数据源ID")
     private Long dataSourceId;
 
-    /**数据库名称 */
     @NotBlank(message = "数据库名称不能为空")
+    @Schema(description = "数据库名称")
     private String dbName;
 
-    /**表名 */
     @NotBlank(message = "表名不能为空")
+    @Schema(description = "表名")
     private String tableName;
 
-    /** 生成的代码的包名 */
     @NotBlank(message = "待生成的包名不能为空")
+    @Schema(description = "生成的代码包名")
     private String packageName;
 
-    /**
-     * 表中字段自定义规则
-     */
+    @Schema(description = "表中字段自定义规则")
     private List<CodeGenColumnSettingDTO> columnSettingList;
 
 }

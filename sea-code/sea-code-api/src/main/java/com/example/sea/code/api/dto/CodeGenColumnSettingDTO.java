@@ -1,25 +1,22 @@
 package com.example.sea.code.api.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-/**
- * 代码生成列设置 DTO
- * @author liuhuan
- * @date 2025-05-08
- */
 @Data
+@Schema(description = "代码生成列设置")
 public class CodeGenColumnSettingDTO {
 
-    /** 列名 */
+    @Schema(description = "列名")
     private String columnName;
 
-    /** 列类型 */
+    @Schema(description = "列类型")
     private String columnType;
 
-    /** 实体类类型 */
+    @Schema(description = "实体类类型")
     private String entityType;
 
-    /** 是否需要转化为实体类字段 */
+    @Schema(description = "是否需要转化为实体类字段")
     private Boolean isEntityField;
 
 }

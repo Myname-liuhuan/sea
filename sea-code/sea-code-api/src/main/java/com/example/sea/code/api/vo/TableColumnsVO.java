@@ -1,27 +1,24 @@
 package com.example.sea.code.api.vo;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-/**
- * 代码生成 - 表字段信息表视图对象
- * @author liuhuan
- * @date 2025-04-29
- */
 @Data
 @Accessors(chain = true)
+@Schema(description = "表字段信息")
 public class TableColumnsVO {
 
-    /** 列名称 */
+    @Schema(description = "列名称")
     private String columnName;
 
-    /** 列类型 */
+    @Schema(description = "列类型")
     private String columnType;
 
-    /** 列对应的实体类类型 */
+    @Schema(description = "列对应的实体类类型")
     private String entityType;
 
-    /** 列注释 */
+    @Schema(description = "列注释")
     private String columnComment;
 
 }
