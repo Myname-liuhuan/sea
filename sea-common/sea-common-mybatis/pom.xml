@@ -29,12 +29,38 @@
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
             <version>${mybatis-plus-start.version}</version>
         </dependency>
-		
+
 		<dependency>
 			<groupId>com.example</groupId>
 			<artifactId>sea-common-security</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+
+        <!-- AOP -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <!-- Web -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- sea-common-core for CommonResult -->
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>sea-common-core</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <!-- sea-system-api for OperationLogFeignClient and OperationLogDTO -->
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>sea-system-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
 
     </dependencies>
 

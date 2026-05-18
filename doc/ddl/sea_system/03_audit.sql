@@ -9,16 +9,18 @@ USE sea_system;
 -- ---------------------------------------------------------------
 DROP TABLE IF EXISTS sys_login_log;
 CREATE TABLE sys_login_log (
-    id              BIGINT          NOT NULL    AUTO_INCREMENT  COMMENT '日志ID',
+    id              BIGINT          NOT NULL                        COMMENT '日志ID',
     user_id         BIGINT                                     COMMENT '用户ID',
     username        VARCHAR(50)                                COMMENT '用户名',
     ip_address      VARCHAR(128)                               COMMENT 'IP地址',
     login_location  VARCHAR(255)                              COMMENT '登录地点',
     browser         VARCHAR(100)                               COMMENT '浏览器',
     os              VARCHAR(100)                               COMMENT '操作系统',
-    status          TINYINT         NOT NULL                    COMMENT '登录状态(0失败,1成功)',
+    status          TINYINT         NOT NULL    DEFAULT 1       COMMENT '登录状态(0失败,1成功)',
     msg             VARCHAR(255)                              COMMENT '提示消息',
     login_time      DATETIME       NOT NULL                    COMMENT '登录时间',
+    logout_time     DATETIME                                   COMMENT '退出时间',
+    fail_reason     VARCHAR(255)                              COMMENT '失败原因',
     PRIMARY KEY (id),
     KEY idx_user_id (user_id),
     KEY idx_login_time (login_time),
@@ -45,6 +47,7 @@ CREATE TABLE sys_operation_log (
     response_param  VARCHAR(2000)                             COMMENT '返回参数',
     status          TINYINT         NOT NULL    DEFAULT 1       COMMENT '操作状态(0异常,1正常)',
     error_msg       TEXT                                      COMMENT '错误消息',
+    duration        INT             NOT NULL    DEFAULT 0       COMMENT '耗时(ms)',
     operation_time  DATETIME       NOT NULL                    COMMENT '操作时间',
     PRIMARY KEY (id),
     KEY idx_user_id (user_id),

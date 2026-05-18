@@ -10,7 +10,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * @author liuhuan
  * @date 2025-07-30
  */
-@EnableFeignClients
+@EnableFeignClients(basePackages = "com.example.sea")
 @EnableDiscoveryClient
 @SpringBootApplication(scanBasePackages = {"com.example.sea.auth", "com.example.sea.common"} )
 public class SeaAuthApplication {

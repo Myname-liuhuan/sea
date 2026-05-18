@@ -26,6 +26,12 @@
 			<version>0.0.1-SNAPSHOT</version>
         </dependency>
 
+       <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>sea-common-remoteclient</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
         <!-- 字段校验 -->
         <dependency>
             <groupId>org.hibernate.validator</groupId>
