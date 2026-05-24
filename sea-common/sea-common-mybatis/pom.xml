@@ -55,10 +55,10 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
-        <!-- sea-system-api for OperationLogFeignClient and OperationLogDTO -->
+        <!-- sea-log-api for OperationLogFeignClient and OperationLogDTO -->
         <dependency>
             <groupId>com.example</groupId>
-            <artifactId>sea-system-api</artifactId>
+            <artifactId>sea-log-api</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 

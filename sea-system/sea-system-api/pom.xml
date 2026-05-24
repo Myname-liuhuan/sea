@@ -47,6 +47,13 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
         </dependency>
+
+        <!-- 日志API（继承feign接口） -->
+        <dependency>
+            <groupId>com.example</groupId>
+            <artifactId>sea-log-api</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>

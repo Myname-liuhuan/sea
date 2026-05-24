@@ -1,14 +1,12 @@
 package com.example.sea.system.api.feign;
 
-import org.springframework.cloud.openfeign.FallbackFactory;
+import com.example.sea.system.api.feign.fallback.SystemFeignClientFallBack;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.security.entity.LoginUser;
-
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * 系统服务FeignClient

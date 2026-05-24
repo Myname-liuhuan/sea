@@ -1,5 +1,6 @@
-package com.example.sea.system.api.feign;
+package com.example.sea.system.api.feign.fallback;
 
+import com.example.sea.system.api.feign.SystemFeignClient;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
 

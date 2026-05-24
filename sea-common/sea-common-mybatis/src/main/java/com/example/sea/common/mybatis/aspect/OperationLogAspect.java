@@ -5,12 +5,12 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -19,8 +19,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import com.example.sea.common.mybatis.annotation.OperationLog;
 import com.example.sea.common.security.entity.LoginUser;
 import com.example.sea.common.security.utils.SecurityContextUtil;
-import com.example.sea.system.api.dto.OperationLogDTO;
-import com.example.sea.system.api.feign.OperationLogFeignClient;
+import com.example.sea.log.api.dto.OperationLogDTO;
+import com.example.sea.log.api.feign.OperationLogFeignClient;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -34,13 +34,11 @@ import lombok.extern.slf4j.Slf4j;
 @Aspect
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class OperationLogAspect {
 
-    @Autowired
-    private OperationLogFeignClient operationLogFeignClient;
-
-    @Autowired
-    private ThreadPoolTaskExecutor operationLogExecutor;
+    private final OperationLogFeignClient operationLogFeignClient;
+    private final ThreadPoolTaskExecutor operationLogExecutor;
 
     /**
      * 敏感字段正则表达式

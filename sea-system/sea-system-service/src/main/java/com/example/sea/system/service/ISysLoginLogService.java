@@ -1,7 +1,7 @@
 package com.example.sea.system.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.example.sea.system.api.dto.LoginLogDTO;
+import com.example.sea.log.api.dto.LoginLogDTO;
 import com.example.sea.system.entity.SysLoginLogPO;
 
 /**

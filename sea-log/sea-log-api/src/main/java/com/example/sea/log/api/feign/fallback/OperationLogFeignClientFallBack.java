@@ -1,11 +1,11 @@
-package com.example.sea.system.api.feign.fallback;
+package com.example.sea.log.api.feign.fallback;
 
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
 
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.log.api.dto.OperationLogDTO;
-import com.example.sea.system.api.feign.OperationLogFeignClient;
+import com.example.sea.log.api.feign.OperationLogFeignClient;
 
 import lombok.extern.slf4j.Slf4j;
 
