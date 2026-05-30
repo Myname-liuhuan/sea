@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.sea.common.core.result.CommonResult;
-import com.example.sea.log.api.dto.LoginLogDTO;
+import com.example.sea.system.api.dto.LoginLogDTO;
 import com.example.sea.system.service.ISysLoginLogService;
 
 import io.swagger.v3.oas.annotations.Operation;

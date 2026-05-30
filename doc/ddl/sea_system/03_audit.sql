@@ -47,7 +47,6 @@ CREATE TABLE sys_operation_log (
     response_param  VARCHAR(2000)                             COMMENT '返回参数',
     status          TINYINT         NOT NULL    DEFAULT 1       COMMENT '操作状态(0异常,1正常)',
     error_msg       TEXT                                      COMMENT '错误消息',
-    duration        INT             NOT NULL    DEFAULT 0       COMMENT '耗时(ms)',
     operation_time  DATETIME       NOT NULL                    COMMENT '操作时间',
     PRIMARY KEY (id),
     KEY idx_user_id (user_id),

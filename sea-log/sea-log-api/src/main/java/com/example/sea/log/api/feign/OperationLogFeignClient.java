@@ -12,7 +12,7 @@ import com.example.sea.log.api.feign.fallback.OperationLogFeignClientFallBack;
  * @author liuhuan
  * @date 2026-05-18
  */
-@FeignClient(value = "sea-system", fallbackFactory = OperationLogFeignClientFallBack.class)
+@FeignClient(value = "sea-system", contextId = "operationLogFeignClient", fallbackFactory = OperationLogFeignClientFallBack.class)
 public interface OperationLogFeignClient {
 
     /**

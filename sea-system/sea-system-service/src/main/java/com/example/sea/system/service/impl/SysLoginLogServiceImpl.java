@@ -3,7 +3,7 @@ package com.example.sea.system.service.impl;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.example.sea.log.api.dto.LoginLogDTO;
+import com.example.sea.system.api.dto.LoginLogDTO;
 import com.example.sea.system.dao.SysLoginLogMapper;
 import com.example.sea.system.entity.SysLoginLogPO;
 import com.example.sea.system.service.ISysLoginLogService;

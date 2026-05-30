@@ -4,7 +4,7 @@ import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
 
 import com.example.sea.common.core.result.CommonResult;
-import com.example.sea.log.api.dto.LoginLogDTO;
+import com.example.sea.system.api.dto.LoginLogDTO;
 import com.example.sea.system.api.feign.LoginLogFeignClient;
 
 import lombok.extern.slf4j.Slf4j;

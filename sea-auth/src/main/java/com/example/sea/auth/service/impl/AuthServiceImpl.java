@@ -3,6 +3,7 @@ package com.example.sea.auth.service.impl;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import com.example.sea.system.api.feign.LoginLogFeignClient;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -17,8 +18,7 @@ import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.security.entity.LoginUser;
 import com.example.sea.common.security.utils.JwtRedisUtil;
 import com.example.sea.common.security.utils.JwtUtil;
-import com.example.sea.log.api.dto.LoginLogDTO;
-import com.example.sea.log.api.feign.LoginLogFeignClient;
+import com.example.sea.system.api.dto.LoginLogDTO;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;

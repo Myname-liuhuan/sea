@@ -12,7 +12,7 @@ import com.example.sea.common.security.entity.LoginUser;
  * 系统服务FeignClient
  * 提供用户信息查询等接口
  */
-@FeignClient(value = "sea-system", fallbackFactory = SystemFeignClientFallBack.class)
+@FeignClient(value = "sea-system", contextId = "systemFeignClient", fallbackFactory = SystemFeignClientFallBack.class)
 public interface SystemFeignClient {
 
     /**
