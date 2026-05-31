@@ -3,82 +3,48 @@ package com.example.sea.common.feign.Interceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
-import org.springframework.util.AntPathMatcher;
-import org.springframework.util.StringUtils;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.example.sea.common.security.properties.SecurityWhiteListProperties;
+import java.util.List;
+
+import com.example.sea.common.feign.exception.FeignTokenConfigurationException;
+import com.example.sea.common.feign.properties.FeignTokenProperties;
+import com.example.sea.common.security.constants.SecurityConstants;
 import com.example.sea.common.security.utils.JwtUtil;
 
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
-import jakarta.servlet.http.HttpServletRequest;
-
-import java.util.Objects;
 
 /**
- * Feign 请求拦截器，用于传递和生成 JWT Token
+ * Feign 请求拦截器，强制使用配置的 feign token
  * @author liuhuan
  * @date 2025-08-25
  */
 @Component
 public class FeignTokenInterceptor implements RequestInterceptor {
 
-    private final SecurityWhiteListProperties securityProperties;
+    private final FeignTokenProperties feignTokenProperties;
     private final JwtUtil jwtUtil;
 
-    private final AntPathMatcher pathMatcher = new AntPathMatcher();
-    
     @Autowired
-    public FeignTokenInterceptor(SecurityWhiteListProperties securityProperties, JwtUtil jwtUtil) {
-        this.securityProperties = securityProperties;
+    public FeignTokenInterceptor(FeignTokenProperties feignTokenProperties, JwtUtil jwtUtil) {
+        this.feignTokenProperties = feignTokenProperties;
         this.jwtUtil = jwtUtil;
     }
 
-    /**
-     * 给feign请求添加token通过security验证
-     * 有有效token就直接透传,没有有效token但在白名单中就生成白名单token
-     */
     @Override
     public void apply(RequestTemplate template) {
-        ServletRequestAttributes attrs =
-            (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        if (attrs == null) return;
-
-        HttpServletRequest request = attrs.getRequest();
-
-        String token = this.resolveValidToken(request);
-        if (Objects.nonNull(token)) {
-            template.header(HttpHeaders.AUTHORIZATION, token);
-        } else {
-            String path = request.getRequestURI();
-            for (String pattern : securityProperties.getWhitelist()) {
-                if (pathMatcher.match(pattern, path)) {
-                    String whiteToken = jwtUtil.generateWhiteToken();
-                    template.header(HttpHeaders.AUTHORIZATION, "Bearer " + whiteToken);
-                    return;
-                }
-            }
+        List<String> missing = feignTokenProperties.validate();
+        if (!missing.isEmpty()) {
+            throw new FeignTokenConfigurationException(missing);
         }
+
+        String token = jwtUtil.generateConfigurableFeignToken(
+                feignTokenProperties.getUser().getId(),
+                feignTokenProperties.getUser().getName(),
+                feignTokenProperties.getRoles(),
+                feignTokenProperties.getAuthorities()
+        );
+
+        template.header(SecurityConstants.TOKEN_HEADER, token);
     }
-
-    /**
-     * 将无效token转化为null
-     * @param request
-     * @return
-     */
-    private String resolveValidToken(HttpServletRequest request) {
-        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (!StringUtils.hasText(token)) {
-            return null;
-        }
-        try{
-            jwtUtil.parseToken(token);
-        }catch(Exception e){
-            return null;
-        }
-        return token;
-    }
-
 }
