@@ -47,3 +47,16 @@ security:
     - /webjars/**
     - /swagger-resources/**
     - /favicon.ico
+
+# Feign Token 配置（各服务可单独覆盖）
+feign:
+  internal:
+    token:
+      user:
+        id: 111
+        name: feignuser
+      roles:
+        - SERVICE_CLIENT
+      authorities:
+        - "internal:call"
+        - "user:read"
