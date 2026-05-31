@@ -82,22 +82,27 @@ public class JwtUtil implements InitializingBean {
     }
 
     /**
-     * 生成白名单token（无用户信息，仅标记请求来源可信）
-     * @return
+     * 生成可配置的 feign token
+     * @param userId  用户ID
+     * @param username 用户名
+     * @param roles 角色列表
+     * @param authorities 权限列表
      */
-    public String generateWhiteToken() {
+    public String generateConfigurableFeignToken(Long userId, String username,
+                                                 List<String> roles, List<String> authorities) {
         Date now = new Date();
         return Jwts.builder()
-                .id(SecurityConstants.INTERNAL_FEIGN) // 唯一的 token ID
-                .subject("0")
-                .claim(SecurityConstants.CLAIM_ROLES, List.of("ADMIN"))
-                .claim(SecurityConstants.CLAIM_AUTHS,List.of("*:*:*"))
+                .id(SecurityConstants.INTERNAL_FEIGN)
+                .subject(String.valueOf(userId))
+                .claim(SecurityConstants.CLAIM_USERNAME, username)
+                .claim(SecurityConstants.CLAIM_ROLES, roles)
+                .claim(SecurityConstants.CLAIM_AUTHS, authorities)
+                .claim(SecurityConstants.CLAIM_TOKEN_TYPE, SecurityConstants.TOKEN_TYPE_ACCESS)
                 .issuedAt(now)
                 .expiration(new Date(now.getTime() + expirationMs))
                 .signWith(secretKey)
                 .compact();
     }
-
 
     /**
      * 解析并验证 JWT：
