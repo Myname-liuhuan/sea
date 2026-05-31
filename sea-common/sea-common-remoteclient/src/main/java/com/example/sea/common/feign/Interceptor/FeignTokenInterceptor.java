@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.example.sea.common.feign.exception.FeignTokenConfigurationException;
 import com.example.sea.common.feign.properties.FeignTokenProperties;
-import com.example.sea.common.security.constants.SecurityConstants;
 import com.example.sea.common.security.utils.JwtUtil;
 
 import feign.RequestInterceptor;
@@ -45,6 +44,6 @@ public class FeignTokenInterceptor implements RequestInterceptor {
                 feignTokenProperties.getAuthorities()
         );
 
-        template.header(SecurityConstants.TOKEN_HEADER, token);
+        template.header(HttpHeaders.AUTHORIZATION, token);
     }
 }
