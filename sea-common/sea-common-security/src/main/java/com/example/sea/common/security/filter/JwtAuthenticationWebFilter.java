@@ -79,29 +79,27 @@ public class JwtAuthenticationWebFilter extends OncePerRequestFilter {
         }
 
         Claims claims = tokenParseResult.getClaims();
-        //判断是否是服务间通信,不是就需要进一步校验
-        if (!Objects.equals(SecurityConstants.INTERNAL_FEIGN, claims.getId())) {
-            //只允许accessToken
-            String tokenType = claims.get(SecurityConstants.CLAIM_TOKEN_TYPE, String.class);
-            if(!Objects.equals(SecurityConstants.TOKEN_TYPE_ACCESS, tokenType)){
-                log.error("只允许accessToken访问接口,token:{}", token);
-                unauthorized(response, "无效的token");
-                return;
-            }
-            //验证token是否在黑名单
-            if(jwtRedisUtil.isBlacklisted(claims.getId())){
-                log.error("黑名单token:{}", token);
-                unauthorized(response, "无效的token");
-                return;
-            }
-            //验证版本号
-            Long version = jwtRedisUtil.getUserVersion(claims.getSubject());
-            Long tokenVersion = claims.get(SecurityConstants.CLAIM_VERSION, Long.class);
-            if(version != tokenVersion){
-                log.error("旧版本token:{}", token);
-                unauthorized(response, "无效的token");
-                return;
-            }
+
+        // 统一校验：只允许 accessToken
+        String tokenType = claims.get(SecurityConstants.CLAIM_TOKEN_TYPE, String.class);
+        if (!Objects.equals(SecurityConstants.TOKEN_TYPE_ACCESS, tokenType)) {
+            log.error("只允许accessToken访问接口,token:{}", token);
+            unauthorized(response, "无效的token");
+            return;
+        }
+        // 验证 token 是否在黑名单
+        if (jwtRedisUtil.isBlacklisted(claims.getId())) {
+            log.error("黑名单token:{}", token);
+            unauthorized(response, "无效的token");
+            return;
+        }
+        // 验证版本号
+        Long version = jwtRedisUtil.getUserVersion(claims.getSubject());
+        Long tokenVersion = claims.get(SecurityConstants.CLAIM_VERSION, Long.class);
+        if (version != null && tokenVersion != null && !version.equals(tokenVersion)) {
+            log.error("旧版本token:{}", token);
+            unauthorized(response, "无效的token");
+            return;
         }
 
         // 将用户信息存储到security context中
