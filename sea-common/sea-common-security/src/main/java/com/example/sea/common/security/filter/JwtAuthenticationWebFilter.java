@@ -123,7 +123,7 @@ public class JwtAuthenticationWebFilter extends OncePerRequestFilter {
      */
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+        if (bearerToken != null && bearerToken.startsWith(SecurityConstants.BEARER)) {
             return bearerToken.substring(7);
         }
         return null;

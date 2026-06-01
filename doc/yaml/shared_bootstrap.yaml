@@ -53,10 +53,10 @@ feign:
   internal:
     token:
       user:
-        id: 111
-        name: feignuser
+        id: 1
+        name: feign_user
       roles:
-        - SERVICE_CLIENT
+        - FEIGN_ROLE
       authorities:
-        - "internal:call"
-        - "user:read"
+        - "sys:user:add"
+        - "sys:user:list"

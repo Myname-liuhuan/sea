@@ -2,6 +2,7 @@ package com.example.sea.system.controller;
 
 import java.util.List;
 
+import com.example.sea.common.mybatis.annotation.OperationLog;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -48,6 +49,7 @@ public class SysUserController {
     @PostMapping("/add")
     @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_USER_ADD + "')")
     @Operation(summary = "新增用户", description = "创建新的系统用户，需要传入用户基本信息")
+    @OperationLog(title = "新增用户", businessType = "新增", operatorType = 1)
     public CommonResult<Boolean> add(@RequestBody @Validated(GroupInsert.class) SysUserDTO sysUserDTO) {
         return sysUsersService.add(sysUserDTO);
     }
@@ -60,6 +62,7 @@ public class SysUserController {
     @PostMapping("/update")
     @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_USER_EDIT + "')")
     @Operation(summary = "更新用户信息",description = "更新现有用户的基本信息，需要传入完整的用户信息")
+    @OperationLog(title = "更新用户信息", businessType = "修改", operatorType = 1)
     public CommonResult<Boolean> update(@RequestBody @Validated(GroupUpdate.class) SysUserDTO sysUserDTO) {
         return sysUsersService.update(sysUserDTO);
     }
@@ -72,6 +75,7 @@ public class SysUserController {
     @GetMapping("/page")
     @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_USER_LIST + "')")
     @Operation(summary = "分页查询用户列表", description = "根据查询条件分页获取用户列表，支持模糊查询")
+    @OperationLog(title = "分页查询用户列表", businessType = "查询", operatorType = 1)
     public CommonResult<PageResult<SysUserVO>> page(SysUserQueryParam sysUserQueryParam) {
         return sysUsersService.page(sysUserQueryParam);
     }
@@ -84,6 +88,7 @@ public class SysUserController {
     @GetMapping("/list")
     @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_USER_LIST + "')")
     @Operation(summary = "查询用户列表", description = "根据查询条件获取用户列表，支持模糊查询")
+    @OperationLog(title = "查询用户列表", businessType = "查询", operatorType = 1)
     public CommonResult<List<SysUserVO>> list(SysUserQueryParam sysUserQueryParam) {
         return sysUsersService.list(sysUserQueryParam);
     }
@@ -113,6 +118,7 @@ public class SysUserController {
     @DeleteMapping("/{userId}")
     @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_USER_DELETE + "')")
     @Operation(summary = "删除用户", description = "根据用户ID删除用户")
+    @OperationLog(title = "删除用户", businessType = "删除", operatorType = 1)
     public CommonResult<Boolean> delete(@PathVariable Long userId) {
         return sysUsersService.delete(userId);
     }

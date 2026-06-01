@@ -1,5 +1,6 @@
 package com.example.sea.common.feign.Interceptor;
 
+import com.example.sea.common.security.constants.SecurityConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
@@ -44,6 +45,6 @@ public class FeignTokenInterceptor implements RequestInterceptor {
                 feignTokenProperties.getAuthorities()
         );
 
-        template.header(HttpHeaders.AUTHORIZATION, token);
+        template.header(HttpHeaders.AUTHORIZATION, SecurityConstants.BEARER + token);
     }
 }

@@ -11,18 +11,21 @@ public interface SecurityConstants {
     String INTERNAL_FEIGN = "INTERNAL-FEIGN";
 
     /** token分类 accessToken */
-    public static final String TOKEN_TYPE_ACCESS = "ACCESS";
+    String TOKEN_TYPE_ACCESS = "ACCESS";
     /** token分类 refreshToken */
-    public static final String TOKEN_TYPE_REFRESH = "REFRESH";
+    String TOKEN_TYPE_REFRESH = "REFRESH";
     /** 用户名称 */
-    public static final String CLAIM_USERNAME = "username";
+    String CLAIM_USERNAME = "username";
     /** 角色 */
-    public static final String CLAIM_ROLES = "roles";
+    String CLAIM_ROLES = "roles";
     /** 权限字符 */
-    public static final String CLAIM_AUTHS = "authorities";
+    String CLAIM_AUTHS = "authorities";
     /** tokenType */
-    public static final String CLAIM_TOKEN_TYPE = "tokenType";
+    String CLAIM_TOKEN_TYPE = "tokenType";
     /** 当前token的版本 */
-    public static final String CLAIM_VERSION = "version";
+    String CLAIM_VERSION = "version";
+    
+    /**token头*/
+    String BEARER = "Bearer ";
 
 }
