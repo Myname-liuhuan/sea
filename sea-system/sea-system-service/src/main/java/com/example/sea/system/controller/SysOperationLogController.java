@@ -61,7 +61,6 @@ public class SysOperationLogController {
         po.setResponseParam(dto.getResponseParam());
         po.setStatus(dto.getStatus());
         po.setErrorMsg(dto.getErrorMsg());
-        po.setDuration(dto.getDuration());
         po.setOperationTime(dto.getOperationTime());
         return po;
     }
