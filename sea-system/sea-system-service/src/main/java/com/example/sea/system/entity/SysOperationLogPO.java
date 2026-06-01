@@ -96,11 +96,6 @@ public class SysOperationLogPO {
     private String errorMsg;
 
     /**
-     * 耗时(ms)
-     */
-    private Integer duration;
-
-    /**
      * 操作时间
      */
     private LocalDateTime operationTime;

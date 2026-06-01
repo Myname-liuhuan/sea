@@ -87,11 +87,6 @@ public class OperationLogDTO {
     private String errorMsg;
 
     /**
-     * 操作时长（毫秒）
-     */
-    private Integer duration;
-
-    /**
      * 操作时间
      */
     private LocalDateTime operationTime;

@@ -66,9 +66,6 @@ public class OperationLogAspect {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         OperationLog operationLog = signature.getMethod().getAnnotation(OperationLog.class);
 
-        // 记录开始时间
-        long startTime = System.currentTimeMillis();
-
         // 获取当前用户
         LoginUser loginUser = SecurityContextUtil.getLoginUser();
 
@@ -109,10 +106,6 @@ public class OperationLogAspect {
             logDTO.setErrorMsg(e.getMessage());
             throw e;
         } finally {
-            // 计算耗时
-            long duration = System.currentTimeMillis() - startTime;
-            logDTO.setDuration((int) duration);
-
             // 构建日志信息
             logDTO.setOperationTime(LocalDateTime.now());
 
