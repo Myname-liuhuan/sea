@@ -19,13 +19,13 @@ public interface SysRoleConverter {
      * @param dto
      * @return
      */
-    public SysRolePO dtoToEntity(SysRoleDTO dto);
+    SysRolePO dtoToEntity(SysRoleDTO dto);
 
     /**
      * entity转vo
      * @param entity
      * @return
      */
-    public SysRoleVO entityToVO(SysRolePO entity);
+    SysRoleVO entityToVO(SysRolePO entity);
 
 }

@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.core.result.PageResult;
+import com.example.sea.system.service.ISysMenuService;
 import com.example.sea.system.service.ISysRoleService;
 
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ import org.springframework.util.CollectionUtils;
 public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRolePO> implements ISysRoleService {
 
     private final SysRoleConverter sysRoleConverter;
+    private final ISysMenuService sysMenuService;
 
     /**
      * 新增角色信息
@@ -79,7 +81,9 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRolePO> im
         baseMapper.deleteRoleMenusByRoleId(roleId);
         // 添加新的角色菜单关系
         if(!CollectionUtils.isEmpty(sysMenuUserDTO.getMenuIdList())){
-            baseMapper.insertRoleMenus(roleId, sysMenuUserDTO.getMenuIdList());
+            // 补全所有父节点ID，叶子节点需要包含父链条才能在登录后查询到完整菜单
+            List<Long> allMenuIds = sysMenuService.listAllParentIds(sysMenuUserDTO.getMenuIdList());
+            baseMapper.insertRoleMenus(roleId, allMenuIds);
         }
         return CommonResult.success();
     }

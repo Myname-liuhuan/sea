@@ -41,4 +41,12 @@ public interface ISysMenuService extends IService<SysMenuPO> {
      */
     CommonResult<List<SysMenuOptionVO>> options();
 
+    /**
+     * 根据菜单ID列表获取所有父节点ID（包括自己）
+     * 用于角色菜单编辑时，叶子节点需要补全父节点链条
+     * @param menuIds 菜单ID列表
+     * @return 包含自己及所有父节点ID的列表
+     */
+    List<Long> listAllParentIds(List<Long> menuIds);
+
 }

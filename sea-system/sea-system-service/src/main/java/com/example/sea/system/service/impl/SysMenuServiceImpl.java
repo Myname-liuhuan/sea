@@ -3,9 +3,12 @@ package com.example.sea.system.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -83,6 +86,36 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenuPO> im
             .map(sysMenuConverter::entityToOptionVO)
             .collect(Collectors.toList());
         return CommonResult.success(list);
+    }
+
+    @Override
+    public List<Long> listAllParentIds(List<Long> menuIds) {
+        if (CollectionUtils.isEmpty(menuIds)) {
+            return List.of();
+        }
+        List<Long> result = new ArrayList<>(menuIds);
+        List<Long> currentLevel = new ArrayList<>(menuIds);
+
+        while (!currentLevel.isEmpty()) {
+            LambdaQueryWrapper<SysMenuPO> wrapper = Wrappers.lambdaQuery();
+            wrapper.in(SysMenuPO::getId, currentLevel)
+                .isNotNull(SysMenuPO::getParentId)
+                .ne(SysMenuPO::getParentId, 0L)
+                .select(SysMenuPO::getParentId);
+
+            List<Long> parentIds = this.baseMapper.selectObjs(wrapper).stream()
+                .map(obj -> ((Number) obj).longValue())
+                .distinct()
+                .filter(id -> !result.contains(id))
+                .collect(Collectors.toList());
+
+            if (parentIds.isEmpty()) {
+                break;
+            }
+            result.addAll(parentIds);
+            currentLevel = parentIds;
+        }
+        return result;
     }
 
     /**

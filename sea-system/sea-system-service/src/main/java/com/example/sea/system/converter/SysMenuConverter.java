@@ -22,15 +22,15 @@ public interface SysMenuConverter {
      * @param dto
      * @return
      */
-    public SysMenuPO dtoToEntity(SysMenuDTO dto);
+    SysMenuPO dtoToEntity(SysMenuDTO dto);
 
     /**
      * entity转nodeVO
      * @param entity
      * @return
      */
-    public SysMenuNodeVO entityToNodeVO(SysMenuPO entity);
+    SysMenuNodeVO entityToNodeVO(SysMenuPO entity);
 
     @Mapping(source = "id", target = "menuId")
-    public SysMenuOptionVO entityToOptionVO(SysMenuPO entity);
+    SysMenuOptionVO entityToOptionVO(SysMenuPO entity);
 }
