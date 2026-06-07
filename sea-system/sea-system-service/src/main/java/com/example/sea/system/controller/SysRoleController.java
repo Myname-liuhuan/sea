@@ -2,6 +2,7 @@ package com.example.sea.system.controller;
 
 import java.util.List;
 
+import com.example.sea.common.mybatis.annotation.OperationLog;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,6 +44,7 @@ public class SysRoleController {
     @PostMapping("/add")
     @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_ROLE_ADD + "')")
     @Operation(summary = "新增角色", description = "创建新的系统角色，需要传入角色基本信息")
+    @OperationLog(title = "新增角色信息", businessType = "新增", operatorType = 1)
     public CommonResult<Boolean> add(@RequestBody @Validated(GroupInsert.class) SysRoleDTO sysRoleDTO){
         return sysRoleService.add(sysRoleDTO);
     }
@@ -50,6 +52,7 @@ public class SysRoleController {
     @PostMapping("/edit")
     @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_ROLE_EDIT + "')")
     @Operation(summary = "编辑角色", description = "编辑现有角色信息，需要传入完整的角色信息")
+    @OperationLog(title = "编辑角色信息", businessType = "编辑", operatorType = 1)
     public CommonResult<Boolean> edit(@RequestBody @Validated(GroupUpdate.class) SysRoleDTO sysRoleDTO){
         return sysRoleService.edit(sysRoleDTO);
     }
@@ -60,6 +63,7 @@ public class SysRoleController {
      */
     @PostMapping("/editRoleUserRelation")
     @Operation(summary = "编辑角色用户关系", description = "编辑角色下的用户关联关系，可以批量添加或移除角色下的用户")
+    @OperationLog(title = "编辑角色用户关系", businessType = "编辑", operatorType = 1)
     public CommonResult<Boolean> editRoleUserRelation(@RequestBody @Validated(GroupUpdate.class) SysRoleUserDTO sysRoleUserDTO){
         return sysRoleService.editRoleUserRelation(sysRoleUserDTO);
     }
@@ -72,6 +76,7 @@ public class SysRoleController {
     @PostMapping("/editRoleMenuRelation")
     @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_ROLE_EDIT + "')")
     @Operation(summary = "编辑角色菜单关系", description = "编辑角色下的菜单权限关联关系，可以批量添加或移除角色下的菜单权限")
+    @OperationLog(title = "编辑角色菜单关系", businessType = "编辑", operatorType = 1)
     public CommonResult<Void> editRoleMenuRelation(@RequestBody @Validated(GroupUpdate.class) SysRoleMenuDTO sysMenuUserDTO){
         return sysRoleService.editRoleMenuRelation(sysMenuUserDTO);
     }

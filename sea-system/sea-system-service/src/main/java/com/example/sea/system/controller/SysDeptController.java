@@ -2,6 +2,7 @@ package com.example.sea.system.controller;
 
 import java.util.List;
 
+import com.example.sea.common.mybatis.annotation.OperationLog;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,18 +51,21 @@ public class SysDeptController {
 
     @PostMapping
     @Operation(summary = "新增部门", description = "新增一个部门")
+    @OperationLog(title = "新增部门", businessType = "新增", operatorType = 1)
     public CommonResult<Void> add(@RequestBody @Validated SysDeptDTO dto) {
         return sysDeptService.add(dto);
     }
 
     @PutMapping
     @Operation(summary = "更新部门", description = "更新部门信息")
+    @OperationLog(title = "更新部门", businessType = "编辑", operatorType = 1)
     public CommonResult<Void> update(@RequestBody @Validated SysDeptDTO dto) {
         return sysDeptService.update(dto);
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "删除部门", description = "删除指定部门")
+    @OperationLog(title = "删除部门", businessType = "删除", operatorType = 1)
     public CommonResult<Void> delete(@PathVariable @NotNull Long id) {
         return sysDeptService.delete(id);
     }

@@ -75,7 +75,6 @@ public class SysUserController {
     @GetMapping("/page")
     @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_USER_LIST + "')")
     @Operation(summary = "分页查询用户列表", description = "根据查询条件分页获取用户列表，支持模糊查询")
-    @OperationLog(title = "分页查询用户列表", businessType = "查询", operatorType = 1)
     public CommonResult<PageResult<SysUserVO>> page(SysUserQueryParam sysUserQueryParam) {
         return sysUsersService.page(sysUserQueryParam);
     }
@@ -88,7 +87,6 @@ public class SysUserController {
     @GetMapping("/list")
     @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_USER_LIST + "')")
     @Operation(summary = "查询用户列表", description = "根据查询条件获取用户列表，支持模糊查询")
-    @OperationLog(title = "查询用户列表", businessType = "查询", operatorType = 1)
     public CommonResult<List<SysUserVO>> list(SysUserQueryParam sysUserQueryParam) {
         return sysUsersService.list(sysUserQueryParam);
     }
