@@ -36,6 +36,20 @@ public interface ISysMenuService extends IService<SysMenuPO> {
     CommonResult<Boolean> add(SysMenuDTO sysMenuDTO);
 
     /**
+     * 更新菜单
+     * @param sysMenuDTO
+     * @return
+     */
+    CommonResult<Boolean> update(SysMenuDTO sysMenuDTO);
+
+    /**
+     * 删除菜单（软删除）
+     * @param id 菜单ID
+     * @return
+     */
+    CommonResult<Boolean> delete(Long id);
+
+    /**
      * 获取菜单选项列表（平铺）
      * @return
      */

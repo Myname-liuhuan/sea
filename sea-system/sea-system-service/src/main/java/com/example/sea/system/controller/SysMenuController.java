@@ -2,6 +2,7 @@ package com.example.sea.system.controller;
 
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.core.validation.GroupInsert;
+import com.example.sea.common.core.validation.GroupUpdate;
 import com.example.sea.common.mybatis.annotation.OperationLog;
 import com.example.sea.system.api.constants.PermissionConstants;
 import com.example.sea.system.api.dto.SysMenuDTO;
@@ -11,6 +12,7 @@ import com.example.sea.system.service.ISysMenuService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -65,6 +67,24 @@ public class SysMenuController {
     @OperationLog(title = "新增菜单", businessType = "新增", operatorType = 1)
     public CommonResult<Boolean> add(@RequestBody @Validated(GroupInsert.class) SysMenuDTO sysMenuDTO) {
         return sysMenuService.add(sysMenuDTO);
+    }
+
+    /** 更新菜单 */
+    @PutMapping("/update")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_MENU_EDIT + "')")
+    @Operation(summary = "更新菜单", description = "更新菜单信息，需要传入菜单ID")
+    @OperationLog(title = "更新菜单", businessType = "编辑", operatorType = 1)
+    public CommonResult<Boolean> update(@RequestBody @Validated(GroupUpdate.class) SysMenuDTO sysMenuDTO) {
+        return sysMenuService.update(sysMenuDTO);
+    }
+
+    /** 删除菜单 */
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_MENU_DELETE + "')")
+    @Operation(summary = "删除菜单", description = "根据ID删除菜单（软删除）")
+    @OperationLog(title = "删除菜单", businessType = "删除", operatorType = 1)
+    public CommonResult<Boolean> delete(@PathVariable @NotNull Long id) {
+        return sysMenuService.delete(id);
     }
 
 

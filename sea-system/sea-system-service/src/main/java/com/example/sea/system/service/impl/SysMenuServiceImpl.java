@@ -77,6 +77,44 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenuPO> im
         return CommonResult.success(result);
     }
 
+    /**
+     * 更新菜单
+     */
+    @Override
+    public CommonResult<Boolean> update(SysMenuDTO sysMenuDTO) {
+        if (sysMenuDTO.getId() == null) {
+            return CommonResult.failed("菜单ID不能为空");
+        }
+        SysMenuPO existing = this.getById(sysMenuDTO.getId());
+        if (existing == null) {
+            return CommonResult.failed("菜单不存在");
+        }
+        // 不能将自己设为自己的父菜单
+        if (sysMenuDTO.getId().equals(sysMenuDTO.getParentId())) {
+            return CommonResult.failed("不能将自己设为自己的父菜单");
+        }
+        SysMenuPO sysMenu = sysMenuConverter.dtoToEntity(sysMenuDTO);
+        boolean result = this.updateById(sysMenu);
+        return CommonResult.success(result);
+    }
+
+    /**
+     * 删除菜单（软删除）：存在子菜单则拒绝
+     */
+    @Override
+    public CommonResult<Boolean> delete(Long id) {
+        if (id == null) {
+            return CommonResult.failed("菜单ID不能为空");
+        }
+        LambdaQueryWrapper<SysMenuPO> childWrapper = new LambdaQueryWrapper<>();
+        childWrapper.eq(SysMenuPO::getParentId, id);
+        if (this.baseMapper.selectCount(childWrapper) > 0) {
+            return CommonResult.failed("该菜单下存在子菜单，请先删除子菜单");
+        }
+        boolean result = this.removeById(id);
+        return CommonResult.success(result);
+    }
+
     @Override
     public CommonResult<List<SysMenuOptionVO>> options() {
         LambdaQueryWrapper<SysMenuPO> wrapper = new LambdaQueryWrapper<>();
