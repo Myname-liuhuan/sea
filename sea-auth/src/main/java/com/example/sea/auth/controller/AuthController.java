@@ -7,8 +7,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.sea.auth.dto.LoginRequestDTO;
+import com.example.sea.auth.dto.LoginRequest;
 import com.example.sea.auth.dto.LoginResponse;
+import com.example.sea.auth.dto.RefreshTokenRequest;
 import com.example.sea.auth.service.AuthService;
 import com.example.sea.auth.validation.GroupLogin;
 import com.example.sea.auth.validation.GroupRefresh;
@@ -36,7 +37,7 @@ public class AuthController {
      */
     @PostMapping("/login")
     @Operation(summary = "用户登录", description = "用户使用用户名和密码登录，返回访问令牌和刷新令牌")
-    public CommonResult<LoginResponse> login(@RequestBody @Validated(GroupLogin.class) LoginRequestDTO loginRequest) {
+    public CommonResult<LoginResponse> login(@RequestBody @Validated(GroupLogin.class) LoginRequest loginRequest) {
         return authService.authenticate(loginRequest.getUsername(), loginRequest.getPassword());
     }
 
@@ -45,7 +46,7 @@ public class AuthController {
      */
     @PostMapping("/refresh")
     @Operation(summary = "刷新令牌", description = "使用刷新令牌获取新的访问令牌")
-    public CommonResult<LoginResponse> refresh(@RequestBody @Validated(GroupRefresh.class) LoginRequestDTO loginRequest) {
-        return authService.refreshToken(loginRequest);  
+    public CommonResult<LoginResponse> refresh(@RequestBody @Validated(GroupRefresh.class) RefreshTokenRequest refreshRequest) {
+        return authService.refreshToken(refreshRequest.getRefreshToken());
     }
 }

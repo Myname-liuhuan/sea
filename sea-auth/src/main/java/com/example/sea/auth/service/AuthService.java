@@ -1,6 +1,5 @@
 package com.example.sea.auth.service;
 
-import com.example.sea.auth.dto.LoginRequestDTO;
 import com.example.sea.auth.dto.LoginResponse;
 import com.example.sea.common.core.result.CommonResult;
 
@@ -10,7 +9,7 @@ import com.example.sea.common.core.result.CommonResult;
  * @date 2025-08-04
  */
 public interface AuthService {
-    
+
     /**
      * 用户认证
      * @param username 用户名
@@ -18,11 +17,11 @@ public interface AuthService {
      * @return 登录响应，包含accessToken和refreshToken
      */
    CommonResult<LoginResponse> authenticate(String username, String password);
-    
+
     /**
      * 刷新token
-     * @param loginRequest 刷新token入参
+     * @param refreshToken 刷新token字符串
      * @return 新token
      */
-    CommonResult<LoginResponse> refreshToken(LoginRequestDTO loginRequest);
+    CommonResult<LoginResponse> refreshToken(String refreshToken);
 }

@@ -10,7 +10,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.alibaba.cloud.commons.lang.StringUtils;
-import com.example.sea.auth.dto.LoginRequestDTO;
 import com.example.sea.auth.dto.LoginResponse;
 import com.example.sea.system.api.feign.SystemFeignClient;
 import com.example.sea.auth.service.AuthService;
@@ -79,12 +78,11 @@ public class AuthServiceImpl implements AuthService {
 
     /**
      * 通过 refreshToken 刷新 AccessToken
-     * @param loginRequest 刷新令牌
+     * @param refreshToken 刷新令牌字符串
      * @return 新的访问令牌AccessToken
      */
     @Override
-    public CommonResult<LoginResponse> refreshToken(LoginRequestDTO loginRequest) {
-        String refreshToken = loginRequest.getRefreshToken();
+    public CommonResult<LoginResponse> refreshToken(String refreshToken) {
         // 先验证token是否存在于Redis中
         if (!jwtRedisUtil.validateToken(refreshToken)) {
             return CommonResult.failed("刷新token无效或已过期");
