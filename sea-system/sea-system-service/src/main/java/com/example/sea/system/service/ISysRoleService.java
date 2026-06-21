@@ -60,4 +60,11 @@ public interface ISysRoleService extends IService<SysRolePO> {
 
     CommonResult<List<String>> getUserIdsByRoleId(Long roleId);
 
+    /**
+     * 硬删除角色（同时清理角色-用户、角色-菜单关联）
+     * @param id 角色ID
+     * @return 操作结果
+     */
+    CommonResult<Void> delete(Long id);
+
 }

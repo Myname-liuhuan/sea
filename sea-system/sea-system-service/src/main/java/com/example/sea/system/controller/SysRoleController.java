@@ -5,6 +5,7 @@ import java.util.List;
 import com.example.sea.common.mybatis.annotation.OperationLog;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +27,7 @@ import com.example.sea.system.service.ISysRoleService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -117,5 +119,13 @@ public class SysRoleController {
     @Operation(summary = "获取角色用户ID列表", description = "根据角色ID查询该角色已分配的用户ID列表")
     public CommonResult<List<String>> getUserIdsByRoleId(@PathVariable Long roleId) {
         return sysRoleService.getUserIdsByRoleId(roleId);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_ROLE_DELETE + "')")
+    @Operation(summary = "删除角色", description = "根据ID硬删除角色，会级联清理角色-用户、角色-菜单关联")
+    @OperationLog(title = "删除角色", businessType = "删除", operatorType = 1)
+    public CommonResult<Void> delete(@PathVariable @NotNull Long id) {
+        return sysRoleService.delete(id);
     }
 }

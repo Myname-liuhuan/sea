@@ -118,6 +118,19 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRolePO> im
         return CommonResult.success(userIds);
     }
 
+    /**
+     * 硬删除角色：先清理角色-用户、角色-菜单关联，再删除角色本身。
+     * 与 SysDeptService 行为一致，使用物理删除（与 BaseEntity 软删不冲突，因为本方法显式调用 baseMapper.deleteById）。
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public CommonResult<Void> delete(Long id) {
+        baseMapper.deleteRoleUsersByRoleId(id);
+        baseMapper.deleteRoleMenusByRoleId(id);
+        baseMapper.deleteById(id);
+        return CommonResult.success();
+    }
+
     private LambdaQueryWrapper<SysRolePO> buildQueryWrapper(SysRoleQueryParam param) {
         LambdaQueryWrapper<SysRolePO> wrapper = Wrappers.lambdaQuery();
         wrapper.like(param.getRoleName() != null, SysRolePO::getRoleName, param.getRoleName())
