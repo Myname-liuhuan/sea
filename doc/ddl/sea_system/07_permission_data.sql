@@ -60,7 +60,15 @@ INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, order_num, path, comp
 (2, 1, '用户管理', 2, 1, '/system/user', 'system/user/index', 'sys:user:list', 'User', 1, 1, NOW(), 0),
 (3, 1, '角色管理', 2, 2, '/system/role', 'system/role/index', 'sys:role:list', 'Role', 1, 1, NOW(), 0),
 (4, 1, '菜单管理', 2, 3, '/system/menu', 'system/menu/index', 'sys:menu:list', 'Menu', 1, 1, NOW(), 0),
-(5, 1, '部门管理', 2, 4, '/system/dept', 'system/dept/index', 'sys:dept:list', 'Office', 1, 1, NOW(), 0);
+(5, 1, '部门管理', 2, 4, '/system/dept', 'system/dept/index', 'sys:dept:list', 'Office', 1, 1, NOW(), 0),
+-- 工作流（重置密码工单化新增）
+(6, 0, '工作流', 1, 50, '/workflow', NULL, NULL, 'SetUp', 1, 1, NOW(), 0);
+
+-- 工作流子菜单（重置密码工单化新增）
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, order_num, path, component, perms, icon, visible, status, create_time, del_flag) VALUES
+(601, 6, '我的申请',   2, 1, '/workflow/my',      'workflow/my/index',       'workflow:my',      'User',    1, 1, NOW(), 0),
+(602, 6, '待我审批',   2, 2, '/workflow/pending', 'workflow/pending/index',  'workflow:approve', 'Aim',     1, 1, NOW(), 0),
+(603, 6, '工单监控',   2, 3, '/workflow/monitor', 'workflow/monitor/index',  'workflow:monitor', 'Monitor', 1, 1, NOW(), 0);
 
 -- 按钮权限 (menu_type=3)
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, order_num, path, component, perms, icon, visible, status, create_time, del_flag) VALUES
@@ -79,7 +87,9 @@ INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, order_num, path, comp
 -- 部门管理按钮
 (401, 5, '部门新增', 3, 1, NULL, NULL, 'sys:dept:add', '#', 1, 1, NOW(), 0),
 (402, 5, '部门编辑', 3, 2, NULL, NULL, 'sys:dept:edit', '#', 1, 1, NOW(), 0),
-(403, 5, '部门删除', 3, 3, NULL, NULL, 'sys:dept:delete', '#', 1, 1, NOW(), 0);
+(403, 5, '部门删除', 3, 3, NULL, NULL, 'sys:dept:delete', '#', 1, 1, NOW(), 0),
+-- 用户管理新按钮（重置密码工单化新增）
+(604, 2, '申请重置', 3, 4, NULL, NULL, 'workflow:apply', '#', 1, 1, NOW(), 0);
 
 -- ---------------------------------------------------------------
 -- 5. 用户角色关联 (sys_user_role) - 添加 id 字段
@@ -95,18 +105,26 @@ INSERT INTO sys_user_role (id, user_id, role_id, create_time) VALUES
 INSERT INTO sys_role_menu (id, role_id, menu_id, create_time) VALUES
 -- 目录和菜单
 (1, 1, 1, NOW()), (2, 1, 2, NOW()), (3, 1, 3, NOW()), (4, 1, 4, NOW()), (5, 1, 5, NOW()),
+-- 工作流目录与子菜单（重置密码工单化新增）
+(6, 1, 6, NOW()), (200, 1, 601, NOW()), (201, 1, 602, NOW()), (202, 1, 603, NOW()),
 -- 用户管理按钮
-(6, 1, 101, NOW()), (7, 1, 102, NOW()), (8, 1, 103, NOW()),
+(7, 1, 101, NOW()), (8, 1, 102, NOW()), (9, 1, 103, NOW()),
+-- 用户管理"申请重置"按钮（重置密码工单化新增）
+(203, 1, 604, NOW()),
 -- 角色管理按钮
-(9, 1, 201, NOW()), (10, 1, 202, NOW()), (11, 1, 203, NOW()),
+(10, 1, 201, NOW()), (11, 1, 202, NOW()), (12, 1, 203, NOW()),
 -- 菜单管理按钮
-(12, 1, 301, NOW()), (13, 1, 302, NOW()), (14, 1, 303, NOW()),
+(13, 1, 301, NOW()), (14, 1, 302, NOW()), (15, 1, 303, NOW()),
 -- 部门管理按钮
-(15, 1, 401, NOW()), (16, 1, 402, NOW()), (17, 1, 403, NOW());
+(16, 1, 401, NOW()), (17, 1, 402, NOW()), (18, 1, 403, NOW());
 
--- 普通用户只有查询权限 (只关联目录和菜单页面)
+-- 普通用户只有查询权限 (只关联目录和菜单页面 + 我的申请 + 申请重置按钮)
 INSERT INTO sys_role_menu (id, role_id, menu_id, create_time) VALUES
-(18, 2, 1, NOW()), (19, 2, 2, NOW()), (20, 2, 3, NOW()), (21, 2, 4, NOW()), (22, 2, 5, NOW());
+(19, 2, 1, NOW()), (20, 2, 2, NOW()), (21, 2, 3, NOW()), (22, 2, 4, NOW()), (23, 2, 5, NOW()),
+-- 工作流目录与我的申请（重置密码工单化新增）
+(24, 2, 6, NOW()), (210, 2, 601, NOW()),
+-- 申请重置按钮（重置密码工单化新增）
+(211, 2, 604, NOW());
 
 -- ---------------------------------------------------------------
 -- 7. 配置数据 (sys_config)
