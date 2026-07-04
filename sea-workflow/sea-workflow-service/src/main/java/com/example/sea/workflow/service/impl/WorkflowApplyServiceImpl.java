@@ -96,6 +96,19 @@ public class WorkflowApplyServiceImpl implements IWorkflowApplyService {
         variables.put("reason", request.getReason());
         variables.put("urgency", request.getUrgency());
 
+        // 取直属上级，作为 dept_leader 用户任务的 assignee（无上级则留空，
+        // Flowable 会按 candidateGroup 落到部门组）
+        Long deptLeaderId = null;
+        try {
+            var leaderResp = systemFeignClient.getUserLeaderId(request.getTargetUserId());
+            if (leaderResp != null && leaderResp.isSuccess() && leaderResp.getData() != null) {
+                deptLeaderId = leaderResp.getData();
+            }
+        } catch (Exception e) {
+            log.warn("取直属上级失败 target={} cause={}", request.getTargetUserId(), e.getMessage());
+        }
+        variables.put("deptLeaderId", deptLeaderId == null ? "" : String.valueOf(deptLeaderId));
+
         ProcessInstance pi = runtimeService.startProcessInstanceByKey(
                 PROCESS_DEFINITION_KEY, task.getTaskNo(), variables);
 
