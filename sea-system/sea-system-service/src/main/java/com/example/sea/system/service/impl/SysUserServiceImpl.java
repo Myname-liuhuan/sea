@@ -158,6 +158,41 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserPO> im
         return CommonResult.success(result);
     }
 
+    @Override
+    public CommonResult<Boolean> resetPassword(Long userId, String newPassword, Boolean requireChange) {
+        if (userId == null || newPassword == null || newPassword.isBlank()) {
+            return CommonResult.failed("参数缺失");
+        }
+        SysUserPO user = this.getById(userId);
+        if (user == null) return CommonResult.failed("用户不存在");
+        user.setPasswordHash(bCryptPasswordEncoder.encode(newPassword));
+        user.setRequirePasswordChange(Boolean.TRUE.equals(requireChange) ? 1 : 0);
+        boolean ok = this.updateById(user);
+        return ok ? CommonResult.success(true) : CommonResult.failed("更新失败");
+    }
 
+    @Override
+    public CommonResult<java.util.Map<String, Object>> getUserRaw(Long userId) {
+        SysUserPO user = this.getById(userId);
+        if (user == null) return CommonResult.failed("用户不存在");
+        java.util.Map<String, Object> data = new java.util.HashMap<>();
+        data.put("id", user.getId());
+        data.put("username", user.getUsername());
+        data.put("email", user.getEmail());
+        data.put("mobile", user.getMobile());
+        data.put("deptId", user.getDeptId());
+        data.put("leaderId", user.getLeaderId());
+        data.put("level", user.getLevel());
+        data.put("requirePasswordChange", user.getRequirePasswordChange());
+        data.put("status", user.getStatus());
+        return CommonResult.success(data);
+    }
+
+    @Override
+    public CommonResult<Long> getUserLeaderId(Long userId) {
+        SysUserPO user = this.getById(userId);
+        if (user == null) return CommonResult.failed("用户不存在");
+        return CommonResult.success(user.getLeaderId());
+    }
 
 }

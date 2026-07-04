@@ -64,4 +64,16 @@ public class SysUserPO extends BaseEntity{
      */
     private  LocalDateTime  bannedUntil;
 
+    /** 部门 ID（与 sys_dept.id 关联） */
+    private Long deptId;
+
+    /** 直属上级 user_id */
+    private Long leaderId;
+
+    /** 能级：1-初级 5-高级 8-总监 10-CXO */
+    private Integer level;
+
+    /** 首次登录需改密：0 否 1 是 */
+    private Integer requirePasswordChange;
+
 }

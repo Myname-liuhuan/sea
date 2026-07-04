@@ -61,4 +61,23 @@ public interface ISysUserService extends IService<SysUserPO> {
     CommonResult<Boolean> delete(Long userId);
 
 
+    /**
+     * 重置密码（流程回调用，不走菜单权限）。
+     *
+     * <p>用 Bcrypt 重写 password_hash，并将 require_password_change 置 1，
+     * 强制用户首次登录修改。
+     */
+    CommonResult<Boolean> resetPassword(Long userId, String newPassword, Boolean requireChange);
+
+    /**
+     * 取用户字段（不含密码），给流程调用方使用。
+     * 仅做内部服务间调用；不做菜单权限控制。
+     */
+    CommonResult<java.util.Map<String, Object>> getUserRaw(Long userId);
+
+    /**
+     * 取直属上级 user_id，无上级返 null。
+     */
+    CommonResult<Long> getUserLeaderId(Long userId);
+
 }
