@@ -67,13 +67,17 @@ public class AuthServiceImpl implements AuthService {
         String refreshToken = jwtUtil.generateRefreshToken(loginUser);
         Long expiresIn = jwtUtil.getAccessTokenExpirationMs();
 
+        // 是否需要强制改密：从 sys_user.require_password_change 透传到前端
+        Boolean mustChangePwd = Boolean.TRUE.equals(loginUser.getRequirePasswordChange());
+
         // 存储token到Redis
         jwtRedisUtil.storeToken(refreshToken, loginUser.getId(), jwtUtil.getRefreshTokenExpirationMs());
 
         // 记录登录成功日志
-        recordLoginLog(username, loginUser.getId(), 1, "登录成功");
+        recordLoginLog(username, loginUser.getId(), 1, mustChangePwd ? "登录成功(待改密)" : "登录成功");
 
-        return CommonResult.success(new LoginResponse(accessToken, refreshToken, expiresIn));
+        return CommonResult.success(
+                new LoginResponse(accessToken, refreshToken, expiresIn, mustChangePwd));
     }
 
     /**

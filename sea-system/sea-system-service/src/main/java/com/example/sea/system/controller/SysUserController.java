@@ -121,5 +121,19 @@ public class SysUserController {
         return sysUsersService.delete(userId);
     }
 
+    /**
+     * 自助改密：登录用户主动改密 / 强制改密（首次登录临时密码场景）。
+     *
+     * <p>强制改密首登场景下允许 oldPassword 为空（sea-auth 已通过密码登录）。
+     */
+    @GetMapping("/changePassword")
+    @Operation(summary = "自助改密")
+    public CommonResult<Boolean> changePassword(
+            @RequestParam Long userId,
+            @RequestParam(value = "oldPassword", required = false) String oldPassword,
+            @RequestParam String newPassword) {
+        return sysUsersService.changePassword(userId, oldPassword, newPassword);
+    }
+
 
 }

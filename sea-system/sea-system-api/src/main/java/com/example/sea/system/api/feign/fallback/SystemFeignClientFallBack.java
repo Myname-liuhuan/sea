@@ -24,6 +24,12 @@ public class SystemFeignClientFallBack implements FallbackFactory<SystemFeignCli
                 log.error("调用sea-system服务失败: {}", cause.getMessage());
                 return CommonResult.failed("无法获取用户信息: " + cause.getMessage());
             }
+
+            @Override
+            public CommonResult<Boolean> changePassword(Long userId, String oldPassword, String newPassword) {
+                log.error("调用sea-system服务失败: {}", cause.getMessage());
+                return CommonResult.failed("sea-system 不可用, changePassword 失败");
+            }
         };
     }
 

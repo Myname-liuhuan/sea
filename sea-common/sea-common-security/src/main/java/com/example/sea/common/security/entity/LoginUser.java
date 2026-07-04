@@ -26,7 +26,7 @@ public class LoginUser implements UserDetails {
 
     /** 记录该userId当前token的版本 用于踢人下线*/
     private Long version;
-    
+
     /**
      * 角色编码列表
      */
@@ -34,6 +34,12 @@ public class LoginUser implements UserDetails {
 
     /** 授权信息列表 */
     List<String> perms;
+
+    /**
+     * 是否需要强制改密（重置密码首次登录场景）。
+     * 重置密码时 sea-workflow 置 1，前端登录后判断并强制跳改密页；改密成功后置 0。
+     */
+    private Boolean requirePasswordChange;
 
 
     @JsonIgnore

@@ -195,4 +195,23 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserPO> im
         return CommonResult.success(user.getLeaderId());
     }
 
+    @Override
+    public CommonResult<Boolean> changePassword(Long userId, String oldPassword, String newPassword) {
+        if (userId == null || newPassword == null || newPassword.isBlank()) {
+            return CommonResult.failed("参数缺失");
+        }
+        SysUserPO user = this.getById(userId);
+        if (user == null) return CommonResult.failed("用户不存在");
+
+        if (oldPassword != null && !oldPassword.isBlank()) {
+            if (!bCryptPasswordEncoder.matches(oldPassword, user.getPasswordHash())) {
+                return CommonResult.failed("原密码不正确");
+            }
+        }
+        user.setPasswordHash(bCryptPasswordEncoder.encode(newPassword));
+        user.setRequirePasswordChange(0);
+        boolean ok = this.updateById(user);
+        return ok ? CommonResult.success(true) : CommonResult.failed("更新失败");
+    }
+
 }

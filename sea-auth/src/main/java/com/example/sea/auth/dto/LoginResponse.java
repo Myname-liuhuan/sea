@@ -10,6 +10,11 @@ public class LoginResponse {
     private String refreshToken;
     private Long expiresIn;
 
+    /**
+     * true 表示密码是临时密码（重置密码后首次登录），前端接到此标志应跳改密页
+     */
+    private Boolean mustChangePassword;
+
     public LoginResponse(String accessToken) {
         this.accessToken = accessToken;
     }
@@ -18,6 +23,14 @@ public class LoginResponse {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.expiresIn = expiresIn;
+    }
+
+    public LoginResponse(String accessToken, String refreshToken, Long expiresIn,
+                         Boolean mustChangePassword) {
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+        this.expiresIn = expiresIn;
+        this.mustChangePassword = mustChangePassword;
     }
 
     public String getAccessToken() {
@@ -42,5 +55,13 @@ public class LoginResponse {
 
     public void setExpiresIn(Long expiresIn) {
         this.expiresIn = expiresIn;
+    }
+
+    public Boolean getMustChangePassword() {
+        return mustChangePassword;
+    }
+
+    public void setMustChangePassword(Boolean mustChangePassword) {
+        this.mustChangePassword = mustChangePassword;
     }
 }

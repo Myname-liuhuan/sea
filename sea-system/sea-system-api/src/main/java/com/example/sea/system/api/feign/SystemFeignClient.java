@@ -1,11 +1,11 @@
 package com.example.sea.system.api.feign;
 
+import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.system.api.feign.fallback.SystemFeignClientFallBack;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.security.entity.LoginUser;
 
 /**
@@ -22,5 +22,14 @@ public interface SystemFeignClient {
      */
     @GetMapping("/sysUser/getLoginUser")
     CommonResult<LoginUser> getLoginUser(@RequestParam String username);
+
+    /**
+     * 改密：服务端用 oldPassword BCrypt 比对后写入新密码并清 require_password_change。
+     * oldPassword 可空（强制改密首登场景，sea-auth 已知密码正确可绕过校验）。
+     */
+    @GetMapping("/sysUser/changePassword")
+    CommonResult<Boolean> changePassword(@RequestParam("userId") Long userId,
+                                        @RequestParam(value = "oldPassword", required = false) String oldPassword,
+                                        @RequestParam("newPassword") String newPassword);
 
 }

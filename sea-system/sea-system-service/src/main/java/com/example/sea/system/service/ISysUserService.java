@@ -80,4 +80,10 @@ public interface ISysUserService extends IService<SysUserPO> {
      */
     CommonResult<Long> getUserLeaderId(Long userId);
 
+    /**
+     * 自助改密：oldPassword 校验后写 newPassword 并清 require_password_change。
+     * 调用方（sea-auth / sea-frontend）传 userId 与 newPassword 必填，oldPassword 可空。
+     */
+    CommonResult<Boolean> changePassword(Long userId, String oldPassword, String newPassword);
+
 }
