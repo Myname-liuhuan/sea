@@ -1,0 +1,53 @@
+# sea-notification 在 Nacos 上的 Data ID 配置样例（运维拷到 Nacos）
+# Data ID:  sea-notification.yaml
+# Group:     DEFAULT_GROUP
+
+server:
+  port: 8085
+
+spring:
+  application:
+    name: sea-notification
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/sea_notification?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  mail:
+    host: smtp.example.com
+    port: 465
+    username: noreply@example.com
+    password: ${MAIL_PASSWORD}
+    default-encoding: UTF-8
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.ssl.enable: true
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+
+# 阿里云短信
+aliyun:
+  sms:
+    enabled: false                     # dev 环境关闭，避免硬依赖 vendor 凭据
+    access-key-id: ${ALI_SMS_AK}
+    access-key-secret: ${ALI_SMS_SK}
+    sign-name: 海纳系统
+    endpoint: dysmsapi.aliyuncs.com
+    template-code: SMS_2600100
+
+# WebSocket
+websocket:
+  endpoint: /ws/notify
+  allowed-origins: "*"
+
+# 通知重试 job
+notify:
+  retry:
+    max-attempts: 3
+    cron: "0 * * * * ?"
+
+logging:
+  level:
+    com.aliyun: warn

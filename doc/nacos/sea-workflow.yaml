@@ -1,0 +1,53 @@
+# sea-workflow 在 Nacos 上的 Data ID 配置样例（运维拷到 Nacos）
+# Data ID:  sea-workflow.yaml
+# Group:     DEFAULT_GROUP
+# Profile:   通用
+
+server:
+  port: 8084
+
+spring:
+  application:
+    name: sea-workflow
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/sea_workflow?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      database: 0
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+
+# Flowable：act_ge_bytearray / act_re_deployment / act_ru_task 等自动建表
+flowable:
+  database-schema-update: true   # 首次启动建表；正式环境用 validate 或 none
+  async-executor-activate: true
+  history-level: full            # 表 act_hi_*
+  process-definition-location-prefix: classpath:/processes/
+  process-definition-name-caches: 100
+
+# 工作流配置
+workflow:
+  business-type: PASSWORD_RESET
+  temp-password-length: 8
+  notify:
+    fallback-channels:
+      - IN_APP
+      - EMAIL
+      - SMS
+
+# 内部 Feign token / 自定义 token 隔板（sea-system / sea-notification 一样）
+sea:
+  feign:
+    token-pass-through: false
+
+logging:
+  level:
+    flowable: info
+    org.activiti: warn
