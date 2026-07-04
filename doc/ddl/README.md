@@ -16,7 +16,7 @@
 sea/doc/ddl/
 ├── README.md              # 本文档
 ├── ALL.sql                # 汇总执行脚本
-├── sea_system/            # sea_system 数据库
+├── sea_system/            # sea_system 数据库（当前完整 DDL，详见下方"完整 DDL vs 增量迁移"）
 │   ├── 00_init.sql        # 数据库初始化
 │   ├── 01_base.sql        # 用户、角色、部门表
 │   ├── 02_auth.sql        # 菜单、权限关联表
@@ -27,10 +27,42 @@ sea/doc/ddl/
 ├── sea_business/          # sea_business 数据库
 │   ├── 00_init.sql        # 数据库初始化
 │   └── 01_media.sql        # 歌手、专辑、音乐表
-└── sea_codegen/           # sea_codegen 数据库
-    ├── 00_init.sql        # 数据库初始化
-    └── 01_codegen.sql     # 代码生成数据源表
+├── sea_codegen/           # sea_codegen 数据库
+│   ├── 00_init.sql        # 数据库初始化
+│   └── 01_codegen.sql     # 代码生成数据源表
+├── feature/<branch-name>/ # 功能分支的增量 DDL（ADD/ALTER/DROP 等变更）
+└── fix/<branch-name>/     # 修复分支的增量 DDL
 ```
+
+## 完整 DDL vs 增量迁移
+
+本目录的 DDL 分两类，作用完全不同：
+
+| 类型 | 位置 | 作用 | 何时更新 |
+|------|------|------|---------|
+| 完整 DDL | `sea_<db>/*.sql` | 当前数据库的"全量"DDL，反映最新合并后的最终状态 | 每次有功能或修复分支合并到主干，需随之同步 |
+| 增量迁移 | `feature/<branch>/*.sql` <br> `fix/<branch>/*.sql` | 该分支对数据库的改动（ALTER/ADD/DROP） | 仅在对应分支开发期间创建与维护 |
+
+**约定**
+
+- `sea_<db>/*.sql` 是新环境部署用的"目标态"脚本，可以直接 `source` 初始化一套空库。
+- `feature/` 和 `fix/` 是迁移记录，按分支隔离。命名规则 `<branch-name>` 必须与 git 分支名保持一致（例如：`feat-password-reset-workflow`）。
+- 一个分支可能涉及对多张表的不同改动，增量迁移放在 `feature/<branch>/` 下，单文件粒度建议按"每次提交一个语义单元"拆分，例如：`2026_07_04_add_sys_user_leader_and_level.sql`、`2026_07_05_create_workflow_task.sql`。
+- 文件名约定：`YYYY_MM_DD[_序号]_动词_<对象表>.sql`，同一分支内按字典序即可确定执行顺序，无需工具。
+
+## 开发流程
+
+1. **拉分支**：从 `dev-web`（或当前主干分支）拉出 `feat-xxx` / `fix-xxx`。
+2. **写增量迁移**：在 `feature/<branch-name>/`（或 `fix/...`）下新增 DDL 文件，记录本分支要做的表结构变更。
+3. **同步完整 DDL**：本次分支提交内，**同时**把 `sea_<db>/` 下对应的完整 DDL 文件更新为"迁移后"的最终状态——保证主干上 `sea_<db>/*.sql` 与已合并的增量迁移一一对应、累计结果一致。
+4. **不互相依赖**：增量迁移文件不引用 `sea_*` 路径；它本身就是一段独立可执行的 MySQL 语句。
+5. **PR 评审**：评审者要确认两点——增量文件齐全、与之对应的 `sea_*` 也已同步。
+6. **合并后**：增量文件随分支删除或保留为审计存档，**但完整 DDL 必须始终保持是合并后主干上的最新状态**。
+
+**反例（不允许）**
+
+- 只在 `feature/<branch>/` 写增量，没同步更新 `sea_<db>/*.sql`。这样会导致主干上 `sea_*` 与生产库漂移、新环境部署缺字段。
+- 把"回滚 SQL"放在 `fix/` 下，回滚应当属于代码层处理，不是 DDL 关注点。
 
 ## 执行顺序
 
