@@ -9,27 +9,31 @@ USE sea_system;
 -- ---------------------------------------------------------------
 DROP TABLE IF EXISTS sys_user;
 CREATE TABLE sys_user (
-    id              BIGINT          NOT NULL    AUTO_INCREMENT  COMMENT '用户ID',
-    username        VARCHAR(50)     NOT NULL                    COMMENT '用户名',
-    email           VARCHAR(100)                             COMMENT '邮箱',
-    mobile          VARCHAR(20)                               COMMENT '手机号',
-    password_hash   VARCHAR(255)    NOT NULL                    COMMENT '密码(BCrypt)',
-    avatar_url      VARCHAR(500)                              COMMENT '头像URL',
-    profile         VARCHAR(500)                              COMMENT '个人简介',
-    dept_id         BIGINT                                     COMMENT '部门ID',
-    status          TINYINT         NOT NULL    DEFAULT 1       COMMENT '状态(0停用,1正常)',
-    is_banned       TINYINT         NOT NULL    DEFAULT 0       COMMENT '封禁状态(0正常,1封禁)',
-    banned_until    DATETIME                                  COMMENT '封禁截止时间',
-    create_time     DATETIME       NOT NULL    DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    update_time     DATETIME       NOT NULL    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    create_by       BIGINT                                     COMMENT '创建人',
-    update_by       BIGINT                                     COMMENT '更新人',
-    del_flag        TINYINT         NOT NULL    DEFAULT 0       COMMENT '删除标志(0未删,1已删)',
+    id                      BIGINT          NOT NULL    AUTO_INCREMENT  COMMENT '用户ID',
+    username                VARCHAR(50)     NOT NULL                    COMMENT '用户名',
+    email                   VARCHAR(100)                             COMMENT '邮箱',
+    mobile                  VARCHAR(20)                               COMMENT '手机号',
+    password_hash           VARCHAR(255)    NOT NULL                    COMMENT '密码(BCrypt)',
+    require_password_change TINYINT         NOT NULL    DEFAULT 0       COMMENT '首次登录需改密(0否,1是)',
+    avatar_url              VARCHAR(500)                              COMMENT '头像URL',
+    profile                 VARCHAR(500)                              COMMENT '个人简介',
+    dept_id                 BIGINT                                     COMMENT '部门ID',
+    leader_id               BIGINT                                     COMMENT '直属上级 user_id',
+    level                   TINYINT                                     COMMENT '能级(1初级,5高级,8总监,10CXO)',
+    status                  TINYINT         NOT NULL    DEFAULT 1       COMMENT '状态(0停用,1正常)',
+    is_banned               TINYINT         NOT NULL    DEFAULT 0       COMMENT '封禁状态(0正常,1封禁)',
+    banned_until            DATETIME                                  COMMENT '封禁截止时间',
+    create_time             DATETIME       NOT NULL    DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time             DATETIME       NOT NULL    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    create_by               BIGINT                                     COMMENT '创建人',
+    update_by               BIGINT                                     COMMENT '更新人',
+    del_flag                TINYINT         NOT NULL    DEFAULT 0       COMMENT '删除标志(0未删,1已删)',
     PRIMARY KEY (id),
     UNIQUE KEY uk_username (username),
     KEY idx_mobile (mobile),
     KEY idx_email (email),
-    KEY idx_dept_id (dept_id)
+    KEY idx_dept_id (dept_id),
+    KEY idx_leader_id (leader_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户表';
 
 -- ---------------------------------------------------------------
