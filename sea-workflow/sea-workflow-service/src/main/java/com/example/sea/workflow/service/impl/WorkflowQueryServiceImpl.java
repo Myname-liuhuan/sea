@@ -65,7 +65,8 @@ public class WorkflowQueryServiceImpl implements IWorkflowQueryService {
 
         List<Task> flowTasks = taskService.createTaskQuery()
                 .taskAssignee(String.valueOf(userId))
-                .listPage((query.getPageNum() - 1) * query.getPageSize(), query.getPageSize());
+                .listPage((int) ((query.getPageNum() - 1) * query.getPageSize()),
+                        (int) (long) query.getPageSize());
         long total = taskService.createTaskQuery()
                 .taskAssignee(String.valueOf(userId)).count();
 

@@ -53,14 +53,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.aliyun</groupId>
-            <artifactId>aliyun-java-sdk-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.aliyun</groupId>
-            <artifactId>aliyun-java-sdk-dysmsapi</artifactId>
-        </dependency>
+        <!--
+          Aliyun dysmsapi 二进制不在生产打包，本期 SMS 实现走 stub。
+          真实接入时把 com.aliyun:aliyun-java-sdk-dysmsapi 加回 pom，
+          SmsNotifier 已封装好 client 装载逻辑（待 vendor 接入补完整）。
+        -->
 
         <!-- WebSocket (InApp 推送) -->
         <dependency>

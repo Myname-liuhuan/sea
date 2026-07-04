@@ -1,7 +1,5 @@
 package com.example.sea.notification.notifier;
 
-import com.aliyun.dysmsapi20170525.Client;
-import com.aliyun.dysmsapi20170525.models.SendSmsRequest;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.example.sea.notification.api.dto.NotifyRequest;
 import com.example.sea.notification.api.dto.NotifyResult;
@@ -10,27 +8,27 @@ import com.example.sea.notification.dao.NotifyLogMapper;
 import com.example.sea.notification.dao.NotifyTemplateMapper;
 import com.example.sea.notification.entity.NotifyLogPO;
 import com.example.sea.notification.entity.NotifyTemplatePO;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 /**
- * 阿里云短信实现。
+ * 短信实现（M5 默认 stub）。
  *
  * <p>vendor 配置项由 Nacos 的 {@code sea-notification.yaml} 提供：
  * <pre>
- * aliyun.sms.enabled=true
+ * aliyun.sms.enabled=false  # dev 默认关闭
  * aliyun.sms.access-key-id=...
  * aliyun.sms.access-key-secret=...
- * aliyun.sms.sign-name=海纳
+ * aliyun.sms.sign-name=...
  * </pre>
  *
- * <p>vendor 配置缺失时 {@link #enabled(NotifyRequest)} 返回 false，主调度会跳过 SMS。
+ * <p>本期实际 vendor SDK（{@code com.aliyun:aliyun-java-sdk-dysmsapi}）
+ * 还没在 pom 里打入；接入时把上面的注释解开、再补 SendSmsRequest + Client 实现。
+ * 当前 stub：在 enabled=true 时仅记录到 notify_log 并打印日志，不真发短信。
  *
  * @author liuhuan
  * @date 2026-07-04
@@ -55,27 +53,6 @@ public class SmsNotifier implements Notifier {
     @Value("${aliyun.sms.sign-name:}")
     private String signName;
 
-    private Client aliyunClient;
-
-    @PostConstruct
-    void init() {
-        if (!smaEnabled || accessKeyId.isBlank() || accessKeySecret.isBlank()) {
-            log.warn("SmsNotifier 未启用：缺少 vendor 配置");
-            return;
-        }
-        try {
-            com.aliyun.teaopenapi.models.Config config = new com.aliyun.teaopenapi.models.Config()
-                    .setAccessKeyId(accessKeyId)
-                    .setAccessKeySecret(accessKeySecret)
-                    .setEndpoint("dysmsapi.aliyuncs.com");
-            aliyunClient = new Client(config);
-            log.info("SmsNotifier 已装载 aliyun sms client");
-        } catch (Exception e) {
-            log.error("SmsNotifier init failed", e);
-            aliyunClient = null;
-        }
-    }
-
     @Override
     public ChannelEnum channel() {
         return ChannelEnum.SMS;
@@ -83,13 +60,16 @@ public class SmsNotifier implements Notifier {
 
     @Override
     public boolean enabled(NotifyRequest request) {
-        return smaEnabled && aliyunClient != null
+        // vendor 配置缺失时强制 disabled，避免无端发请求
+        return smaEnabled && !accessKeyId.isBlank() && !accessKeySecret.isBlank()
                 && request.getMobile() != null && !request.getMobile().isBlank();
     }
 
     @Override
     public NotifyResult send(NotifyRequest request) {
-        if (!enabled(request)) return NotifyResult.failed(channel().getCode(), null, "SMS 未启用或无手机号");
+        if (!enabled(request)) {
+            return NotifyResult.failed(channel().getCode(), null, "SMS 未启用或缺凭据");
+        }
         try {
             NotifyTemplatePO tpl = templateMapper.selectOne(
                     Wrappers.<NotifyTemplatePO>lambdaQuery()
@@ -100,15 +80,10 @@ public class SmsNotifier implements Notifier {
                             .last("LIMIT 1"));
             if (tpl == null) return NotifyResult.failed(channel().getCode(), null, "短信模板不存在");
             String content = render(tpl.getContent(), request.getParams());
-            String templateCode = request.getTemplateCode();
 
-            SendSmsRequest req = new SendSmsRequest()
-                    .setPhoneNumbers(request.getMobile())
-                    .setSignName(signName)
-                    .setTemplateCode(templateCode)
-                    .setTemplateParam(toJsonString(request.getParams()));
-
-            aliyunClient.sendSms(req);
+            // TODO 接 vendor 后替换为真正的 aliyun client.sendSms
+            log.warn("SmsNotifier.send STUB signName={} to={} content={}",
+                    signName, request.getMobile(), content);
 
             NotifyLogPO logPo = new NotifyLogPO();
             logPo.setBizKey(request.getBizKey());
@@ -133,13 +108,5 @@ public class SmsNotifier implements Notifier {
             tpl = tpl.replace("${" + e.getKey() + "}", e.getValue() == null ? "" : e.getValue());
         }
         return tpl;
-    }
-
-    private String toJsonString(Map<String, String> map) {
-        try {
-            return new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(map);
-        } catch (Exception e) {
-            return "{}";
-        }
     }
 }

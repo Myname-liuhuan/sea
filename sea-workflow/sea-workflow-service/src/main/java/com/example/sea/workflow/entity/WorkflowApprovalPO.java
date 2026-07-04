@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @TableName("workflow_approval")
 public class WorkflowApprovalPO {
 
-    /** 主键 */
+    /** 主键（MP 默认雪花策略） */
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 

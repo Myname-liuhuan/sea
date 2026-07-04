@@ -7,7 +7,6 @@ import com.example.sea.workflow.api.dto.ApplyResultDTO;
 import com.example.sea.workflow.api.feign.SystemFeignClient;
 import com.example.sea.workflow.api.param.ApplyRequest;
 import com.example.sea.workflow.constants.WorkflowStatusEnum;
-import com.example.sea.workflow.converter.WorkflowTaskConverter;
 import com.example.sea.workflow.dao.WorkflowTaskMapper;
 import com.example.sea.workflow.entity.WorkflowTaskPO;
 import com.example.sea.workflow.service.IWorkflowApplyService;
@@ -41,7 +40,6 @@ public class WorkflowApplyServiceImpl implements IWorkflowApplyService {
     private static final long IDEMPOTENCY_TTL_SECONDS = 600L;
 
     private final WorkflowTaskMapper taskMapper;
-    private final WorkflowTaskConverter taskConverter;
     private final SystemFeignClient systemFeignClient;
     private final RuntimeService runtimeService;
     private final RedisUtil redisUtil;
@@ -59,15 +57,19 @@ public class WorkflowApplyServiceImpl implements IWorkflowApplyService {
             String cacheKey = IDEMPOTENCY_KEY_PREFIX + idempotencyKey;
             Object cached = redisUtil.get(cacheKey);
             if (cached instanceof String s) {
-                return CommonResult.success(new ApplyResultDTO(s, null));
+                ApplyResultDTO existing = new ApplyResultDTO();
+                existing.setTaskNo(s);
+                return CommonResult.success(existing);
             }
         }
 
         // 2. 取目标用户信息（由 sea-system 提供 Feign）
-        Map<String, Object> userMap = systemFeignClient.getUserRaw(request.getTargetUserId());
-        if (userMap == null || userMap.get("id") == null) {
+        var userResp = systemFeignClient.getUserRaw(request.getTargetUserId());
+        if (userResp == null || !userResp.isSuccess() || userResp.getData() == null
+                || userResp.getData().get("id") == null) {
             return CommonResult.failed("目标用户不存在");
         }
+        Map<String, Object> userMap = userResp.getData();
         Long deptId = toLong(userMap.get("deptId"));
         Integer level = toInt(userMap.get("level"));
         if (level == null) {
@@ -118,12 +120,15 @@ public class WorkflowApplyServiceImpl implements IWorkflowApplyService {
         taskMapper.insert(task);
 
         if (idempotencyKey != null && !idempotencyKey.isBlank()) {
-            redisUtil.setStr(IDEMPOTENCY_KEY_PREFIX + idempotencyKey,
+            redisUtil.set(IDEMPOTENCY_KEY_PREFIX + idempotencyKey,
                     task.getTaskNo(), IDEMPOTENCY_TTL_SECONDS);
         }
         log.info("workflow.apply applicant={} target={} taskNo={} flowInstance={}",
                 applicantId, request.getTargetUserId(), task.getTaskNo(), pi.getId());
-        return CommonResult.success(new ApplyResultDTO(task.getTaskNo(), task.getId()));
+        ApplyResultDTO result = new ApplyResultDTO();
+        result.setTaskNo(task.getTaskNo());
+        result.setTaskId(task.getId());
+        return CommonResult.success(result);
     }
 
     private static String generateTaskNo() {

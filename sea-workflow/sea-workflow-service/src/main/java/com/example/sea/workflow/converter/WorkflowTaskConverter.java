@@ -38,7 +38,7 @@ public interface WorkflowTaskConverter {
     WorkflowTaskPO applyToEntity(ApplyRequest request);
 
     /** PO → VO。状态码转状态文本。 */
-    @Mapping(target = "statusLabel", expression = "java(WorkflowStatusEnum.of(po.getStatus()) == null ? null : WorkflowStatusEnum.of(po.getStatus()).getLabel())")
+    @Mapping(target = "statusLabel", expression = "java(com.example.sea.workflow.constants.WorkflowStatusEnum.of(po.getStatus()) == null ? null : com.example.sea.workflow.constants.WorkflowStatusEnum.of(po.getStatus()).getLabel())")
     WorkflowTaskVO entityToVo(WorkflowTaskPO po);
 
     List<WorkflowTaskVO> entityListToVoList(List<WorkflowTaskPO> list);

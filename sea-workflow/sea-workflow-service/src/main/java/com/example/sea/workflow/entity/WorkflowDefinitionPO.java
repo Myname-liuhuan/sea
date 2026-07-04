@@ -1,7 +1,5 @@
 package com.example.sea.workflow.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.example.sea.common.mybatis.entity.BaseEntity;
 import lombok.Data;
@@ -22,10 +20,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @TableName("workflow_definition")
 public class WorkflowDefinitionPO extends BaseEntity {
-
-    /** 主键 */
-    @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
 
     /** 业务类型 */
     private String businessType;
