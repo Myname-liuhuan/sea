@@ -40,16 +40,18 @@ INSERT INTO sys_dept (id, parent_id, name, order_num, leader, mobile, email, sta
 -- 2. 用户数据 (sys_user)
 -- ---------------------------------------------------------------
 -- 密码是 admin123 (BCrypt 加密后的结果)
-INSERT INTO sys_user (id, username, email, mobile, password_hash, dept_id, status, create_time, del_flag) VALUES
-(1, 'admin', 'admin@sea.com', '13800138000', '$2a$10$tDx7HJ5YExDZcKKfC59oTeeWfcbaqbGjatGWJHFUCaIfSHZi3/QQq', 1, 1, NOW(), 0),
-(2, 'test', 'test@sea.com', '13800138001', '$2a$10$tDx7HJ5YExDZcKKfC59oTeeWfcbaqbGjatGWJHFUCaIfSHZi3/QQq', 2, 1, NOW(), 0);
+INSERT INTO sys_user (id, username, email, mobile, password_hash, dept_id, level, require_password_change, status, create_time, del_flag) VALUES
+(1, 'admin', 'admin@sea.com', '13800138000', '$2a$10$tDx7HJ5YExDZcKKfC59oTeeWfcbaqbGjatGWJHFUCaIfSHZi3/QQq', 1, 10, 0, 1, NOW(), 0),
+(2, 'test', 'test@sea.com', '13800138001', '$2a$10$tDx7HJ5YExDZcKKfC59oTeeWfcbaqbGjatGWJHFUCaIfSHZi3/QQq', 2, 5, 0, 1, NOW(), 0),
+(3, 'hr_specialist', 'hr@sea.com', '13800138003', '$2a$10$tDx7HJ5YExDZcKKfC59oTeeWfcbaqbGjatGWJHFUCaIfSHZi3/QQq', 1, 8, 0, 1, NOW(), 0);
 
 -- ---------------------------------------------------------------
 -- 3. 角色数据 (sys_role)
 -- ---------------------------------------------------------------
 INSERT INTO sys_role (id, role_name, role_code, role_desc, data_scope, status, create_time, del_flag) VALUES
 (1, '管理员', 'ROLE_ADMIN', '超级管理员，拥有所有权限', 1, 1, NOW(), 0),
-(2, '普通用户', 'ROLE_USER', '普通用户，只有查询权限', 4, 1, NOW(), 0);
+(2, '普通用户', 'ROLE_USER', '普通用户，只有查询权限', 4, 1, NOW(), 0),
+(3, 'HR 专员', 'HR', '人力资源专员，负责 level >= 8 用户的密码重置审批', 1, 1, NOW(), 0);
 
 -- ---------------------------------------------------------------
 -- 4. 菜单数据 (sys_menu) - 包含目录、菜单、按钮
@@ -96,7 +98,8 @@ INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, order_num, path, comp
 -- ---------------------------------------------------------------
 INSERT INTO sys_user_role (id, user_id, role_id, create_time) VALUES
 (1, 1, 1, NOW()),  -- admin -> 管理员
-(2, 2, 2, NOW());  -- test -> 普通用户
+(2, 2, 2, NOW()),  -- test -> 普通用户
+(3, 3, 3, NOW());  -- hr_specialist -> HR 专员
 
 -- ---------------------------------------------------------------
 -- 6. 角色菜单关联 (sys_role_menu) - 添加 id 字段
@@ -125,6 +128,12 @@ INSERT INTO sys_role_menu (id, role_id, menu_id, create_time) VALUES
 (24, 2, 6, NOW()), (210, 2, 601, NOW()),
 -- 申请重置按钮（重置密码工单化新增）
 (211, 2, 604, NOW());
+
+-- HR 专员：进入待我审批节点（重置密码工单化新增）
+INSERT INTO sys_role_menu (id, role_id, menu_id, create_time) VALUES
+(300, 3, 6, NOW()),     -- 工作流目录
+(301, 3, 601, NOW()),    -- 我的申请（可看自己的）
+(302, 3, 602, NOW());    -- 待我审批（核心：HR 节点在这里领）
 
 -- ---------------------------------------------------------------
 -- 7. 配置数据 (sys_config)
