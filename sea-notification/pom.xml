@@ -24,4 +24,21 @@
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
+    <!-- 阿里云短信 SDK：仅本模块内可能使用，版本号引用父 pom ${aliyun-*.version}。
+         本期 service 不引入，下一次 vendor 真接入时启用。 -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>aliyun-java-sdk-core</artifactId>
+                <version>${aliyun-core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>aliyun-java-sdk-dysmsapi</artifactId>
+                <version>${aliyun-dysmsapi.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
 </project>

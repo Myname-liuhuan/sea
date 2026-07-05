@@ -112,24 +112,8 @@
 				<version>${springdoc.version}</version>
 			</dependency>
 
-			<!-- Flowable BPMN 引擎 -->
-			<dependency>
-				<groupId>org.flowable</groupId>
-				<artifactId>flowable-spring-boot-starter</artifactId>
-				<version>${flowable.version}</version>
-			</dependency>
-
-			<!-- 阿里云短信 SDK -->
-			<dependency>
-				<groupId>com.aliyun</groupId>
-				<artifactId>aliyun-java-sdk-core</artifactId>
-				<version>${aliyun-core.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.aliyun</groupId>
-				<artifactId>aliyun-java-sdk-dysmsapi</artifactId>
-				<version>${aliyun-dysmsapi.version}</version>
-			</dependency>
+			<!-- flowable / 阿里云 SDK 版本号留在 properties（${flowable.version} / ${aliyun-*.version}）；
+			     dependencyManagement 下沉到各自子 pom，子模块 dependencies 引用时不写 version -->
 		</dependencies>
 	</dependencyManagement>
 
