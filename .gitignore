@@ -33,6 +33,8 @@ build/
 .vscode/
 
 test/
+!sea-*/src/test/**
+
 ### 日志文件目录 ###
 logs/
 
