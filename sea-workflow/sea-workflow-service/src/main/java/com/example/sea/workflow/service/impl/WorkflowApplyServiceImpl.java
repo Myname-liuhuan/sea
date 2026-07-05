@@ -37,7 +37,12 @@ public class WorkflowApplyServiceImpl implements IWorkflowApplyService {
     private static final String BUSINESS_TYPE = "PASSWORD_RESET";
     private static final String PROCESS_DEFINITION_KEY = "reset_password";
     private static final String IDEMPOTENCY_KEY_PREFIX = "workflow:apply:idemp:";
+    private static final String RATE_LIMIT_KEY_PREFIX = "workflow:apply:rate:";
     private static final long IDEMPOTENCY_TTL_SECONDS = 600L;
+    /** §14 #14：每用户每天最多申请次数 */
+    private static final int DAILY_APPLY_LIMIT = 5;
+    /** Rate-limit key TTL：留 2 小时缓冲跨过零点 */
+    private static final long RATE_LIMIT_TTL_SECONDS = 26 * 3600L;
 
     private final WorkflowTaskMapper taskMapper;
     private final SystemFeignClient systemFeignClient;
@@ -50,6 +55,12 @@ public class WorkflowApplyServiceImpl implements IWorkflowApplyService {
         Long applicantId = SecurityContextUtil.getUserId();
         if (applicantId == null) {
             return CommonResult.failed("未登录或会话已失效");
+        }
+
+        // 0. §14 #14：申请防刷限流
+        if (!withinDailyLimit(applicantId)) {
+            log.warn("workflow.apply.rate_limit user={} limit={}", applicantId, DAILY_APPLY_LIMIT);
+            return CommonResult.failed("今日申请次数已达上限（" + DAILY_APPLY_LIMIT + " 次）");
         }
 
         // 1. Idempotency 兜底
@@ -147,5 +158,16 @@ public class WorkflowApplyServiceImpl implements IWorkflowApplyService {
         if (o == null) return null;
         if (o instanceof Number n) return n.intValue();
         return Integer.parseInt(o.toString());
+    }
+
+    /** §14 #14：每用户每天最多 DAILY_APPLY_LIMIT 次申请，Redis 计数。 */
+    private boolean withinDailyLimit(long userId) {
+        String key = RATE_LIMIT_KEY_PREFIX + userId + ":" + LocalDate.now();
+        Object cur = redisUtil.get(key);
+        long used = 0L;
+        if (cur instanceof Number n) used = n.longValue();
+        if (used >= DAILY_APPLY_LIMIT) return false;
+        redisUtil.set(key, used + 1, RATE_LIMIT_TTL_SECONDS);
+        return true;
     }
 }
