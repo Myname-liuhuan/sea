@@ -11,6 +11,7 @@ import com.example.sea.common.security.utils.SecurityContextUtil;
 import com.example.sea.workflow.api.dto.WorkflowDetailDTO;
 import com.example.sea.workflow.api.param.WorkflowTaskQueryParam;
 import com.example.sea.workflow.api.vo.WorkflowTaskVO;
+import com.example.sea.workflow.api.vo.WorkflowApprovalVO;
 import com.example.sea.workflow.converter.WorkflowApprovalConverter;
 import com.example.sea.workflow.converter.WorkflowTaskConverter;
 import com.example.sea.workflow.dao.WorkflowApprovalMapper;
@@ -18,6 +19,7 @@ import com.example.sea.workflow.dao.WorkflowTaskMapper;
 import com.example.sea.workflow.entity.WorkflowApprovalPO;
 import com.example.sea.workflow.entity.WorkflowTaskPO;
 import com.example.sea.workflow.service.IWorkflowQueryService;
+import com.example.sea.workflow.service.WorkflowNameEnricher;
 import lombok.RequiredArgsConstructor;
 import org.flowable.engine.TaskService;
 import org.flowable.task.api.Task;
@@ -43,6 +45,7 @@ public class WorkflowQueryServiceImpl implements IWorkflowQueryService {
     private final WorkflowTaskConverter taskConverter;
     private final WorkflowApprovalConverter approvalConverter;
     private final TaskService taskService;
+    private final WorkflowNameEnricher nameEnricher;
 
     @Override
     public CommonResult<PageResult<WorkflowTaskVO>> myApplications(WorkflowTaskQueryParam query) {
@@ -80,6 +83,7 @@ public class WorkflowQueryServiceImpl implements IWorkflowQueryService {
                 : taskMapper.selectBatchIds(taskNos.stream().map(this::findIdByTaskNo).collect(Collectors.toList()));
 
         List<WorkflowTaskVO> vos = tasks.stream().map(taskConverter::entityToVo).collect(Collectors.toList());
+        nameEnricher.enrichTaskNames(vos);
         return CommonResult.success(new PageResult<>(vos, total, query.getPageNum(), query.getPageSize()));
     }
 
@@ -115,8 +119,12 @@ public class WorkflowQueryServiceImpl implements IWorkflowQueryService {
                         .orderByAsc(WorkflowApprovalPO::getNodeOrder));
 
         WorkflowDetailDTO dto = new WorkflowDetailDTO();
-        dto.setTask(taskConverter.entityToVo(task));
-        dto.setApprovals(approvalConverter.entityListToVoList(approvals));
+        WorkflowTaskVO taskVo = taskConverter.entityToVo(task);
+        List<WorkflowApprovalVO> approvalVos = approvalConverter.entityListToVoList(approvals);
+        nameEnricher.enrichTaskNames(List.of(taskVo));
+        nameEnricher.enrichApprovalNames(approvalVos);
+        dto.setTask(taskVo);
+        dto.setApprovals(approvalVos);
         return CommonResult.success(dto);
     }
 
@@ -133,11 +141,9 @@ public class WorkflowQueryServiceImpl implements IWorkflowQueryService {
     private PageResult<WorkflowTaskVO> toPageResult(LambdaQueryWrapper<WorkflowTaskPO> wrapper) {
         Page<WorkflowTaskPO> page = new Page<>(1L, 10L);
         IPage<WorkflowTaskPO> result = taskMapper.selectPage(page, wrapper);
-        return new PageResult<>(
-                taskConverter.entityListToVoList(result.getRecords()),
-                result.getTotal(),
-                result.getCurrent(),
-                result.getSize());
+        List<WorkflowTaskVO> vos = taskConverter.entityListToVoList(result.getRecords());
+        nameEnricher.enrichTaskNames(vos);
+        return new PageResult<>(vos, result.getTotal(), result.getCurrent(), result.getSize());
     }
 
     @SuppressWarnings("unused")
