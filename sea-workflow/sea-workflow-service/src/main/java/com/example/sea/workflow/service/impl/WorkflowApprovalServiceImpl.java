@@ -54,6 +54,12 @@ public class WorkflowApprovalServiceImpl implements IWorkflowApprovalService {
             return CommonResult.failed("当前无待办");
         }
 
+        // §14 #15：防止 reassign 之后原审批人完成；assignee 必须匹配
+        String activeAssignee = flowTask.getAssignee();
+        if (activeAssignee != null && !String.valueOf(approverId).equals(activeAssignee)) {
+            return CommonResult.failed("该工单已被转交，无法以原审批人身份完成");
+        }
+
         Map<String, Object> variables = new HashMap<>();
         variables.put("approved", Boolean.TRUE.equals(request.getApproved()));
         variables.put("comment", request.getComment());
@@ -92,7 +98,12 @@ public class WorkflowApprovalServiceImpl implements IWorkflowApprovalService {
         if (flowTask == null) {
             return CommonResult.failed("当前无待办");
         }
+        String previousAssignee = flowTask.getAssignee();
+        if (previousAssignee != null && String.valueOf(request.getToUserId()).equals(previousAssignee)) {
+            return CommonResult.failed("不能转交给当前审批人");
+        }
 
+        // §14 #15：转交前先把"原审批人是谁"也写一行（approved=-1, delegated_from=原审批人）
         taskService.setAssignee(flowTask.getId(), String.valueOf(request.getToUserId()));
 
         WorkflowApprovalPO approval = new WorkflowApprovalPO();
