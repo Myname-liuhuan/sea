@@ -91,7 +91,7 @@ public class SmsNotifier implements Notifier {
             logPo.setReceiver(request.getMobile());
             logPo.setUserId(request.getReceiverUserId());
             logPo.setTemplateCode(request.getTemplateCode());
-            logPo.setPayloadCipher(content);
+            logPo.setPayloadCipher(buildReplayPayload(request, content));
             logPo.setStatus("SUCCESS");
             logPo.setAttempts(1);
             logMapper.insert(logPo);
@@ -108,5 +108,24 @@ public class SmsNotifier implements Notifier {
             tpl = tpl.replace("${" + e.getKey() + "}", e.getValue() == null ? "" : e.getValue());
         }
         return tpl;
+    }
+
+    /** §14 #11：短信 payload + 参数快照。 */
+    private static String buildReplayPayload(com.example.sea.notification.api.dto.NotifyRequest req,
+                                           String renderedContent) {
+        try {
+            NotifyReplayPayload p = new NotifyReplayPayload(
+                    "SMS",
+                    req.getReceiverUserId(),
+                    req.getEmail(),
+                    req.getMobile(),
+                    req.getTemplateCode(),
+                    req.getParams(),
+                    req.getBizKey(),
+                    req.getAppName());
+            return new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(p);
+        } catch (Exception e) {
+            return renderedContent;
+        }
     }
 }
