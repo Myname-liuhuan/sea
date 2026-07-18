@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.example.sea.notification.api.dto.NotifyRequest;
 import com.example.sea.notification.api.dto.NotifyResult;
+import com.example.sea.notification.config.NotificationChannelProperties;
 import com.example.sea.notification.constants.ChannelEnum;
 import com.example.sea.notification.dao.NotifyLogMapper;
 import com.example.sea.notification.dao.NotifyTemplateMapper;
@@ -38,6 +39,7 @@ public class InAppNotifier implements Notifier {
     private final NotifyTemplateMapper templateMapper;
     private final NotifyLogMapper logMapper;
     private final InAppMessageMapper inAppMapper;
+    private final NotificationChannelProperties channelProperties;
 
     @Override
     public ChannelEnum channel() {
@@ -45,7 +47,16 @@ public class InAppNotifier implements Notifier {
     }
 
     @Override
+    public boolean enabled(NotifyRequest request) {
+        // 站内信是纯 DB 写入，唯一可控的是通道开关
+        return channelProperties.getInapp().getEnabled();
+    }
+
+    @Override
     public NotifyResult send(NotifyRequest request) {
+        if (!enabled(request)) {
+            return NotifyResult.failed(channel().getCode(), null, "站内信通道关闭");
+        }
         try {
             NotifyTemplatePO tpl = templateMapper.selectOne(
                     Wrappers.<NotifyTemplatePO>lambdaQuery()

@@ -17,7 +17,9 @@ spring:
     host: smtp.example.com
     port: 465
     username: noreply@example.com
-    password: ${MAIL_PASSWORD}
+    # 凭据留空避免 Spring 解析 ${MAIL_PASSWORD} 失败。
+    # 实际密码请运维在 Nacos 控制台直接填值（不要再用 ${VAR} 占位符语法，Nacos 不做服务端解析）。
+    password: ""
     default-encoding: UTF-8
     properties:
       mail.smtp.auth: true
@@ -28,11 +30,12 @@ spring:
         server-addr: 127.0.0.1:8848
 
 # 阿里云短信
+# 凭据留空避免 Spring 解析 ${ALI_SMS_AK/SK} 失败。
+# 实际 AK/SK 请运维在 Nacos 控制台直接填值。
 aliyun:
   sms:
-    enabled: false                     # dev 环境关闭，避免硬依赖 vendor 凭据
-    access-key-id: ${ALI_SMS_AK}
-    access-key-secret: ${ALI_SMS_SK}
+    access-key-id: ""
+    access-key-secret: ""
     sign-name: 海纳系统
     endpoint: dysmsapi.aliyuncs.com
     template-code: SMS_2600100
@@ -47,6 +50,15 @@ notify:
   retry:
     max-attempts: 3
     cron: "0 * * * * ?"
+  # 三通道总开关（@RefreshScope 热切，无需重启）
+  # sms 默认 false，等 vendor 凭据到位再在 Nacos 上改成 true
+  channel:
+    sms:
+      enabled: false
+    email:
+      enabled: true
+    inapp:
+      enabled: true
 
 logging:
   level:

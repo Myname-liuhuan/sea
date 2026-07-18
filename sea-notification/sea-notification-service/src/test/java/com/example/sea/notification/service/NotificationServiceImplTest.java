@@ -4,6 +4,7 @@ import com.example.sea.notification.api.dto.NotifyRequest;
 import com.example.sea.notification.api.dto.NotifyResult;
 import com.example.sea.notification.constants.ChannelEnum;
 import com.example.sea.notification.dao.NotifyLogMapper;
+import com.example.sea.notification.entity.NotifyLogPO;
 import com.example.sea.notification.notifier.InAppNotifier;
 import com.example.sea.notification.notifier.Notifier;
 import com.example.sea.notification.service.impl.NotificationServiceImpl;
@@ -107,7 +108,7 @@ class NotificationServiceImplTest {
         req.setReceiverUserId(1L);
         req.setTemplateCode("X");
         req.setParams(new HashMap<>());
-        when(logMapper.insert(any())).thenReturn(1);
+        when(logMapper.insert(any(NotifyLogPO.class))).thenReturn(1);
 
         NotifyResult r = svc.send(req);
         assertEquals(false, r.isSuccess());

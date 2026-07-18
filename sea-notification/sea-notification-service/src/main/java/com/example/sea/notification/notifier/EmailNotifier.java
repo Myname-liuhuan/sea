@@ -3,6 +3,7 @@ package com.example.sea.notification.notifier;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.example.sea.notification.api.dto.NotifyRequest;
 import com.example.sea.notification.api.dto.NotifyResult;
+import com.example.sea.notification.config.NotificationChannelProperties;
 import com.example.sea.notification.constants.ChannelEnum;
 import com.example.sea.notification.dao.NotifyLogMapper;
 import com.example.sea.notification.dao.NotifyTemplateMapper;
@@ -20,6 +21,9 @@ import java.util.Map;
 /**
  * 邮件实现：JavaMailSender。
  *
+ * <p>开关由 {@link NotificationChannelProperties} 的
+ * {@code notify.channel.email.enabled} 集中管理，热切由 {@code @RefreshScope} 保证。
+ *
  * <p>若用户的 email 为空则跳过（返回 success=false 但不阻塞主调度）。
  *
  * @author liuhuan
@@ -33,6 +37,7 @@ public class EmailNotifier implements Notifier {
     private final NotifyTemplateMapper templateMapper;
     private final NotifyLogMapper logMapper;
     private final JavaMailSender mailSender;
+    private final NotificationChannelProperties channelProperties;
 
     @Value("${spring.mail.username:noreply@example.com}")
     private String from;
@@ -44,13 +49,14 @@ public class EmailNotifier implements Notifier {
 
     @Override
     public boolean enabled(NotifyRequest request) {
-        return request.getEmail() != null && !request.getEmail().isBlank();
+        return channelProperties.getEmail().getEnabled()
+                && request.getEmail() != null && !request.getEmail().isBlank();
     }
 
     @Override
     public NotifyResult send(NotifyRequest request) {
         if (!enabled(request)) {
-            return NotifyResult.failed(channel().getCode(), null, "用户无邮箱");
+            return NotifyResult.failed(channel().getCode(), null, "邮件通道关闭或用户无邮箱");
         }
         try {
             NotifyTemplatePO tpl = templateMapper.selectOne(
