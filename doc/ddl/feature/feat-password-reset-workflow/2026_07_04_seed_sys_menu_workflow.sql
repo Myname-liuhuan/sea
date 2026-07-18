@@ -14,9 +14,9 @@ INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, order_num, path, comp
 
 -- 2) 工作流的子菜单
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, order_num, path, component, perms, icon, visible, status, create_time, del_flag) VALUES
-(601, 6, '我的申请',   2, 1, '/workflow/my',       'workflow/my/index',         'workflow:my',      'User',         1, 1, NOW(), 0),
-(602, 6, '待我审批',   2, 2, '/workflow/pending',  'workflow/pending/index',    'workflow:approve', 'Aim',          1, 1, NOW(), 0),
-(603, 6, '工单监控',   2, 3, '/workflow/monitor',  'workflow/monitor/index',    'workflow:monitor', 'Monitor',      1, 1, NOW(), 0);
+(601, 6, '我的申请',   2, 1, '/workflow/my',       'workflow/MyApplications',   'workflow:my',      'User',         1, 1, NOW(), 0),
+(602, 6, '待我审批',   2, 2, '/workflow/pending',  'workflow/PendingApprovals', 'workflow:approve', 'Aim',          1, 1, NOW(), 0),
+(603, 6, '工单监控',   2, 3, '/workflow/monitor',  'workflow/AllTasksMonitor',  'workflow:monitor', 'Monitor',      1, 1, NOW(), 0);
 
 -- 3) 用户管理下的"申请重置"按钮（menu_type=3）
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, order_num, path, component, perms, icon, visible, status, create_time, del_flag) VALUES

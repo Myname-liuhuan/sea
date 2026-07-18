@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Tag(name = "工作流-监控", description = "管理员查看所有工单")
 @RestController
-@RequestMapping("/api/workflow")
+@RequestMapping("")
 @RequiredArgsConstructor
 public class WorkflowMonitorController {
 

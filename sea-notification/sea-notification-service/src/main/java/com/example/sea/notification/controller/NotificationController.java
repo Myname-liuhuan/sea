@@ -26,16 +26,16 @@ import java.util.List;
 /**
  * 通知服务对外 API。
  *
- * <p>sea-workflow 与前端都用得到：sea-workflow 通过 Feign 调
- * {@code /api/notification/send} / {@code /in-app}；前端通过
- * {@code /messages} / {@code /unread-count} / {@code /read}。
+ * <p>sea-workflow 与前端都用得到：sea-workflow 通过 Feign 调 {@code /send}、
+ * {@code /in-app}；前端（经网关）调 {@code /messages} / {@code /unread-count} /
+ * {@code /messages/{id}/read} / {@code /messages/read-all}。
  *
  * @author liuhuan
  * @date 2026-07-04
  */
 @Tag(name = "通知服务")
 @RestController
-@RequestMapping("/api/notification")
+@RequestMapping("")
 @RequiredArgsConstructor
 public class NotificationController {
 

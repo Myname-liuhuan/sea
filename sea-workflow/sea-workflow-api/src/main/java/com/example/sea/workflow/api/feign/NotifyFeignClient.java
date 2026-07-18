@@ -28,13 +28,13 @@ public interface NotifyFeignClient {
      *
      * @param request 业务侧组装：templateCode / channels / receiverUserId / params / bizKey
      */
-    @PostMapping("/api/notification/send")
+    @PostMapping("/send")
     CommonResult<NotifyVO> send(@RequestBody NotifyDTO request);
 
     /**
      * 收件箱未读数。当前登录人 user_id 由 server 端从 SecurityContext 取，
      * 入参仅作为"查谁的"的可选覆盖（默认取当前登录人）。
      */
-    @GetMapping("/api/notification/unread-count")
+    @GetMapping("/unread-count")
     CommonResult<Long> unreadCount(@RequestParam(value = "userId", required = false) Long userId);
 }

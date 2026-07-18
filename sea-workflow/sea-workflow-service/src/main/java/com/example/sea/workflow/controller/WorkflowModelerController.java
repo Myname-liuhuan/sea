@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Tag(name = "工作流-模型设计器", description = "BPMN 模型的 CRUD + 保存 BPMN + 部署")
 @RestController
-@RequestMapping("/api/workflow/model")
+@RequestMapping("/model")
 @RequiredArgsConstructor
 public class WorkflowModelerController {
 

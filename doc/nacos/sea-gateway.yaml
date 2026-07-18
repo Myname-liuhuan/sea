@@ -44,20 +44,33 @@ spring:
           filters:
             - StripPrefix=1
 
-        # 工作流：controller 路径自带 /api 前缀（与 sea-system 等单段前缀不同），所以不 StripPrefix
+        # 工作流：与 sea-system 等保持一致（gateway strip + 控制器无 service-name 前缀）。
+        # 前端 baseURL=/api 经 Vite 抹掉后到网关是 /workflow/...，匹配本条。
         - id: sea-workflow
           uri: lb://sea-workflow
           order: 5
           predicates:
-            - Path=/api/workflow/**
+            - Path=/workflow/**
+          filters:
+            - StripPrefix=1
 
-        # 通知服务：同样自带 /api 前缀，不 StripPrefix。
-        # 前端铃铛 / Feign 客户端（sea-workflow）都走这条。
+        # 通知服务 HTTP API：跟 workflow 同样的 gateway-strip 模式。
         - id: sea-notification
           uri: lb://sea-notification
           order: 6
           predicates:
-            - Path=/api/notification/**
+            - Path=/notification/**
+          filters:
+            - StripPrefix=1
+
+        # 通知服务 WebSocket：Vite 不代理 WS（前端用 VITE_WS_BASE_URL 直连网关），
+        # 所以 URL 仍带 /api 前缀，需独立一条不放 strip 的路由。
+        # 配 shared_bootstrap.yaml 的白名单 /api/notification/ws/** 一起放过 AuthFilter。
+        - id: sea-notification-ws
+          uri: lb://sea-notification
+          order: 7
+          predicates:
+            - Path=/api/notification/ws/**
 
         # SpringDoc API文档路由
         - id: sea-auth-docs

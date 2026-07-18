@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Tag(name = "工作流-工单", description = "重置密码工单的申请 / 审批 / 转交 / 查询")
 @RestController
-@RequestMapping("/api/workflow")
+@RequestMapping("")
 @RequiredArgsConstructor
 public class WorkflowController {
 

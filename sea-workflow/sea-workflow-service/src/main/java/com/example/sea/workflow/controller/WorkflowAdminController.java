@@ -25,7 +25,7 @@ import java.util.List;
  */
 @Tag(name = "工作流-管理", description = "管理员紧急通道与流程定义查询")
 @RestController
-@RequestMapping("/api/workflow")
+@RequestMapping("")
 @RequiredArgsConstructor
 public class WorkflowAdminController {
 
