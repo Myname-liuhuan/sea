@@ -1,7 +1,8 @@
 package com.example.sea.notification.service.impl;
 
-import com.example.sea.notification.api.dto.NotifyRequest;
-import com.example.sea.notification.api.dto.NotifyResult;
+import com.example.sea.common.core.result.CommonResult;
+import com.example.sea.notification.api.dto.NotifyDTO;
+import com.example.sea.notification.api.vo.NotifyVO;
 import com.example.sea.notification.dao.NotifyLogMapper;
 import com.example.sea.notification.entity.NotifyLogPO;
 import com.example.sea.notification.notifier.Notifier;
@@ -40,7 +41,7 @@ public class NotificationServiceImpl implements INotificationService {
 
     @Async
     @Override
-    public NotifyResult send(NotifyRequest request) {
+    public CommonResult<NotifyVO> send(NotifyDTO request) {
         Set<String> tried = new LinkedHashSet<>();
         tried.add(request.getPrimaryChannel());
         if (request.getFallbackChannels() != null) tried.addAll(request.getFallbackChannels());
@@ -52,11 +53,11 @@ public class NotificationServiceImpl implements INotificationService {
             Notifier n = pickNotifier(ch);
             if (n == null || !n.enabled(request)) continue;
 
-            NotifyResult r = n.send(request);
+            NotifyVO r = n.send(request);
             if (r != null && r.isSuccess()) {
                 if (r.getLogId() != null) lastLogId = r.getLogId();
                 log.info("notify.send ok channel={} bizKey={}", ch, request.getBizKey());
-                return r;
+                return CommonResult.success(r);
             }
             if (r != null) log.warn("notify.send fail channel={} bizKey={} err={}",
                     ch, request.getBizKey(), r.getError());
@@ -75,7 +76,7 @@ public class NotificationServiceImpl implements INotificationService {
         logMapper.insert(logPo);
         lastLogId = logPo.getId();
         log.warn("notify.send all-failed bizKey={} tried={}", request.getBizKey(), tried);
-        return NotifyResult.failed(request.getPrimaryChannel(), lastLogId, "全部通道失败");
+        return CommonResult.success(NotifyVO.failed(request.getPrimaryChannel(), lastLogId, "全部通道失败"));
     }
 
     private Notifier pickNotifier(ChannelEnum ch) {

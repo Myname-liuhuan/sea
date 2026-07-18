@@ -1,20 +1,23 @@
 package com.example.sea.notification.notifier;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.example.sea.notification.api.dto.NotifyRequest;
-import com.example.sea.notification.api.dto.NotifyResult;
+import com.example.sea.notification.api.dto.NotifyDTO;
+import com.example.sea.notification.api.vo.NotifyVO;
 import com.example.sea.notification.config.NotificationChannelProperties;
 import com.example.sea.notification.constants.ChannelEnum;
+import com.example.sea.notification.dao.InAppMessageMapper;
 import com.example.sea.notification.dao.NotifyLogMapper;
 import com.example.sea.notification.dao.NotifyTemplateMapper;
 import com.example.sea.notification.entity.InAppMessagePO;
-import com.example.sea.notification.dao.InAppMessageMapper;
 import com.example.sea.notification.entity.NotifyLogPO;
 import com.example.sea.notification.entity.NotifyTemplatePO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 站内信实现。
@@ -22,7 +25,7 @@ import org.springframework.stereotype.Component;
  * <p>步骤：
  * <ol>
  *   <li>查模板</li>
- *   <li>渲染 content（占位替换）</li>
+ *   <li>渲染 content（占位替换，含 appName 顶层字段）</li>
  *   <li>写 in_app_message 行</li>
  *   <li>落 notify_log（默认 SUCCESS）</li>
  *   <li>尝试 WS push 给该 user（由 M3.C 的 WebSocket Handler 提供，本期 hook 为空）</li>
@@ -36,6 +39,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class InAppNotifier implements Notifier {
 
+    private final ObjectMapper REPLAY_MAPPER = new ObjectMapper();
+
     private final NotifyTemplateMapper templateMapper;
     private final NotifyLogMapper logMapper;
     private final InAppMessageMapper inAppMapper;
@@ -47,15 +52,15 @@ public class InAppNotifier implements Notifier {
     }
 
     @Override
-    public boolean enabled(NotifyRequest request) {
+    public boolean enabled(NotifyDTO request) {
         // 站内信是纯 DB 写入，唯一可控的是通道开关
         return channelProperties.getInapp().getEnabled();
     }
 
     @Override
-    public NotifyResult send(NotifyRequest request) {
+    public NotifyVO send(NotifyDTO request) {
         if (!enabled(request)) {
-            return NotifyResult.failed(channel().getCode(), null, "站内信通道关闭");
+            return NotifyVO.failed(channel().getCode(), null, "站内信通道关闭");
         }
         try {
             NotifyTemplatePO tpl = templateMapper.selectOne(
@@ -66,10 +71,11 @@ public class InAppNotifier implements Notifier {
                             .orderByDesc(NotifyTemplatePO::getVersion)
                             .last("LIMIT 1"));
             if (tpl == null) {
-                return NotifyResult.failed(channel().getCode(), null, "模板不存在: " + request.getTemplateCode());
+                return NotifyVO.failed(channel().getCode(), null, "模板不存在: " + request.getTemplateCode());
             }
-            String title = render(tpl.getSubject(), request.getParams());
-            String content = render(tpl.getContent(), request.getParams());
+            Map<String, String> renderParams = renderParams(request);
+            String title = render(tpl.getSubject(), renderParams);
+            String content = render(tpl.getContent(), renderParams);
 
             InAppMessagePO msg = new InAppMessagePO();
             msg.setUserId(request.getReceiverUserId());
@@ -86,20 +92,34 @@ public class InAppNotifier implements Notifier {
             logPo.setReceiver(String.valueOf(request.getReceiverUserId()));
             logPo.setUserId(request.getReceiverUserId());
             logPo.setTemplateCode(request.getTemplateCode());
-            logPo.setPayloadCipher(buildReplayPayload(request, content));
+            logPo.setPayloadCipher(buildReplayPayload(request));
             logPo.setStatus("SUCCESS");
             logPo.setAttempts(1);
             logMapper.insert(logPo);
 
             // TODO M3.C：WebSocket push 给该 user（由 InAppMessageService 维护 session）
-            return NotifyResult.success(channel().getCode(), logPo.getId());
+            return NotifyVO.success(channel().getCode(), logPo.getId());
         } catch (Exception e) {
             log.error("InAppNotifier.send failed bizKey={}", request.getBizKey(), e);
-            return NotifyResult.failed(channel().getCode(), null, e.getMessage());
+            return NotifyVO.failed(channel().getCode(), null, e.getMessage());
         }
     }
 
-    private String render(String tpl, java.util.Map<String, String> params) {
+    /**
+     * 构造模板渲染参数：用户传的 params + NotifyDTO.appName（顶层字段注入），
+     * 这样模板里 ${appName} 占位符能渲染。
+     */
+    private Map<String, String> renderParams(NotifyDTO request) {
+        Map<String, String> base = request.getParams() == null
+                ? new HashMap<>()
+                : new HashMap<>(request.getParams());
+        if (request.getAppName() != null) {
+            base.put("appName", request.getAppName());
+        }
+        return base;
+    }
+
+    private String render(String tpl, Map<String, String> params) {
         if (tpl == null || params == null) return tpl;
         for (var e : params.entrySet()) {
             tpl = tpl.replace("${" + e.getKey() + "}", e.getValue() == null ? "" : e.getValue());
@@ -107,30 +127,13 @@ public class InAppNotifier implements Notifier {
         return tpl;
     }
 
-    /**
-     * §14 #11：把发出去的 payload 完整快照（含 params / bizKey / receiverUserId 等）
-     * 写进 notify_log.payload_cipher；重试时直接反序列化重新渲染。
-     */
-    private static String buildReplayPayload(com.example.sea.notification.api.dto.NotifyRequest req,
-                                           String renderedContent) {
+    /** §14 #11：直接把 NotifyDTO 序列化进 notify_log.payload_cipher，重试时反序列化即可重渲染。 */
+    private String buildReplayPayload(NotifyDTO request) {
         try {
-            NotifyReplayPayload p = new NotifyReplayPayload(
-                    "IN_APP",
-                    req.getReceiverUserId(),
-                    req.getEmail(),
-                    req.getMobile(),
-                    req.getTemplateCode(),
-                    req.getParams(),
-                    req.getBizKey(),
-                    req.getAppName());
-            return new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(p);
+            return REPLAY_MAPPER.writeValueAsString(request);
         } catch (Exception e) {
-            return renderedContent;
+            log.warn("InAppNotifier.buildReplayPayload failed bizKey={}", request.getBizKey(), e);
+            return "{}";
         }
-    }
-
-    @SuppressWarnings("unused")
-    private LambdaQueryWrapper<NotifyTemplatePO> empty() {
-        return Wrappers.lambdaQuery();
     }
 }

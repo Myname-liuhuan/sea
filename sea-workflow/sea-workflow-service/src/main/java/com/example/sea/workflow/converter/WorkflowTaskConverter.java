@@ -1,7 +1,7 @@
 package com.example.sea.workflow.converter;
 
-import com.example.sea.workflow.api.dto.ApplyResultDTO;
-import com.example.sea.workflow.api.param.ApplyRequest;
+import com.example.sea.workflow.api.vo.ApplyResultVO;
+import com.example.sea.workflow.api.dto.ApplyRequest;
 import com.example.sea.workflow.api.vo.WorkflowTaskVO;
 import com.example.sea.workflow.constants.WorkflowStatusEnum;
 import com.example.sea.workflow.entity.WorkflowTaskPO;
@@ -43,5 +43,5 @@ public interface WorkflowTaskConverter {
 
     List<WorkflowTaskVO> entityListToVoList(List<WorkflowTaskPO> list);
 
-    ApplyResultDTO toApplyResult(WorkflowTaskPO po);
+    ApplyResultVO toApplyResult(WorkflowTaskPO po);
 }

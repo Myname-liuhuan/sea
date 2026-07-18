@@ -1,7 +1,7 @@
 package com.example.sea.workflow.service;
 
 import com.example.sea.common.core.result.CommonResult;
-import com.example.sea.workflow.api.param.AdminEmergencyRequest;
+import com.example.sea.workflow.api.dto.AdminEmergencyRequest;
 
 /**
  * 管理员紧急通道 + 流程定义管理（M2）。

@@ -1,14 +1,15 @@
 package com.example.sea.notification.notifier;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.example.sea.notification.api.dto.NotifyRequest;
-import com.example.sea.notification.api.dto.NotifyResult;
+import com.example.sea.notification.api.dto.NotifyDTO;
+import com.example.sea.notification.api.vo.NotifyVO;
 import com.example.sea.notification.config.NotificationChannelProperties;
 import com.example.sea.notification.constants.ChannelEnum;
 import com.example.sea.notification.dao.NotifyLogMapper;
 import com.example.sea.notification.dao.NotifyTemplateMapper;
 import com.example.sea.notification.entity.NotifyLogPO;
 import com.example.sea.notification.entity.NotifyTemplatePO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,6 +44,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class SmsNotifier implements Notifier {
 
+    private final ObjectMapper REPLAY_MAPPER = new ObjectMapper();
+
     private final NotifyTemplateMapper templateMapper;
     private final NotifyLogMapper logMapper;
     private final NotificationChannelProperties channelProperties;
@@ -62,7 +65,7 @@ public class SmsNotifier implements Notifier {
     }
 
     @Override
-    public boolean enabled(NotifyRequest request) {
+    public boolean enabled(NotifyDTO request) {
         // vendor 配置缺失或通道开关关闭时强制 disabled，避免无端发请求
         return channelProperties.getSms().getEnabled()
                 && !accessKeyId.isBlank()
@@ -71,9 +74,9 @@ public class SmsNotifier implements Notifier {
     }
 
     @Override
-    public NotifyResult send(NotifyRequest request) {
+    public NotifyVO send(NotifyDTO request) {
         if (!enabled(request)) {
-            return NotifyResult.failed(channel().getCode(), null, "SMS 未启用或缺凭据");
+            return NotifyVO.failed(channel().getCode(), null, "SMS 未启用或缺凭据");
         }
         try {
             NotifyTemplatePO tpl = templateMapper.selectOne(
@@ -83,8 +86,9 @@ public class SmsNotifier implements Notifier {
                             .eq(NotifyTemplatePO::getEnabled, 1)
                             .orderByDesc(NotifyTemplatePO::getVersion)
                             .last("LIMIT 1"));
-            if (tpl == null) return NotifyResult.failed(channel().getCode(), null, "短信模板不存在");
-            String content = render(tpl.getContent(), request.getParams());
+            if (tpl == null) return NotifyVO.failed(channel().getCode(), null, "短信模板不存在");
+            Map<String, String> renderParams = renderParams(request);
+            String content = render(tpl.getContent(), renderParams);
 
             // TODO 接 vendor 后替换为真正的 aliyun client.sendSms
             log.warn("SmsNotifier.send STUB signName={} to={} content={}",
@@ -96,15 +100,29 @@ public class SmsNotifier implements Notifier {
             logPo.setReceiver(request.getMobile());
             logPo.setUserId(request.getReceiverUserId());
             logPo.setTemplateCode(request.getTemplateCode());
-            logPo.setPayloadCipher(buildReplayPayload(request, content));
+            logPo.setPayloadCipher(buildReplayPayload(request));
             logPo.setStatus("SUCCESS");
             logPo.setAttempts(1);
             logMapper.insert(logPo);
-            return NotifyResult.success(channel().getCode(), logPo.getId());
+            return NotifyVO.success(channel().getCode(), logPo.getId());
         } catch (Exception e) {
             log.error("SmsNotifier.send failed bizKey={}", request.getBizKey(), e);
-            return NotifyResult.failed(channel().getCode(), null, e.getMessage());
+            return NotifyVO.failed(channel().getCode(), null, e.getMessage());
         }
+    }
+
+    /**
+     * 构造模板渲染参数：用户传的 params + NotifyDTO.appName（顶层字段注入），
+     * 这样模板里 ${appName} 占位符能渲染。
+     */
+    private Map<String, String> renderParams(NotifyDTO request) {
+        Map<String, String> base = request.getParams() == null
+                ? new java.util.HashMap<>()
+                : new java.util.HashMap<>(request.getParams());
+        if (request.getAppName() != null) {
+            base.put("appName", request.getAppName());
+        }
+        return base;
     }
 
     private String render(String tpl, Map<String, String> params) {
@@ -115,22 +133,13 @@ public class SmsNotifier implements Notifier {
         return tpl;
     }
 
-    /** §14 #11：短信 payload + 参数快照。 */
-    private static String buildReplayPayload(com.example.sea.notification.api.dto.NotifyRequest req,
-                                           String renderedContent) {
+    /** §14 #11：直接把 NotifyDTO 序列化进 notify_log.payload_cipher，重试时反序列化即可重渲染。 */
+    private String buildReplayPayload(NotifyDTO request) {
         try {
-            NotifyReplayPayload p = new NotifyReplayPayload(
-                    "SMS",
-                    req.getReceiverUserId(),
-                    req.getEmail(),
-                    req.getMobile(),
-                    req.getTemplateCode(),
-                    req.getParams(),
-                    req.getBizKey(),
-                    req.getAppName());
-            return new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(p);
+            return REPLAY_MAPPER.writeValueAsString(request);
         } catch (Exception e) {
-            return renderedContent;
+            log.warn("SmsNotifier.buildReplayPayload failed bizKey={}", request.getBizKey(), e);
+            return "{}";
         }
     }
 }

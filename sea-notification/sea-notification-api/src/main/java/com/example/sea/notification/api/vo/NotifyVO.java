@@ -1,4 +1,4 @@
-package com.example.sea.notification.api.dto;
+package com.example.sea.notification.api.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -11,7 +11,7 @@ import lombok.Data;
  */
 @Data
 @Schema(description = "通知发送结果")
-public class NotifyResult {
+public class NotifyVO {
 
     @Schema(description = "是否成功")
     private boolean success;
@@ -25,16 +25,16 @@ public class NotifyResult {
     @Schema(description = "错误描述（成功为空）")
     private String error;
 
-    public static NotifyResult success(String channel, Long logId) {
-        NotifyResult r = new NotifyResult();
+    public static NotifyVO success(String channel, Long logId) {
+        NotifyVO r = new NotifyVO();
         r.success = true;
         r.channel = channel;
         r.logId = logId;
         return r;
     }
 
-    public static NotifyResult failed(String channel, Long logId, String error) {
-        NotifyResult r = new NotifyResult();
+    public static NotifyVO failed(String channel, Long logId, String error) {
+        NotifyVO r = new NotifyVO();
         r.success = false;
         r.channel = channel;
         r.logId = logId;

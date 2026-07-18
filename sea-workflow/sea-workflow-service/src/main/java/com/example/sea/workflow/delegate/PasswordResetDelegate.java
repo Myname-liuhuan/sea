@@ -1,11 +1,15 @@
 package com.example.sea.workflow.delegate;
 
 import com.example.sea.common.core.exception.BusinessException;
+import com.example.sea.common.core.result.CommonResult;
+import com.example.sea.notification.api.dto.NotifyDTO;
+import com.example.sea.notification.api.vo.NotifyVO;
 import com.example.sea.workflow.api.feign.NotifyFeignClient;
 import com.example.sea.workflow.api.feign.SystemFeignClient;
 import com.example.sea.workflow.api.dto.ResetPasswordRequest;
 import com.example.sea.workflow.dao.WorkflowTaskMapper;
 import com.example.sea.workflow.entity.WorkflowTaskPO;
+import com.example.sea.workflow.util.NotifyPayloadBuilder;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.example.sea.workflow.constants.WorkflowStatusEnum;
@@ -17,9 +21,6 @@ import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 重置密码执行节点。
@@ -90,23 +91,11 @@ public class PasswordResetDelegate implements JavaDelegate {
                 log.warn("取用户联络方式失败 target={}", targetUserId, e);
             }
 
-            Map<String, Object> notifyPayload = new HashMap<>();
-            notifyPayload.put("primaryChannel", "IN_APP");
-            notifyPayload.put("fallbackChannels", List.of("EMAIL", "SMS"));
-            notifyPayload.put("receiverUserId", targetUserId);
-            notifyPayload.put("email", email);
-            notifyPayload.put("mobile", mobile);
-            notifyPayload.put("templateCode", "PWD_RESET_OK");
-            Map<String, String> params = new HashMap<>();
-            params.put("pwd", tempPassword);
-            params.put("approver", "审批人");
-            params.put("appName", "海纳系统");
-            notifyPayload.put("params", params);
-            notifyPayload.put("bizKey", taskNo);
-            notifyPayload.put("appName", "海纳系统");
+            NotifyDTO notifyPayload = NotifyPayloadBuilder.buildPasswordResetPayload(
+                    targetUserId, email, mobile, tempPassword, "审批人", taskNo);
 
             try {
-                Map<String, Object> notifyResp = notifyFeignClient.send(notifyPayload);
+                CommonResult<NotifyVO> notifyResp = notifyFeignClient.send(notifyPayload);
                 log.info("password.reset.notify target={} resp={}", targetUserId, notifyResp);
             } catch (Exception e) {
                 // 通知失败不阻断流程（密码已成功重置）

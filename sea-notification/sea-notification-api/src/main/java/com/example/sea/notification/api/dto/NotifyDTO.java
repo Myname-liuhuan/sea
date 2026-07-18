@@ -12,12 +12,15 @@ import java.util.Map;
 /**
  * 通用通知请求（in-app → email → sms 降级）。
  *
+ * <p>同时承担前端入参与 Feign 入参；作为 Feign 调用 payload 时，
+ * sea-workflow 通过 {@code NotifyPayloadBuilder} 构造后传入。
+ *
  * @author liuhuan
  * @date 2026-07-04
  */
 @Data
 @Schema(description = "通用通知请求")
-public class NotifyRequest {
+public class NotifyDTO {
 
     @Schema(description = "主通道，必须填")
     @NotBlank

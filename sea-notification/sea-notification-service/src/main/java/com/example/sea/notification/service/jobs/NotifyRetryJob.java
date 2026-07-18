@@ -2,12 +2,11 @@ package com.example.sea.notification.service.jobs;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.example.sea.notification.api.dto.NotifyRequest;
-import com.example.sea.notification.api.dto.NotifyResult;
+import com.example.sea.notification.api.dto.NotifyDTO;
+import com.example.sea.notification.api.vo.NotifyVO;
 import com.example.sea.notification.dao.NotifyLogMapper;
 import com.example.sea.notification.entity.NotifyLogPO;
 import com.example.sea.notification.notifier.Notifier;
-import com.example.sea.notification.notifier.NotifyReplayPayload;
 import com.example.sea.notification.service.INotificationService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +23,8 @@ import java.util.List;
  * <p>每分钟扫描一次：status=FAILED AND attempts < maxAttempts，调用对应 Notifier 重发。
  * 成功后置 SUCCESS；attempts 自增。
  *
- * <p>§14 #11：payload_cipher 里是 NotifyReplayPayload JSON 序列化；
- * 反序列化得到完整 NotifyRequest 后直接发给对应 Notifier，让模板重新渲染，
+ * <p>§14 #11：payload_cipher 里直接是 NotifyDTO 的 JSON 序列化；
+ * 反序列化得到完整 NotifyDTO 后直接发给对应 Notifier，让模板重新渲染，
  * 不再依赖 ${payload} 占位补救。
  *
  * @author liuhuan
@@ -57,12 +56,12 @@ public class NotifyRetryJob {
         for (NotifyLogPO l : list) {
             Notifier n = pickNotifier(l.getChannel());
             if (n == null) continue;
-            NotifyRequest req = rebuildRequest(l);
+            NotifyDTO req = rebuildRequest(l);
             if (req == null) {
                 log.warn("notify.retry skip logId={} reason=payload-unparseable", l.getId());
                 continue;
             }
-            NotifyResult r = n.send(req);
+            NotifyVO r = n.send(req);
             if (r != null && r.isSuccess()) {
                 l.setStatus("SUCCESS");
                 l.setAttempts(l.getAttempts() + 1);
@@ -83,25 +82,13 @@ public class NotifyRetryJob {
     }
 
     /**
-     * §14 #11：从 notify_log.payload_cipher 反序列化 NotifyReplayPayload，
-     * 转化为完整 NotifyRequest 返回。失败时返 null。
+     * §14 #11：从 notify_log.payload_cipher 直接反序列化 NotifyDTO。
+     * 重试时按原始请求重新渲染模板（payload 自带 params / bizKey / appName）。
      */
-    private NotifyRequest rebuildRequest(NotifyLogPO l) {
+    private NotifyDTO rebuildRequest(NotifyLogPO l) {
         if (l.getPayloadCipher() == null || l.getPayloadCipher().isBlank()) return null;
         try {
-            ObjectMapper m = new ObjectMapper();
-            NotifyReplayPayload p = m.readValue(l.getPayloadCipher(), NotifyReplayPayload.class);
-            NotifyRequest r = new NotifyRequest();
-            r.setPrimaryChannel(p.getChannel());
-            r.setFallbackChannels(List.of("IN_APP", "EMAIL", "SMS"));
-            r.setReceiverUserId(p.getReceiverUserId());
-            r.setEmail(p.getEmail());
-            r.setMobile(p.getMobile());
-            r.setTemplateCode(p.getTemplateCode());
-            r.setParams(p.getParams());
-            r.setBizKey(p.getBizKey());
-            r.setAppName(p.getAppName());
-            return r;
+            return new ObjectMapper().readValue(l.getPayloadCipher(), NotifyDTO.class);
         } catch (Exception e) {
             log.warn("notify.retry.parse failed logId={} cause={}", l.getId(), e.getMessage());
             return null;

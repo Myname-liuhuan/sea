@@ -1,11 +1,11 @@
 package com.example.sea.notification.service;
 
-import com.example.sea.notification.api.dto.NotifyRequest;
-import com.example.sea.notification.api.dto.NotifyResult;
+import com.example.sea.common.core.result.CommonResult;
+import com.example.sea.notification.api.dto.NotifyDTO;
+import com.example.sea.notification.api.vo.NotifyVO;
 import com.example.sea.notification.constants.ChannelEnum;
 import com.example.sea.notification.dao.NotifyLogMapper;
 import com.example.sea.notification.entity.NotifyLogPO;
-import com.example.sea.notification.notifier.InAppNotifier;
 import com.example.sea.notification.notifier.Notifier;
 import com.example.sea.notification.service.impl.NotificationServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -25,7 +26,7 @@ import static org.mockito.Mockito.when;
 /**
  * {@link NotificationServiceImpl} 主调度单测。
  *
- * <p>验证：主通道失败 → fallback 链路接管；全部失败 → NotifyResult.failed。
+ * <p>验证：主通道失败 → fallback 链路接管；全部失败 → NotifyVO.failed。
  */
 @ExtendWith(MockitoExtension.class)
 class NotificationServiceImplTest {
@@ -45,11 +46,11 @@ class NotificationServiceImplTest {
         }
 
         @Override public ChannelEnum channel() { return ch; }
-        @Override public boolean enabled(NotifyRequest r) { return enabled; }
-        @Override public NotifyResult send(NotifyRequest r) {
+        @Override public boolean enabled(NotifyDTO r) { return enabled; }
+        @Override public NotifyVO send(NotifyDTO r) {
             return sendSuccess
-                    ? NotifyResult.success(ch.getCode(), 1L)
-                    : NotifyResult.failed(ch.getCode(), null, "mock fail");
+                    ? NotifyVO.success(ch.getCode(), 1L)
+                    : NotifyVO.failed(ch.getCode(), null, "mock fail");
         }
     }
 
@@ -61,15 +62,16 @@ class NotificationServiceImplTest {
                 new FakeNotifier(ChannelEnum.SMS, true, false));
         NotificationServiceImpl svc = new NotificationServiceImpl(notifiers, logMapper);
 
-        NotifyRequest req = new NotifyRequest();
+        NotifyDTO req = new NotifyDTO();
         req.setPrimaryChannel("IN_APP");
         req.setReceiverUserId(1L);
         req.setTemplateCode("PWD_RESET_OK");
         req.setParams(new HashMap<>());
 
-        NotifyResult r = svc.send(req);
-        assertTrue(r.isSuccess());
-        assertEquals("IN_APP", r.getChannel());
+        CommonResult<NotifyVO> resp = svc.send(req);
+        assertNotNull(resp);
+        assertTrue(resp.isSuccess());
+        assertEquals("IN_APP", resp.getData().getChannel());
     }
 
     @Test
@@ -80,7 +82,7 @@ class NotificationServiceImplTest {
                 new FakeNotifier(ChannelEnum.SMS, true, false));
         NotificationServiceImpl svc = new NotificationServiceImpl(notifiers, logMapper);
 
-        NotifyRequest req = new NotifyRequest();
+        NotifyDTO req = new NotifyDTO();
         req.setPrimaryChannel("IN_APP");
         req.setFallbackChannels(List.of("EMAIL", "SMS"));
         req.setReceiverUserId(1L);
@@ -89,9 +91,10 @@ class NotificationServiceImplTest {
         params.put("k", "v");
         req.setParams(params);
 
-        NotifyResult r = svc.send(req);
-        assertTrue(r.isSuccess());
-        assertEquals("EMAIL", r.getChannel());
+        CommonResult<NotifyVO> resp = svc.send(req);
+        assertNotNull(resp);
+        assertTrue(resp.isSuccess());
+        assertEquals("EMAIL", resp.getData().getChannel());
     }
 
     @Test
@@ -102,7 +105,7 @@ class NotificationServiceImplTest {
                 new FakeNotifier(ChannelEnum.SMS, true, false));
         NotificationServiceImpl svc = new NotificationServiceImpl(notifiers, logMapper);
 
-        NotifyRequest req = new NotifyRequest();
+        NotifyDTO req = new NotifyDTO();
         req.setPrimaryChannel("IN_APP");
         req.setFallbackChannels(List.of("EMAIL", "SMS"));
         req.setReceiverUserId(1L);
@@ -110,7 +113,10 @@ class NotificationServiceImplTest {
         req.setParams(new HashMap<>());
         when(logMapper.insert(any(NotifyLogPO.class))).thenReturn(1);
 
-        NotifyResult r = svc.send(req);
-        assertEquals(false, r.isSuccess());
+        CommonResult<NotifyVO> resp = svc.send(req);
+        assertNotNull(resp);
+        // send() 本身始终返回 CommonResult.success(data)；通道全失败由 data.success=false 表达
+        assertTrue(resp.isSuccess());
+        assertEquals(false, resp.getData().isSuccess());
     }
 }

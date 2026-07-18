@@ -2,12 +2,15 @@ package com.example.sea.workflow.service.impl;
 
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.security.utils.SecurityContextUtil;
+import com.example.sea.notification.api.dto.NotifyDTO;
+import com.example.sea.workflow.api.dto.AdminEmergencyRequest;
+import com.example.sea.workflow.api.dto.ResetPasswordRequest;
 import com.example.sea.workflow.api.feign.NotifyFeignClient;
 import com.example.sea.workflow.api.feign.SystemFeignClient;
-import com.example.sea.workflow.api.param.AdminEmergencyRequest;
 import com.example.sea.workflow.dao.AdminAuditMapper;
 import com.example.sea.workflow.entity.AdminAuditPO;
 import com.example.sea.workflow.service.IWorkflowAdminService;
+import com.example.sea.workflow.util.NotifyPayloadBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,9 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 管理员通道：绕过审批直接重置密码。
@@ -62,8 +62,7 @@ public class WorkflowAdminServiceImpl implements IWorkflowAdminService {
 
         char[] pwdChars = randomPassword(PASSWORD_LENGTH);
         try {
-            com.example.sea.workflow.api.dto.ResetPasswordRequest body =
-                    new com.example.sea.workflow.api.dto.ResetPasswordRequest();
+            ResetPasswordRequest body = new ResetPasswordRequest();
             body.setNewPassword(new String(pwdChars));
 
             CommonResult<Void> resp = systemFeignClient.resetPassword(
@@ -104,20 +103,8 @@ public class WorkflowAdminServiceImpl implements IWorkflowAdminService {
                 mobile = m == null ? null : m.toString();
             }
 
-            Map<String, Object> notifyPayload = new HashMap<>();
-            notifyPayload.put("primaryChannel", "IN_APP");
-            notifyPayload.put("fallbackChannels", List.of("EMAIL", "SMS"));
-            notifyPayload.put("receiverUserId", receiverUserId);
-            notifyPayload.put("email", email);
-            notifyPayload.put("mobile", mobile);
-            notifyPayload.put("templateCode", "PWD_RESET_OK");
-            Map<String, String> params = new HashMap<>();
-            params.put("pwd", tempPassword);
-            params.put("approver", role);
-            params.put("appName", "海纳系统");
-            notifyPayload.put("params", params);
-            notifyPayload.put("bizKey", "ADMIN_" + receiverUserId);
-            notifyPayload.put("appName", "海纳系统");
+            NotifyDTO notifyPayload = NotifyPayloadBuilder.buildPasswordResetPayload(
+                    receiverUserId, email, mobile, tempPassword, role, "ADMIN_" + receiverUserId);
             notifyFeignClient.send(notifyPayload);
         } catch (Exception e) {
             log.warn("admin.pushNotify.failed role={} receiver={}", role, receiverUserId, e);

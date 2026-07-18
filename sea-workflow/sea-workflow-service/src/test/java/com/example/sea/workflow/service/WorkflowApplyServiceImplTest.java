@@ -1,16 +1,14 @@
 package com.example.sea.workflow.service;
 
 import com.example.sea.common.core.utils.RedisUtil;
+import com.example.sea.workflow.api.dto.ApplyRequest;
 import com.example.sea.workflow.api.feign.SystemFeignClient;
-import com.example.sea.workflow.api.param.ApplyRequest;
 import com.example.sea.workflow.constants.WorkflowUrgencyEnum;
-import com.example.sea.workflow.converter.WorkflowTaskConverter;
 import com.example.sea.workflow.dao.WorkflowTaskMapper;
 import com.example.sea.workflow.service.impl.WorkflowApplyServiceImpl;
 import org.flowable.engine.RuntimeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -19,6 +17,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
@@ -30,9 +29,6 @@ class WorkflowApplyServiceImplTest {
 
     @Mock
     private WorkflowTaskMapper taskMapper;
-
-    @Mock
-    private WorkflowTaskConverter taskConverter;
 
     @Mock
     private SystemFeignClient systemFeignClient;
@@ -53,7 +49,7 @@ class WorkflowApplyServiceImplTest {
         when(redisUtil.get(any())).thenReturn(null);
 
         WorkflowApplyServiceImpl impl = new WorkflowApplyServiceImpl(
-                taskMapper, taskConverter, systemFeignClient, runtimeService, redisUtil);
+                taskMapper, systemFeignClient, runtimeService, redisUtil);
 
         ApplyRequest req = new ApplyRequest();
         req.setTargetUserId(2L);

@@ -3,8 +3,8 @@ package com.example.sea.notification.controller;
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.core.result.PageResult;
 import com.example.sea.common.security.utils.SecurityContextUtil;
-import com.example.sea.notification.api.dto.NotifyRequest;
-import com.example.sea.notification.api.dto.NotifyResult;
+import com.example.sea.notification.api.dto.NotifyDTO;
+import com.example.sea.notification.api.vo.NotifyVO;
 import com.example.sea.notification.api.vo.InAppMessageVO;
 import com.example.sea.notification.service.IInAppMessageService;
 import com.example.sea.notification.service.INotificationService;
@@ -48,15 +48,15 @@ public class NotificationController {
     @PostMapping("/send")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "通用通知发送（in-app → email → sms 降级）")
-    public NotifyResult send(@RequestBody @Valid NotifyRequest request) {
+    public CommonResult<NotifyVO> send(@RequestBody @Valid NotifyDTO request) {
         return notificationService.send(request);
     }
 
     @PostMapping("/in-app")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "仅发站内信")
-    public NotifyResult sendInApp(@RequestBody @Valid NotifyRequest request) {
-        NotifyRequest r = new NotifyRequest();
+    public CommonResult<NotifyVO> sendInApp(@RequestBody @Valid NotifyDTO request) {
+        NotifyDTO r = new NotifyDTO();
         r.setPrimaryChannel("IN_APP");
         r.setFallbackChannels(List.of("EMAIL", "SMS"));
         r.setReceiverUserId(request.getReceiverUserId());
@@ -68,15 +68,17 @@ public class NotificationController {
     }
 
     /**
-     * 前端铃铛用：未读数。
+     * 未读数。前端铃铛不传 userId 取当前登录人；服务间调用（如 sea-workflow）
+     * 可显式传 userId。
      */
-    @PostMapping("/unread-count")
+    @GetMapping("/unread-count")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "未读数")
-    public CommonResult<Long> unreadCount() {
-        Long me = SecurityContextUtil.getUserId();
-        if (me == null) return CommonResult.failed("未登录");
-        return inAppMessageService.unreadCount(me);
+    public CommonResult<Long> unreadCount(
+            @RequestParam(value = "userId", required = false) Long userId) {
+        Long target = userId != null ? userId : SecurityContextUtil.getUserId();
+        if (target == null) return CommonResult.failed("未登录");
+        return inAppMessageService.unreadCount(target);
     }
 
     /**

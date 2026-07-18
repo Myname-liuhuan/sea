@@ -1,7 +1,7 @@
 package com.example.sea.workflow.controller;
 
 import com.example.sea.common.core.result.CommonResult;
-import com.example.sea.workflow.api.param.AdminEmergencyRequest;
+import com.example.sea.workflow.api.dto.AdminEmergencyRequest;
 import com.example.sea.workflow.api.vo.WorkflowDefinitionVO;
 import com.example.sea.workflow.service.IWorkflowAdminService;
 import com.example.sea.workflow.service.IWorkflowDefinitionService;

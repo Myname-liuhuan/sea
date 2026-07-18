@@ -1,7 +1,7 @@
 package com.example.sea.notification.notifier;
 
-import com.example.sea.notification.api.dto.NotifyRequest;
-import com.example.sea.notification.api.dto.NotifyResult;
+import com.example.sea.notification.api.dto.NotifyDTO;
+import com.example.sea.notification.api.vo.NotifyVO;
 import com.example.sea.notification.constants.ChannelEnum;
 
 /**
@@ -23,12 +23,12 @@ public interface Notifier {
     ChannelEnum channel();
 
     /** 渲染模板并发送；返回结果（success=false 表示失败但不必抛异常） */
-    NotifyResult send(NotifyRequest request);
+    NotifyVO send(NotifyDTO request);
 
     /**
      * 返回实现层是否实际启用（如 SMS 在某环境 vendorKey 缺失，应返回 false 让主调度跳过）。
      */
-    default boolean enabled(NotifyRequest request) {
+    default boolean enabled(NotifyDTO request) {
         return true;
     }
 }

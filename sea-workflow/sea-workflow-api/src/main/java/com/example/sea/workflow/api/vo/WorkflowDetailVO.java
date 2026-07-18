@@ -1,7 +1,5 @@
-package com.example.sea.workflow.api.dto;
+package com.example.sea.workflow.api.vo;
 
-import com.example.sea.workflow.api.vo.WorkflowApprovalVO;
-import com.example.sea.workflow.api.vo.WorkflowTaskVO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -18,7 +16,7 @@ import java.util.List;
  */
 @Data
 @Schema(description = "工单详情")
-public class WorkflowDetailDTO {
+public class WorkflowDetailVO {
 
     @Schema(description = "工单本体")
     private WorkflowTaskVO task;

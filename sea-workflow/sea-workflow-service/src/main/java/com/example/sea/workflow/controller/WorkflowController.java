@@ -3,11 +3,11 @@ package com.example.sea.workflow.controller;
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.core.result.PageResult;
 import com.example.sea.workflow.api.constants.WorkflowPermissionConstants;
-import com.example.sea.workflow.api.dto.ApplyResultDTO;
-import com.example.sea.workflow.api.dto.WorkflowDetailDTO;
-import com.example.sea.workflow.api.param.ApplyRequest;
-import com.example.sea.workflow.api.param.ApproveRequest;
-import com.example.sea.workflow.api.param.ReassignRequest;
+import com.example.sea.workflow.api.vo.ApplyResultVO;
+import com.example.sea.workflow.api.vo.WorkflowDetailVO;
+import com.example.sea.workflow.api.dto.ApplyRequest;
+import com.example.sea.workflow.api.dto.ApproveRequest;
+import com.example.sea.workflow.api.dto.ReassignRequest;
 import com.example.sea.workflow.api.param.WorkflowTaskQueryParam;
 import com.example.sea.workflow.api.vo.WorkflowTaskVO;
 import com.example.sea.workflow.service.IWorkflowApplyService;
@@ -48,7 +48,7 @@ public class WorkflowController {
     @PostMapping("/apply")
     @PreAuthorize("isAuthenticated() and hasAuthority('" + WorkflowPermissionConstants.WORKFLOW_APPLY + "')")
     @Operation(summary = "发起重置密码申请")
-    public CommonResult<ApplyResultDTO> apply(@RequestBody @Valid ApplyRequest request,
+    public CommonResult<ApplyResultVO> apply(@RequestBody @Valid ApplyRequest request,
                                               @RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey) {
         return applyService.apply(request, idempotencyKey);
     }
@@ -99,7 +99,7 @@ public class WorkflowController {
     @GetMapping("/detail/{taskNo}")
     @PreAuthorize("isAuthenticated()")
     @Operation(summary = "工单详情")
-    public CommonResult<WorkflowDetailDTO> detail(@PathVariable String taskNo) {
+    public CommonResult<WorkflowDetailVO> detail(@PathVariable String taskNo) {
         return queryService.detail(taskNo);
     }
 }

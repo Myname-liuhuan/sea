@@ -1,4 +1,4 @@
-package com.example.sea.workflow.api.dto;
+package com.example.sea.workflow.api.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -11,7 +11,7 @@ import lombok.Data;
  */
 @Data
 @Schema(description = "发起申请返回结果")
-public class ApplyResultDTO {
+public class ApplyResultVO {
 
     @Schema(description = "工单编号")
     private String taskNo;

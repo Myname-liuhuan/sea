@@ -2,7 +2,7 @@ package com.example.sea.workflow.service;
 
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.core.result.PageResult;
-import com.example.sea.workflow.api.dto.WorkflowDetailDTO;
+import com.example.sea.workflow.api.vo.WorkflowDetailVO;
 import com.example.sea.workflow.api.param.WorkflowTaskQueryParam;
 import com.example.sea.workflow.api.vo.WorkflowTaskVO;
 
@@ -24,5 +24,5 @@ public interface IWorkflowQueryService {
     CommonResult<PageResult<WorkflowTaskVO>> allTasks(WorkflowTaskQueryParam query);
 
     /** 工单详情：task + 审批链路 */
-    CommonResult<WorkflowDetailDTO> detail(String taskNo);
+    CommonResult<WorkflowDetailVO> detail(String taskNo);
 }

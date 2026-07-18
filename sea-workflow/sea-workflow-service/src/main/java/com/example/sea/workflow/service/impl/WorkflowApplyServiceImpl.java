@@ -3,9 +3,9 @@ package com.example.sea.workflow.service.impl;
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.core.utils.RedisUtil;
 import com.example.sea.common.security.utils.SecurityContextUtil;
-import com.example.sea.workflow.api.dto.ApplyResultDTO;
+import com.example.sea.workflow.api.vo.ApplyResultVO;
 import com.example.sea.workflow.api.feign.SystemFeignClient;
-import com.example.sea.workflow.api.param.ApplyRequest;
+import com.example.sea.workflow.api.dto.ApplyRequest;
 import com.example.sea.workflow.constants.WorkflowStatusEnum;
 import com.example.sea.workflow.dao.WorkflowTaskMapper;
 import com.example.sea.workflow.entity.WorkflowTaskPO;
@@ -51,7 +51,7 @@ public class WorkflowApplyServiceImpl implements IWorkflowApplyService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public CommonResult<ApplyResultDTO> apply(ApplyRequest request, String idempotencyKey) {
+    public CommonResult<ApplyResultVO> apply(ApplyRequest request, String idempotencyKey) {
         Long applicantId = SecurityContextUtil.getUserId();
         if (applicantId == null) {
             return CommonResult.failed("未登录或会话已失效");
@@ -67,10 +67,8 @@ public class WorkflowApplyServiceImpl implements IWorkflowApplyService {
         if (idempotencyKey != null && !idempotencyKey.isBlank()) {
             String cacheKey = IDEMPOTENCY_KEY_PREFIX + idempotencyKey;
             Object cached = redisUtil.get(cacheKey);
-            if (cached instanceof String s) {
-                ApplyResultDTO existing = new ApplyResultDTO();
-                existing.setTaskNo(s);
-                return CommonResult.success(existing);
+            if (cached instanceof ApplyResultVO hit) {
+                return CommonResult.success(hit);
             }
         }
 
@@ -130,15 +128,15 @@ public class WorkflowApplyServiceImpl implements IWorkflowApplyService {
         task.setCurrentNode("dept_leader");
         taskMapper.insert(task);
 
+        ApplyResultVO result = new ApplyResultVO();
+        result.setTaskNo(task.getTaskNo());
+        result.setTaskId(task.getId());
+
         if (idempotencyKey != null && !idempotencyKey.isBlank()) {
-            redisUtil.set(IDEMPOTENCY_KEY_PREFIX + idempotencyKey,
-                    task.getTaskNo(), IDEMPOTENCY_TTL_SECONDS);
+            redisUtil.set(IDEMPOTENCY_KEY_PREFIX + idempotencyKey, result, IDEMPOTENCY_TTL_SECONDS);
         }
         log.info("workflow.apply applicant={} target={} taskNo={} flowInstance={}",
                 applicantId, request.getTargetUserId(), task.getTaskNo(), pi.getId());
-        ApplyResultDTO result = new ApplyResultDTO();
-        result.setTaskNo(task.getTaskNo());
-        result.setTaskId(task.getId());
         return CommonResult.success(result);
     }
 

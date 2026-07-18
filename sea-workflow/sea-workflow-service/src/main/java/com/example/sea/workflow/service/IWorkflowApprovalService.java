@@ -1,8 +1,8 @@
 package com.example.sea.workflow.service;
 
 import com.example.sea.common.core.result.CommonResult;
-import com.example.sea.workflow.api.param.ApproveRequest;
-import com.example.sea.workflow.api.param.ReassignRequest;
+import com.example.sea.workflow.api.dto.ApproveRequest;
+import com.example.sea.workflow.api.dto.ReassignRequest;
 
 /**
  * 审批人侧：通过 / 拒绝 / 转交 / 委派。

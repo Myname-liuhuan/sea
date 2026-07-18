@@ -1,8 +1,8 @@
 package com.example.sea.workflow.service;
 
 import com.example.sea.common.core.result.CommonResult;
-import com.example.sea.workflow.api.dto.ApplyResultDTO;
-import com.example.sea.workflow.api.param.ApplyRequest;
+import com.example.sea.workflow.api.vo.ApplyResultVO;
+import com.example.sea.workflow.api.dto.ApplyRequest;
 
 /**
  * 申请人侧：发起重置密码工单。
@@ -25,5 +25,5 @@ public interface IWorkflowApplyService {
      *
      * @param idempotencyKey 可空；提供则 10 分钟内同 key 不重复创建
      */
-    CommonResult<ApplyResultDTO> apply(ApplyRequest request, String idempotencyKey);
+    CommonResult<ApplyResultVO> apply(ApplyRequest request, String idempotencyKey);
 }

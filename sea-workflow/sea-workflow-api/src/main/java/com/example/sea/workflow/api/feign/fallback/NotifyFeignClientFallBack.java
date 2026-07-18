@@ -1,13 +1,12 @@
 package com.example.sea.workflow.api.feign.fallback;
 
+import com.example.sea.common.core.result.CommonResult;
+import com.example.sea.notification.api.dto.NotifyDTO;
+import com.example.sea.notification.api.vo.NotifyVO;
 import com.example.sea.workflow.api.feign.NotifyFeignClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * sea-notification Feign 降级工厂。
@@ -23,22 +22,15 @@ public class NotifyFeignClientFallBack implements FallbackFactory<NotifyFeignCli
     public NotifyFeignClient create(Throwable cause) {
         return new NotifyFeignClient() {
             @Override
-            public Map<String, Object> send(Map<String, Object> payload) {
-                log.error("notify.send failed cause={}", cause.getMessage());
-                Map<String, Object> resp = new HashMap<>();
-                resp.put("success", false);
-                resp.put("error", "sea-notification 不可用: " + cause.getMessage());
-                return resp;
+            public CommonResult<NotifyVO> send(NotifyDTO request) {
+                log.error("notify.send failed bizKey={} cause={}",
+                        request == null ? null : request.getBizKey(), cause.getMessage());
+                return CommonResult.failed("sea-notification 不可用: " + cause.getMessage());
             }
 
             @Override
-            public Map<String, Object> sendInApp(Map<String, Object> payload) {
-                return send(payload);
-            }
-
-            @Override
-            public Long unreadCount(List<Long> userIds) {
-                return 0L;
+            public CommonResult<Long> unreadCount(Long userId) {
+                return CommonResult.success(0L);
             }
         };
     }

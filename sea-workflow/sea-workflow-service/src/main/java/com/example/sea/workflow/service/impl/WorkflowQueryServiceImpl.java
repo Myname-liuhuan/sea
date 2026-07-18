@@ -8,7 +8,7 @@ import com.example.sea.common.core.exception.BusinessException;
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.core.result.PageResult;
 import com.example.sea.common.security.utils.SecurityContextUtil;
-import com.example.sea.workflow.api.dto.WorkflowDetailDTO;
+import com.example.sea.workflow.api.vo.WorkflowDetailVO;
 import com.example.sea.workflow.api.param.WorkflowTaskQueryParam;
 import com.example.sea.workflow.api.vo.WorkflowTaskVO;
 import com.example.sea.workflow.api.vo.WorkflowApprovalVO;
@@ -100,7 +100,7 @@ public class WorkflowQueryServiceImpl implements IWorkflowQueryService {
     }
 
     @Override
-    public CommonResult<WorkflowDetailDTO> detail(String taskNo) {
+    public CommonResult<WorkflowDetailVO> detail(String taskNo) {
         LambdaQueryWrapper<WorkflowTaskPO> w = Wrappers.<WorkflowTaskPO>lambdaQuery()
                 .eq(WorkflowTaskPO::getTaskNo, taskNo);
         WorkflowTaskPO task = taskMapper.selectOne(w);
@@ -118,7 +118,7 @@ public class WorkflowQueryServiceImpl implements IWorkflowQueryService {
                         .eq(WorkflowApprovalPO::getTaskId, task.getId())
                         .orderByAsc(WorkflowApprovalPO::getNodeOrder));
 
-        WorkflowDetailDTO dto = new WorkflowDetailDTO();
+        WorkflowDetailVO dto = new WorkflowDetailVO();
         WorkflowTaskVO taskVo = taskConverter.entityToVo(task);
         List<WorkflowApprovalVO> approvalVos = approvalConverter.entityListToVoList(approvals);
         nameEnricher.enrichTaskNames(List.of(taskVo));
