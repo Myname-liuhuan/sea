@@ -40,9 +40,9 @@ aliyun:
     endpoint: dysmsapi.aliyuncs.com
     template-code: SMS_2600100
 
-# WebSocket
+# WebSocket（强制走网关路径）
 websocket:
-  endpoint: /ws/notify
+  endpoint: /api/notification/ws/notify
   allowed-origins: "*"
 
 # 通知重试 job
@@ -63,3 +63,8 @@ notify:
 logging:
   level:
     com.aliyun: warn
+
+# SpringDoc 扫描配置（与 sea-system.yaml / sea-workflow.yaml 同套路）
+# 没这一段 sea-notification 的 /v3/api-docs 会扫不到 controller
+springdoc:
+  packages-to-scan: com.example.sea.notification

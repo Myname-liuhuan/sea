@@ -51,6 +51,14 @@ spring:
           predicates:
             - Path=/api/workflow/**
 
+        # 通知服务：同样自带 /api 前缀，不 StripPrefix。
+        # 前端铃铛 / Feign 客户端（sea-workflow）都走这条。
+        - id: sea-notification
+          uri: lb://sea-notification
+          order: 6
+          predicates:
+            - Path=/api/notification/**
+
         # SpringDoc API文档路由
         - id: sea-auth-docs
           uri: lb://sea-auth
@@ -85,6 +93,13 @@ spring:
           order: 14
           predicates:
             - Path=/sea-workflow/v3/api-docs/**
+
+        # 通知服务 OpenAPI 文档
+        - id: sea-notification-docs
+          uri: lb://sea-notification
+          order: 15
+          predicates:
+            - Path=/sea-notification/v3/api-docs/**
           filters:
             - StripPrefix=1
 
@@ -107,6 +122,8 @@ springdoc:
         url: sea-code/v3/api-docs
       - name: 工作流服务
         url: sea-workflow/v3/api-docs
+      - name: 通知服务
+        url: sea-notification/v3/api-docs
     operations-sorter: method
     tags-sorter: alpha
     display-request-duration: true

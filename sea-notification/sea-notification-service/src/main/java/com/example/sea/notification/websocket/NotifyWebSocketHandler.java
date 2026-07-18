@@ -20,8 +20,10 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 站内信 WebSocket 推送。
  *
- * <p>客户端连接：
- * <pre>ws://host:8085/ws/notify?token=&lt;accessToken&gt;</pre>
+ * <p>客户端连接（强制走网关）：
+ * <pre>ws://gateway-host:8080/api/notification/ws/notify?token=&lt;accessToken&gt;</pre>
+ *
+ * <p>不允许直连 notification-service 自身端口，只此一条入口。
  *
  * <p>安全：服务端从 JWT 的 claims 解析 userId；忽略 query 中的 userId（防伪）。
  * 若 token 无效 / 过期，握手期间直接 close(1008)。

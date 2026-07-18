@@ -107,7 +107,7 @@ cd sea-frontend && npm run dev   # http://localhost:3000
 ### 4.5 铃铛未读
 
 1. 浏览器停在任意页，打开 DevTools Network
-2. 应能看到 ws://localhost:9085/api/notification/ws/notify?userId=...（实际经网关）
+2. 应能看到 ws://localhost:8080/api/notification/ws/notify?token=&lt;accessToken&gt;（经网关）
 3. 收到推送 → unread 自增 + bell-badge 出现
 
 ### 4.6 工单监控（ADMIN）

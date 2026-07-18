@@ -47,6 +47,9 @@ security:
     - /webjars/**
     - /swagger-resources/**
     - /favicon.ico
+    # 通知服务 WebSocket：握手的 token 走 ?token=...，Authorization 头拿不到，
+    # 必须在网关 AuthFilter 白名单里放过
+    - /api/notification/ws/**
 
 # Feign Token 配置（各服务可单独覆盖）
 feign:
