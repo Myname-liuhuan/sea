@@ -19,11 +19,13 @@ CREATE TABLE notify_template (
     content         TEXT            NOT NULL                    COMMENT '模板内容（占位 ${name}）',
     profile         VARCHAR(32)     NOT NULL DEFAULT 'default'   COMMENT 'profile',
     enabled         TINYINT         NOT NULL DEFAULT 1,
-    create_time     DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    update_time     DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    del_flag        TINYINT         NOT NULL DEFAULT 0,
+    create_time     DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time     DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    create_by       BIGINT                                     COMMENT '创建人',
+    update_by       BIGINT                                     COMMENT '更新人',
+    del_flag        TINYINT         NOT NULL DEFAULT 0          COMMENT '删除标志(0未删,1已删)',
     PRIMARY KEY (id),
-    UNIQUE KEY uk_code_ver_profile (template_code, version, profile),
+    UNIQUE KEY uk_code_ver_profile_channel (template_code, version, profile, channel),
     KEY idx_enabled (enabled)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='通知模板';
 

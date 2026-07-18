@@ -19,4 +19,18 @@ public interface WorkflowPermissionConstants {
 
     /** 工单监控列表，仅管理员可见 */
     String WORKFLOW_MONITOR = "workflow:monitor";
+
+    // ---- 流程设计器（M5 新增）----
+
+    /** 流程模型 - 查看列表 / 进入设计器 */
+    String WORKFLOW_MODEL_READ   = "workflow:model:read";
+
+    /** 流程模型 - 新建 / 编辑元数据 / 保存 BPMN */
+    String WORKFLOW_MODEL_WRITE  = "workflow:model:write";
+
+    /** 流程模型 - 部署为流程定义（admin only） */
+    String WORKFLOW_MODEL_DEPLOY = "workflow:model:deploy";
+
+    /** 流程模型 - 删除（admin only） */
+    String WORKFLOW_MODEL_DELETE = "workflow:model:delete";
 }

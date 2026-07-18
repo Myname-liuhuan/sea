@@ -1,13 +1,10 @@
 package com.example.sea.notification.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.example.sea.common.mybatis.entity.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
-
-import java.time.LocalDateTime;
 
 /**
  * 通知模板实体。
@@ -16,12 +13,10 @@ import java.time.LocalDateTime;
  * @date 2026-07-04
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Accessors(chain = true)
 @TableName("notify_template")
-public class NotifyTemplatePO {
-
-    @TableId(type = IdType.ASSIGN_ID)
-    private Long id;
+public class NotifyTemplatePO extends BaseEntity {
 
     /** 模板编码 e.g. PWD_RESET_OK */
     private String templateCode;
@@ -43,11 +38,4 @@ public class NotifyTemplatePO {
 
     /** 启用 */
     private Integer enabled;
-
-    private LocalDateTime createTime;
-
-    private LocalDateTime updateTime;
-
-    @TableLogic(value = "0", delval = "1")
-    private Integer delFlag;
 }

@@ -51,3 +51,7 @@ logging:
   level:
     flowable: info
     org.activiti: warn
+
+# SpringDoc 扫描配置（与 sea-system.yaml 同样套路）
+springdoc:
+  packages-to-scan: com.example.sea.workflow

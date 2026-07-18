@@ -2,6 +2,7 @@ package com.example.sea.common.mybatis.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.Data;
 
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 public class BaseEntity {
 
     /** 主键 */
+    @TableId
     private Long id;
 
     /** 创建时间 */

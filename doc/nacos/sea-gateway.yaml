@@ -44,6 +44,13 @@ spring:
           filters:
             - StripPrefix=1
 
+        # 工作流：controller 路径自带 /api 前缀（与 sea-system 等单段前缀不同），所以不 StripPrefix
+        - id: sea-workflow
+          uri: lb://sea-workflow
+          order: 5
+          predicates:
+            - Path=/api/workflow/**
+
         # SpringDoc API文档路由
         - id: sea-auth-docs
           uri: lb://sea-auth
@@ -73,6 +80,13 @@ spring:
             - Path=/sea-code/v3/api-docs/**
           filters:
             - StripPrefix=1
+        - id: sea-workflow-docs
+          uri: lb://sea-workflow
+          order: 14
+          predicates:
+            - Path=/sea-workflow/v3/api-docs/**
+          filters:
+            - StripPrefix=1
 
 # SpringDoc 网关聚合配置
 springdoc:
@@ -91,6 +105,8 @@ springdoc:
         url: sea-media/v3/api-docs
       - name: 代码生成服务
         url: sea-code/v3/api-docs
+      - name: 工作流服务
+        url: sea-workflow/v3/api-docs
     operations-sorter: method
     tags-sorter: alpha
     display-request-duration: true
