@@ -70,7 +70,10 @@ INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, order_num, path, comp
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, order_num, path, component, perms, icon, visible, status, create_time, del_flag) VALUES
 (601, 6, '我的申请',   2, 1, '/workflow/my',      'workflow/MyApplications',   'workflow:my',      'User',    1, 1, NOW(), 0),
 (602, 6, '待我审批',   2, 2, '/workflow/pending', 'workflow/PendingApprovals', 'workflow:approve', 'Aim',     1, 1, NOW(), 0),
-(603, 6, '工单监控',   2, 3, '/workflow/monitor', 'workflow/AllTasksMonitor',  'workflow:monitor', 'Monitor', 1, 1, NOW(), 0);
+(603, 6, '工单监控',   2, 3, '/workflow/monitor', 'workflow/AllTasksMonitor',  'workflow:monitor', 'Monitor', 1, 1, NOW(), 0),
+-- 流程模型 / 设计器（流程设计器新增）
+(605, 6, '流程模型',   2, 4, '/workflow/model',     'workflow/model/index',    'workflow:model:read', 'Workflow', 1, 1, NOW(), 0),
+(606, 6, '流程设计器', 2, 5, '/workflow/designer',  'workflow/designer/index', 'workflow:model:read', 'Edit',     1, 1, NOW(), 0);
 
 -- 按钮权限 (menu_type=3)
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, order_num, path, component, perms, icon, visible, status, create_time, del_flag) VALUES
@@ -92,6 +95,13 @@ INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, order_num, path, comp
 (403, 5, '部门删除', 3, 3, NULL, NULL, 'sys:dept:delete', '#', 1, 1, NOW(), 0),
 -- 用户管理新按钮（重置密码工单化新增）
 (604, 2, '申请重置', 3, 4, NULL, NULL, 'workflow:apply', '#', 1, 1, NOW(), 0);
+
+-- 流程模型按钮（流程设计器新增）：挂在菜单 605 下
+INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, order_num, path, component, perms, icon, visible, status, create_time, del_flag) VALUES
+(607, 605, '新建模型',  3, 1, NULL, NULL, 'workflow:model:write',  '#', 1, 1, NOW(), 0),
+(608, 605, '保存 BPMN', 3, 2, NULL, NULL, 'workflow:model:write',  '#', 1, 1, NOW(), 0),
+(609, 605, '部署流程',  3, 3, NULL, NULL, 'workflow:model:deploy', '#', 1, 1, NOW(), 0),
+(610, 605, '删除模型',  3, 4, NULL, NULL, 'workflow:model:delete', '#', 1, 1, NOW(), 0);
 
 -- ---------------------------------------------------------------
 -- 5. 用户角色关联 (sys_user_role) - 添加 id 字段
@@ -119,7 +129,11 @@ INSERT INTO sys_role_menu (id, role_id, menu_id, create_time) VALUES
 -- 菜单管理按钮
 (13, 1, 301, NOW()), (14, 1, 302, NOW()), (15, 1, 303, NOW()),
 -- 部门管理按钮
-(16, 1, 401, NOW()), (17, 1, 402, NOW()), (18, 1, 403, NOW());
+(16, 1, 401, NOW()), (17, 1, 402, NOW()), (18, 1, 403, NOW()),
+-- 流程模型 / 设计器菜单 + 按钮（流程设计器新增）
+(400, 1, 605, NOW()), (401, 1, 606, NOW()),
+(402, 1, 607, NOW()), (403, 1, 608, NOW()),
+(404, 1, 609, NOW()), (405, 1, 610, NOW());
 
 -- 普通用户只有查询权限 (只关联目录和菜单页面 + 我的申请 + 申请重置按钮)
 INSERT INTO sys_role_menu (id, role_id, menu_id, create_time) VALUES
@@ -133,7 +147,12 @@ INSERT INTO sys_role_menu (id, role_id, menu_id, create_time) VALUES
 INSERT INTO sys_role_menu (id, role_id, menu_id, create_time) VALUES
 (300, 3, 6, NOW()),     -- 工作流目录
 (301, 3, 601, NOW()),    -- 我的申请（可看自己的）
-(302, 3, 602, NOW());    -- 待我审批（核心：HR 节点在这里领）
+(302, 3, 602, NOW()),    -- 待我审批（核心：HR 节点在这里领）
+-- 流程模型 / 设计器（流程设计器新增）：HR 只读 + 设计，不放 deploy/delete
+(410, 3, 605, NOW()),
+(411, 3, 606, NOW()),
+(412, 3, 607, NOW()),
+(413, 3, 608, NOW());
 
 -- ---------------------------------------------------------------
 -- 7. 配置数据 (sys_config)
