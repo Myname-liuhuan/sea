@@ -11,6 +11,7 @@ import com.example.sea.workflow.api.param.WorkflowModelQueryParam;
 import com.example.sea.workflow.api.vo.DeployModelResultVO;
 import com.example.sea.workflow.api.vo.WorkflowModelListItemVO;
 import com.example.sea.workflow.api.vo.WorkflowModelVO;
+import com.example.sea.workflow.service.IWorkflowModelHistoryService;
 import com.example.sea.workflow.service.IWorkflowModelerService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -81,6 +82,7 @@ public class WorkflowModelerServiceImpl implements IWorkflowModelerService {
 
     private final RepositoryService repositoryService;
     private final ObjectMapper objectMapper;
+    private final IWorkflowModelHistoryService historyService;
 
     // ===================== 查询 =====================
 
@@ -280,6 +282,17 @@ public class WorkflowModelerServiceImpl implements IWorkflowModelerService {
             repositoryService.addModelEditorSourceExtra(id,
                     req.getSvg().getBytes(StandardCharsets.UTF_8));
         }
+
+        // 写一份历史快照（version 自动 +1）
+        try {
+            int newVersion = historyService.recordHistory(id, xml, req.getSvg(), null);
+            log.info("workflow.model.saveBpmn.history id={} v={} by={}",
+                    id, newVersion, SecurityContextUtil.getUsername());
+        } catch (Exception e) {
+            // 历史失败不影响主流程；只打日志，让前端感知不到
+            log.warn("workflow.model.saveBpmn.history.failed id={} cause={}", id, e.getMessage());
+        }
+
         return CommonResult.success();
     }
 
