@@ -4,6 +4,7 @@ import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.system.api.feign.fallback.SystemFeignClientFallBack;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.sea.common.security.entity.LoginUser;
@@ -16,12 +17,13 @@ import com.example.sea.common.security.entity.LoginUser;
 public interface SystemFeignClient {
 
     /**
-     * 获取登录用户信息
+     * 取鉴权用 LoginUser（含 password hash），供 sea-auth 走 BCrypt 校验。
+     * 走内部端点 /api/system/users/{username}/auth-info，需 internal:callback 权限。
      * @param username 用户名
-     * @return 用户信息
+     * @return 含 password 的完整 LoginUser
      */
-    @GetMapping("/sysUser/getLoginUser")
-    CommonResult<LoginUser> getLoginUser(@RequestParam String username);
+    @GetMapping("/api/system/users/{username}/auth-info")
+    CommonResult<LoginUser> getLoginUser(@PathVariable("username") String username);
 
     /**
      * 改密：服务端用 oldPassword BCrypt 比对后写入新密码并清 require_password_change。

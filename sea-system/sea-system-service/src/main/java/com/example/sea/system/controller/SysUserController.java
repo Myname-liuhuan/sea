@@ -18,8 +18,8 @@ import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.core.result.PageResult;
 import com.example.sea.common.core.validation.GroupInsert;
 import com.example.sea.common.core.validation.GroupUpdate;
-import com.example.sea.common.security.entity.LoginUser;
 import com.example.sea.system.api.constants.PermissionConstants;
+import com.example.sea.system.api.dto.LoginUserView;
 import com.example.sea.system.api.dto.SysUserDTO;
 import com.example.sea.system.api.param.SysUserQueryParam;
 import com.example.sea.system.api.vo.SysUserVO;
@@ -93,7 +93,14 @@ public class SysUserController {
     }
 
     /**
-     * 根据用户名获取登录用户信息
+     * 根据用户名获取登录用户视图（不含密码）
+     *
+     * <p>仅返回 UI 需要的字段：id / username / version / roles / perms / requirePasswordChange。
+     * password 不在响应里——避免 BCrypt 哈希泄漏给任意已登录用户。
+     *
+     * <p>sea-auth 走 {@code /api/system/users/{username}/auth-info} 内部端点取含密码的 LoginUser 做 BCrypt 校验。
+     *
+     * <p>访问控制：仅本人 / admin 可查（避免横向枚举）。
      *
      * ::@RequestParam String username 要求请求参数里必须有 username 这个名字的参数。
             当传的是 usname=888,没有匹配到 username。
@@ -104,8 +111,9 @@ public class SysUserController {
      * @return
      */
     @GetMapping("/getLoginUser")
-    @Operation(summary = "获取登录用户信息", description = "根据用户名获取用户的登录信息，包括权限和角色信息")
-    public CommonResult<LoginUser> getLoginUser(String username) {
+    @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_USER_LIST + "') or #username == authentication.principal.username")
+    @Operation(summary = "获取登录用户信息", description = "根据用户名获取用户的登录信息，包括权限和角色信息（不含密码）")
+    public CommonResult<LoginUserView> getLoginUser(String username) {
         return sysUsersService.getLoginUser(username);
     }
 
@@ -125,9 +133,12 @@ public class SysUserController {
     /**
      * 自助改密：登录用户主动改密 / 强制改密（首次登录临时密码场景）。
      *
-     * <p>强制改密首登场景下允许 oldPassword 为空（sea-auth 已通过密码登录）。
+     * <p>仅本人可改本人；admin（拥有 sys:user:edit 权限）可代改。
+     * <p>强制改密首登场景下允许 oldPassword 为空（sea-auth 已通过密码登录）；
+     * 其他场景必须校验 oldPassword，禁止靠"省略参数"绕过 BCrypt。
      */
     @GetMapping("/changePassword")
+    @PreAuthorize("hasAuthority('" + PermissionConstants.SYS_USER_EDIT + "') or #userId == authentication.principal.id")
     @Operation(summary = "自助改密")
     public CommonResult<Boolean> changePassword(
             @RequestParam Long userId,

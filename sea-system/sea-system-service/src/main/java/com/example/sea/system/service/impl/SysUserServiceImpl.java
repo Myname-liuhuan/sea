@@ -19,6 +19,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.sea.common.core.result.CommonResult;
 import com.example.sea.common.core.result.PageResult;
 import com.example.sea.common.security.entity.LoginUser;
+import com.example.sea.common.security.utils.SecurityContextUtil;
+import com.example.sea.system.api.constants.PermissionConstants;
 import com.example.sea.system.converter.SysUserConverter;
 import com.example.sea.system.dao.SysUserMapper;
 import com.example.sea.system.entity.SysUserPO;
@@ -118,34 +120,52 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserPO> im
     }
     
     /**
-     * 校验登录用户信息
-     * @param username 用户名
-     * @return 返回登录用户信息
+     * 加载用户信息（PO + 角色 + 权限），返回完整 LoginUser（含 password hash）。
+     * 内部使用，由 {@link #getLoginUser} 和 {@link #getAuthLoginUser} 复用。
      */
-    @Override
-    public CommonResult<LoginUser> getLoginUser(String username) {
-        if (StringUtils.isBlank(username)) {
-            return CommonResult.failed("用户名不能为空");
-        }
-        //lambdaquery通过用户名查询用户
+    private LoginUser loadLoginUserInternal(String username) {
         List<SysUserPO> userList = this.baseMapper.selectList(
-            Wrappers.<SysUserPO>lambdaQuery().eq(SysUserPO::getUsername, username)
+                Wrappers.<SysUserPO>lambdaQuery().eq(SysUserPO::getUsername, username)
         );
-
         if (CollectionUtils.isEmpty(userList)) {
-            return CommonResult.failed("用户不存在");
+            return null;
         }
-
         SysUserPO sysUser = userList.get(0);
         LoginUser loginUser = new LoginUser();
         BeanUtils.copyProperties(sysUser, loginUser);
         loginUser.setPassword(sysUser.getPasswordHash());
-        //获取角色
-        List<String> roleCodeList = this.baseMapper.getRoleCodeByUserId(sysUser.getId());
-        loginUser.setRoles(roleCodeList);
-        //获取权限
-        List<String> perms = this.baseMapper.getPermsByUserId(sysUser.getId());
-        loginUser.setPerms(perms);
+        loginUser.setRoles(this.baseMapper.getRoleCodeByUserId(sysUser.getId()));
+        loginUser.setPerms(this.baseMapper.getPermsByUserId(sysUser.getId()));
+        return loginUser;
+    }
+
+    /**
+     * UI 视图：剔除 password 字段，避免 BCrypt 哈希泄漏给前端。
+     */
+    @Override
+    public CommonResult<com.example.sea.system.api.dto.LoginUserView> getLoginUser(String username) {
+        if (StringUtils.isBlank(username)) {
+            return CommonResult.failed("用户名不能为空");
+        }
+        LoginUser loginUser = loadLoginUserInternal(username);
+        if (loginUser == null) {
+            return CommonResult.failed("用户不存在");
+        }
+        return CommonResult.success(com.example.sea.system.api.dto.LoginUserView.from(loginUser));
+    }
+
+    /**
+     * 内部鉴权视图：含 password hash，仅供 sea-auth Feign 走 {@code internal:callback} 调用。
+     */
+    @Override
+    public CommonResult<LoginUser> getAuthLoginUser(String username) {
+        if (StringUtils.isBlank(username)) {
+            return CommonResult.failed("用户名不能为空");
+        }
+        LoginUser loginUser = loadLoginUserInternal(username);
+        if (loginUser == null) {
+            return CommonResult.failed("用户不存在");
+        }
         return CommonResult.success(loginUser);
     }
 
@@ -200,10 +220,27 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserPO> im
         if (userId == null || newPassword == null || newPassword.isBlank()) {
             return CommonResult.failed("参数缺失");
         }
+        // 二次校验：仅本人可改本人；admin（拥有 sys:user:edit）可代改。
+        // 防止 controller 注解被绕过（AOP 关闭、注解漏写等）。
+        Long callerId = SecurityContextUtil.getUserId();
+        boolean isSelf = callerId != null && callerId.equals(userId);
+        boolean isAdmin = SecurityContextUtil.hasAuthority(PermissionConstants.SYS_USER_EDIT);
+        if (!isSelf && !isAdmin) {
+            return CommonResult.failed("无权修改他人密码");
+        }
+
         SysUserPO user = this.getById(userId);
         if (user == null) return CommonResult.failed("用户不存在");
 
-        if (oldPassword != null && !oldPassword.isBlank()) {
+        // 仅当"强制改密"场景下允许 oldPassword 为空（sea-auth 已通过密码登录）。
+        // 其他场景必须校验 oldPassword，禁止靠"省略参数"绕过 BCrypt。
+        boolean forcedReset = Integer.valueOf(1).equals(user.getRequirePasswordChange());
+        if (forcedReset) {
+            // 强制改密流程：sea-auth 已用临时密码登录过，此处不重复校验 oldPassword
+        } else {
+            if (oldPassword == null || oldPassword.isBlank()) {
+                return CommonResult.failed("原密码不能为空");
+            }
             if (!bCryptPasswordEncoder.matches(oldPassword, user.getPasswordHash())) {
                 return CommonResult.failed("原密码不正确");
             }

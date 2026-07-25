@@ -106,11 +106,13 @@ public class WorkflowQueryServiceImpl implements IWorkflowQueryService {
         WorkflowTaskPO task = taskMapper.selectOne(w);
         if (task == null) throw new BusinessException("工单不存在");
 
-        Long applicant = SecurityContextUtil.getUserId();
-        boolean viewerIsApplicant = applicant != null && applicant.equals(task.getApplicantId());
-        boolean viewerIsAdmin = isCurrentUserAdmin();
-        if (!viewerIsApplicant && !viewerIsAdmin) {
-            // 当前审批人也可读；这里松绑，后续收紧
+        // 访问控制：申请人 / 当前审批人 / 超管 三选一
+        Long viewerId = SecurityContextUtil.getUserId();
+        boolean viewerIsApplicant = viewerId != null && viewerId.equals(task.getApplicantId());
+        boolean viewerIsCurrentApprover = viewerId != null && isCurrentApprover(taskNo, String.valueOf(viewerId));
+        boolean viewerIsAdmin = SecurityContextUtil.hasAuthority("*:*:*");
+        if (!viewerIsApplicant && !viewerIsCurrentApprover && !viewerIsAdmin) {
+            throw new BusinessException("无权查看该工单");
         }
 
         List<WorkflowApprovalPO> approvals = approvalMapper.selectList(
@@ -128,9 +130,19 @@ public class WorkflowQueryServiceImpl implements IWorkflowQueryService {
         return CommonResult.success(dto);
     }
 
-    private boolean isCurrentUserAdmin() {
-        // TODO M2+E：接入 SecurityContextUtil 的角色解析。暂用空实现
-        return false;
+    /**
+     * 当前用户是否是该工单的待办审批人。
+     * 通过 Flowable TaskService 查 taskAssignee + 流程变量 taskNo 匹配。
+     */
+    private boolean isCurrentApprover(String taskNo, String userId) {
+        try {
+            return taskService.createTaskQuery()
+                    .taskAssignee(userId)
+                    .processVariableValueEquals("taskNo", taskNo)
+                    .count() > 0;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private Long findIdByTaskNo(String taskNo) {

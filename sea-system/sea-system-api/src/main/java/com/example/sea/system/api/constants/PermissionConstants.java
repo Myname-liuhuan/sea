@@ -8,6 +8,13 @@ public interface PermissionConstants {
     String SYS_USER_DELETE = "sys:user:delete";
     String SYS_USER_LIST = "sys:user:list";
 
+    /**
+     * 内部服务间回调权限（仅 feign.internal.token / 服务间调用持有）。
+     * 持有此权限可访问 SysUserWorkflowCallbackController 下的所有端点。
+     * 业务用户（包含 admin）默认无此权限，避免内部接口被外部滥用。
+     */
+    String INTERNAL_CALLBACK = "internal:callback";
+
     // 角色管理
     String SYS_ROLE_ADD = "sys:role:add";
     String SYS_ROLE_EDIT = "sys:role:edit";

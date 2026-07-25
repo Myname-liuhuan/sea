@@ -63,3 +63,4 @@ feign:
       authorities:
         - "sys:user:add"
         - "sys:user:list"
+        - "internal:callback"

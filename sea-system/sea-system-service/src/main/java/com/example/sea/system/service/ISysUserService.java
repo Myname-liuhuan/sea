@@ -47,11 +47,16 @@ public interface ISysUserService extends IService<SysUserPO> {
     CommonResult<PageResult<SysUserVO>> page(SysUserQueryParam sysUserQueryParam);
 
     /**
-     * 校验登录用户信息
-     * @param username 用户名
-     * @return 登录用户信息
+     * 取登录用户视图（不含 password），给 UI / sysUser/getLoginUser 用。
+     * 避免把 BCrypt 哈希泄漏给前端或非内部调用方。
      */
-    CommonResult<LoginUser> getLoginUser(String username);
+    CommonResult<com.example.sea.system.api.dto.LoginUserView> getLoginUser(String username);
+
+    /**
+     * 取完整登录用户（含 password hash），仅供 sea-auth 走 Feign 内部端点调用。
+     * 调用方需持有 {@code internal:callback} 权限。
+     */
+    CommonResult<LoginUser> getAuthLoginUser(String username);
 
     /**
      * 删除用户
