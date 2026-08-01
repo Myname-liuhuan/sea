@@ -59,10 +59,10 @@ INSERT INTO sys_role (id, role_name, role_code, role_desc, data_scope, status, c
 -- 目录
 INSERT INTO sys_menu (id, parent_id, menu_name, menu_type, order_num, path, component, perms, icon, visible, status, create_time, del_flag) VALUES
 (1, 0, '系统管理', 1, 1, '/system', NULL, NULL, 'Setting', 1, 1, NOW(), 0),
-(2, 1, '用户管理', 2, 1, '/system/user', 'user/index', 'sys:user:list', 'User', 1, 1, NOW(), 0),
-(3, 1, '角色管理', 2, 2, '/system/role', 'role/index', 'sys:role:list', 'Role', 1, 1, NOW(), 0),
-(4, 1, '菜单管理', 2, 3, '/system/menu', 'menu/index', 'sys:menu:list', 'Menu', 1, 1, NOW(), 0),
-(5, 1, '部门管理', 2, 4, '/system/dept', 'dept/index', 'sys:dept:list', 'Office', 1, 1, NOW(), 0),
+(2, 1, '用户管理', 2, 1, '/system/user', 'system/user/index', 'sys:user:list', 'User', 1, 1, NOW(), 0),
+(3, 1, '角色管理', 2, 2, '/system/role', 'system/role/index', 'sys:role:list', 'Role', 1, 1, NOW(), 0),
+(4, 1, '菜单管理', 2, 3, '/system/menu', 'system/menu/index', 'sys:menu:list', 'Menu', 1, 1, NOW(), 0),
+(5, 1, '部门管理', 2, 4, '/system/dept', 'system/dept/index', 'sys:dept:list', 'Office', 1, 1, NOW(), 0),
 -- 工作流（重置密码工单化新增）
 (6, 0, '工作流', 1, 50, '/workflow', NULL, NULL, 'SetUp', 1, 1, NOW(), 0);
 
