@@ -3,20 +3,11 @@
 ## 🛠 待开发 & 待修改功能
 
 ### 🔧 待开发功能
-- [ ] 用户权限体系
-- [ ] swagger门户
-- [ ] 工作流集成
-- [ ] 对全局的公共字段要给默认值
-- [ ] BaseEntity等系列base类和公共字段，mybatis之间的关系要实现
-- [ ] 项目日志选型和实现方式
 - [ ] k8s环境下部署实现
 
 ### 🩹 待修改 & 优化项
-- [ ] 现有的用户权限一套表要重新整理
-
-### 🔒 安全待办
-- [ ] **sea-code SQL 注入风险**: `CodegenDataSourceServiceImpl.listColumns()` MySQL 路径通过字符串拼接 `tableName` 构建 SQL（`"SHOW FULL COLUMNS FROM " + tableName`），应改为 `information_schema.columns` + PreparedStatement 参数绑定
-- [ ] **sea-code 数据源密码明文存储**: `CodegenDataSourcePO.password` 以明文存入数据库，应使用 AES 加密（可用 `sea-common-core` 的 `AES` 工具类 + MyBatis TypeHandler）；同时 `CodegenDataSourceVO` 的 list 接口不应返回 password 字段
+- [ ] **sea-code 数据源密码明文存储**: `CodegenDataSourcePO.password` 以明文存入数据库，应使用 AES 加密（可用 `sea-common-core` 的 `AES` 工具类 + MyBatis TypeHandler）（注：`CodegenDataSourceVO` 已不返回 password 字段）
+- [ ] **通知模块发件人邮箱待配置**: `doc/nacos/sea-notification.yaml` 中 `spring.mail.username/password` 目前是占位符（`noreply@example.com` / 空），需要运维在 Nacos 控制台配置真实发件人邮箱及密码；阿里云短信 AK/SK 同理待配置
 
 
 
