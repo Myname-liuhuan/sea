@@ -19,17 +19,19 @@ spring:
       port: 6379
       password: 123456
       database: 0
+  # 邮件通道：使用 QQ 邮箱 SMTP
+  # password 是 QQ 邮箱「授权码」（16 位），不是 QQ 登录密码。
+  # 开启方式：QQ 邮箱网页版 → 设置 → 账户 → 开启「SMTP 服务」，按提示获取授权码。
+  # 凭据留空避免 Spring 解析 ${VAR} 占位符失败；实际值请运维在 Nacos 控制台直接填值。
   mail:
-    host: smtp.example.com
+    host: smtp.qq.com
     port: 465
-    username: noreply@example.com
-    # 凭据留空避免 Spring 解析 ${MAIL_PASSWORD} 失败。
-    # 实际密码请运维在 Nacos 控制台直接填值（不要再用 ${VAR} 占位符语法，Nacos 不做服务端解析）。
-    password: ""
+    username: <your-qq-email@qq.com>   # 例：123456789@qq.com
+    password: ""                       # 填 QQ 邮箱授权码（16 位），不是登录密码
     default-encoding: UTF-8
     properties:
       mail.smtp.auth: true
-      mail.smtp.ssl.enable: true
+      mail. smtp.ssl.enable: true       # 端口 465 走 SSL；如要换 587/STARTTLS，把这里改 false 并加 mail.smtp.starttls.enable: true
   cloud:
     nacos:
       discovery:

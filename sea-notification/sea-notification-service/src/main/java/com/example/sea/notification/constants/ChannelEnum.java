@@ -1,10 +1,13 @@
 package com.example.sea.notification.constants;
 
+import lombok.Getter;
+
 /**
  * 通知通道枚举。
  *
  * <p>优先级 inApp → email → sms（设计文档 §4 sea-notification）。
  */
+@Getter
 public enum ChannelEnum {
 
     /** 站内信（必达） */
@@ -20,14 +23,6 @@ public enum ChannelEnum {
     ChannelEnum(String code, String label) {
         this.code = code;
         this.label = label;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public String getLabel() {
-        return label;
     }
 
     public static ChannelEnum of(String code) {

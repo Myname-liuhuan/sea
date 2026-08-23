@@ -2,8 +2,10 @@ package com.example.sea.notification.notifier;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.example.sea.notification.api.dto.NotifyDTO;
+import com.example.sea.notification.api.vo.InAppMessageVO;
 import com.example.sea.notification.api.vo.NotifyVO;
 import com.example.sea.notification.config.NotificationChannelProperties;
+import com.example.sea.notification.converter.InAppMessageConverter;
 import com.example.sea.notification.constants.ChannelEnum;
 import com.example.sea.notification.dao.InAppMessageMapper;
 import com.example.sea.notification.dao.NotifyLogMapper;
@@ -11,6 +13,7 @@ import com.example.sea.notification.dao.NotifyTemplateMapper;
 import com.example.sea.notification.entity.InAppMessagePO;
 import com.example.sea.notification.entity.NotifyLogPO;
 import com.example.sea.notification.entity.NotifyTemplatePO;
+import com.example.sea.notification.websocket.NotifyWebSocketHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +48,8 @@ public class InAppNotifier implements Notifier {
     private final NotifyLogMapper logMapper;
     private final InAppMessageMapper inAppMapper;
     private final NotificationChannelProperties channelProperties;
+    private final NotifyWebSocketHandler wsHandler;
+    private final InAppMessageConverter messageConverter;
 
     @Override
     public ChannelEnum channel() {
@@ -97,7 +102,12 @@ public class InAppNotifier implements Notifier {
             logPo.setAttempts(1);
             logMapper.insert(logPo);
 
-            // TODO M3.C：WebSocket push 给该 user（由 InAppMessageService 维护 session）
+            // WebSocket 推送给在线 user（不在线静默跳过，下一次轮询兜底）
+            try {
+                wsHandler.push(request.getReceiverUserId(), messageConverter.entityToVo(msg));
+            } catch (Exception e) {
+                log.warn("ws.notify.push dispatch failed bizKey={} err={}", request.getBizKey(), e.getMessage());
+            }
             return NotifyVO.success(channel().getCode(), logPo.getId());
         } catch (Exception e) {
             log.error("InAppNotifier.send failed bizKey={}", request.getBizKey(), e);
