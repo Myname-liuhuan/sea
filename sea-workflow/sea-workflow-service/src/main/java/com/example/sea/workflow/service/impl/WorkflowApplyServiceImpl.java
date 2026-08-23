@@ -106,6 +106,8 @@ public class WorkflowApplyServiceImpl implements IWorkflowApplyService {
         variables.put("targetDeptId", deptId);
         variables.put("reason", request.getReason());
         variables.put("urgency", request.getUrgency());
+        // taskNo 也作为流程变量下发，pendingApprovals 通过它关联到 workflow_task 业务行
+        variables.put("taskNo", task.getTaskNo());
 
         // 取直属上级，作为 dept_leader 用户任务的 assignee（无上级则留空，
         // Flowable 会按 candidateGroup 落到部门组）

@@ -45,14 +45,23 @@ public class LoginUser implements UserDetails {
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // 将字符串权限转换为GrantedAuthority对象，过滤空权限
-        if (perms == null || perms.isEmpty()) {
-            return java.util.Collections.emptyList();
+        // §15 #25：既要带 perms（hasAuthority 校验），也要带 roles（hasRole 校验）。
+        // 之前只把 perms 转成 GrantedAuthority，roles 字段完全没用上 → @PreAuthorize("hasRole('ADMIN')")
+        // 永远 false，admin-emergency-reset 等强依赖角色的接口全部 403。
+        java.util.List<GrantedAuthority> all = new java.util.ArrayList<>();
+        if (roles != null) {
+            roles.stream()
+                    .filter(r -> r != null && !r.trim().isEmpty())
+                    .map(SimpleGrantedAuthority::new)
+                    .forEach(all::add);
         }
-        return perms.stream()
-                .filter(perm -> perm != null && !perm.trim().isEmpty())
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+        if (perms != null) {
+            perms.stream()
+                    .filter(perm -> perm != null && !perm.trim().isEmpty())
+                    .map(SimpleGrantedAuthority::new)
+                    .forEach(all::add);
+        }
+        return all;
     }
 
     @JsonIgnore

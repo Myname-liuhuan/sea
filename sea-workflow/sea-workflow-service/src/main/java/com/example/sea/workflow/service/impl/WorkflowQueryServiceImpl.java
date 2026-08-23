@@ -21,6 +21,7 @@ import com.example.sea.workflow.entity.WorkflowTaskPO;
 import com.example.sea.workflow.service.IWorkflowQueryService;
 import com.example.sea.workflow.service.WorkflowNameEnricher;
 import lombok.RequiredArgsConstructor;
+import org.flowable.engine.HistoryService;
 import org.flowable.engine.TaskService;
 import org.flowable.task.api.Task;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,7 @@ public class WorkflowQueryServiceImpl implements IWorkflowQueryService {
     private final WorkflowTaskConverter taskConverter;
     private final WorkflowApprovalConverter approvalConverter;
     private final TaskService taskService;
+    private final HistoryService historyService;
     private final WorkflowNameEnricher nameEnricher;
 
     @Override
@@ -74,7 +76,9 @@ public class WorkflowQueryServiceImpl implements IWorkflowQueryService {
                 .taskAssignee(String.valueOf(userId)).count();
 
         List<String> taskNos = flowTasks.stream()
-                .map(t -> (String) taskService.getVariable(t.getExecutionId(), "taskNo"))
+                // taskService.getVariable 在 Flowable 里实际执行 GetTaskVariableCmd，期望的是 taskId，
+                // 不是 executionId；executionId 走 runtimeService.getVariable。这里挂的是 taskNo 流程变量。
+                .map(t -> (String) taskService.getVariable(t.getId(), "taskNo"))
                 .filter(s -> s != null)
                 .collect(Collectors.toList());
 
@@ -131,15 +135,23 @@ public class WorkflowQueryServiceImpl implements IWorkflowQueryService {
     }
 
     /**
-     * 当前用户是否是该工单的待办审批人。
-     * 通过 Flowable TaskService 查 taskAssignee + 流程变量 taskNo 匹配。
+     * 当前用户是否是该工单的当前/历史审批人。
+     * <p>当前：Flowable TaskService 查 ACT_RU_TASK；
+     * 历史：Flowable HistoryService 查 ACT_HI_TASKINST，
+     * 用于审批通过后 admin 仍能查看工单详情。
      */
     private boolean isCurrentApprover(String taskNo, String userId) {
         try {
-            return taskService.createTaskQuery()
+            long active = taskService.createTaskQuery()
                     .taskAssignee(userId)
                     .processVariableValueEquals("taskNo", taskNo)
-                    .count() > 0;
+                    .count();
+            if (active > 0) return true;
+            long historical = historyService.createHistoricTaskInstanceQuery()
+                    .taskAssignee(userId)
+                    .processVariableValueEquals("taskNo", taskNo)
+                    .count();
+            return historical > 0;
         } catch (Exception e) {
             return false;
         }

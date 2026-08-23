@@ -8,9 +8,9 @@ import com.example.sea.notification.entity.NotifyLogPO;
 import com.example.sea.notification.notifier.Notifier;
 import com.example.sea.notification.service.INotificationService;
 import com.example.sea.notification.constants.ChannelEnum;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -38,8 +38,9 @@ public class NotificationServiceImpl implements INotificationService {
 
     private final List<Notifier> notifiers;
     private final NotifyLogMapper logMapper;
+    /** 失败回放：把 NotifyDTO 序列化进 notify_log.payload_cipher，重试时反序列化即可重渲染。 */
+    private final ObjectMapper replayMapper = new ObjectMapper();
 
-    @Async
     @Override
     public CommonResult<NotifyVO> send(NotifyDTO request) {
         Set<String> tried = new LinkedHashSet<>();
@@ -67,12 +68,22 @@ public class NotificationServiceImpl implements INotificationService {
         NotifyLogPO logPo = new NotifyLogPO();
         logPo.setBizKey(request.getBizKey());
         logPo.setChannel(request.getPrimaryChannel());
-        logPo.setReceiver(request.getMobile() != null ? request.getMobile() : request.getEmail());
+        // receiver 列 NOT NULL；当 mobile/email 都为空时回退到 userId 字符串，
+        // 否则触发 SQLIntegrityConstraintViolationException 把整条请求变成 500。
+        String receiver = request.getMobile();
+        if (receiver == null || receiver.isBlank()) receiver = request.getEmail();
+        if (receiver == null || receiver.isBlank()) {
+            receiver = request.getReceiverUserId() == null ? "unknown" : String.valueOf(request.getReceiverUserId());
+        }
+        logPo.setReceiver(receiver);
         logPo.setUserId(request.getReceiverUserId());
         logPo.setTemplateCode(request.getTemplateCode());
         logPo.setStatus("FAILED");
         logPo.setError("全部通道失败");
         logPo.setAttempts(tried.size());
+        // 全失败回放：NotifyRetryJob 重建 NotifyDTO 后重投，必须留 payload_cipher，
+        // 否则 rebuildRequest 返回 null → 该条永久跳过 → attempts 永远不增 → 永远重试不到。
+        logPo.setPayloadCipher(buildReplayPayload(request));
         logMapper.insert(logPo);
         lastLogId = logPo.getId();
         log.warn("notify.send all-failed bizKey={} tried={}", request.getBizKey(), tried);
@@ -85,6 +96,15 @@ public class NotificationServiceImpl implements INotificationService {
             if (n.channel() == ch) return n;
         }
         return null;
+    }
+
+    private String buildReplayPayload(NotifyDTO request) {
+        try {
+            return replayMapper.writeValueAsString(request);
+        } catch (Exception e) {
+            log.warn("NotificationServiceImpl.buildReplayPayload failed bizKey={}", request.getBizKey(), e);
+            return "{}";
+        }
     }
 
     @SuppressWarnings("unused")
