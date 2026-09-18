@@ -4,6 +4,7 @@
 
 ### 🔧 待开发功能
 - [ ] k8s环境下部署实现
+- [ ] 全局监察delete等高敏感操作，将这些操作打印日志到特定log里面
 
 ### 🩹 待修改 & 优化项
 - [ ] **sea-code 数据源密码明文存储**: `CodegenDataSourcePO.password` 以明文存入数据库，应使用 AES 加密（可用 `sea-common-core` 的 `AES` 工具类 + MyBatis TypeHandler）（注：`CodegenDataSourceVO` 已不返回 password 字段）
